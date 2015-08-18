@@ -301,7 +301,7 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 		$user_option = get_user_option( get_current_screen()->base . 'per_day' );
 
 		if ( empty( $user_option ) ) {
-			$user_option = 5;
+			$user_option = 10;
 		}
 
 		return (int) $user_option;

@@ -285,9 +285,8 @@ function wp_event_calendar_admin_styling() {
 		}
 
 		table.calendar div.events-for-day {
-			margin-top: 30px;
-			overflow-y: auto;
-			max-height: 80px
+			margin: 30px 0 5px;
+			min-height: 80px
 		}
 
 		table.calendar a {
