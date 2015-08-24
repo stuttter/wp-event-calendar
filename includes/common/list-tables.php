@@ -64,9 +64,30 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 	protected $query = null;
 
 	/**
+	 * The items being displayed
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var array
+	 */
+	public $items = array();
+
+	/**
+	 * The items with pointers
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var array
+	 */
+	public $pointers = array();
+
+	/**
 	 * The main constructor method
 	 */
 	public function __construct( $args = array() ) {
+
+		// Ready the pointer content
+		add_action( 'admin_print_footer_scripts', array( $this, 'admin_pointers_footer' ) );
 
 		// Set month, day, & year
 		$this->month = $this->get_month();
@@ -480,13 +501,66 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 
 		// Rearrange posts into an array keyed by day of the month
 		foreach ( $this->query->posts as $post ) {
-			$post_day = mysql2date( 'j', $post->post_date );
 
+			// Pointers
+			$pointer_title     = '<h3 class="' . $this->get_day_post_classes( $post->ID ) . '">' . esc_html( $post->post_title   ) . '</h3>';
+			$pointer_edit_link = current_user_can( 'edit_post', $post->ID ) ? ' <a href="' . esc_url( get_edit_post_link( $post->ID ) ) . '">'  . esc_html__( 'Edit', 'wp-event-calendar' ) . '</a>' : '';
+			$pointer_excerpt   = '<p>'  . esc_html( $post->post_content ) . $pointer_edit_link . '</p>';
+			$this->pointers[] = array(
+				'content'   => $pointer_title . $pointer_excerpt,
+				'anchor_id' => '#event-pointer-' . $post->ID,
+				'edge'      => 'bottom',
+				'align'     => 'left'
+			);
+
+			// Reorder posts by day
+			$post_day = mysql2date( 'j', $post->post_date );
 			if ( empty( $this->items[ $post_day ] ) || ( $max_per_day > count( $this->items[ $post_day ] ) ) ) {
 				$this->items[ $post_day ][ $post->ID ] = $post;
 			}
 		}
 	}
+
+	/**
+	 * Output the pointers for each event
+	 *
+	 * @since 0.1.1
+	 */
+	public function admin_pointers_footer() {
+	?>
+
+<!-- Start Event Pointers -->
+<script type="text/javascript">
+	/* <![CDATA[ */
+	( function($) {
+		$( '.calendar a' ).click( function( event ) {
+			event.preventDefault();
+			$( 'div.wp-pointer' ).css( 'display', 'none' );
+		} );
+
+	<?php foreach ( $this->pointers as $item ) : ?>
+
+		$( '<?php echo $item[ 'anchor_id' ]; ?>' ).pointer( {
+			content: '<?php echo $item[ 'content' ]; ?>',
+			position: {
+				edge:  '<?php echo $item[ 'edge' ]; ?>',
+				align: '<?php echo $item[ 'align' ]; ?>'
+			}
+		} );
+
+		$( '<?php echo $item[ 'anchor_id' ]; ?>' ).click( function() {
+			$( this ).pointer( 'open' );
+		} );
+
+	<?php endforeach; ?>		
+	} )( jQuery );
+	/* ]]> */
+</script>
+<!-- End Event Pointers -->
+
+		<?php
+	}
+
 
 	/**
 	 * Message to be displayed when there are no items
@@ -712,6 +786,15 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 			: array();
 	}
 
+	/**
+	 * Get posts for the day
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param int $day
+	 *
+	 * @return string
+	 */
 	protected function get_day_posts( $day = 1 ) {
 
 		// Get posts and bail if none
@@ -726,7 +809,7 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 		// Loop through today's posts
 		foreach ( $posts as $post ) : ?>
 
-			<a href="<?php echo esc_url( get_edit_post_link( $post->ID ) ); ?>" class="<?php echo $this->get_day_post_classes( $post->ID ); ?>"><?php echo esc_html( get_the_title( $post->ID ) ); ?></a>
+			<a id="event-pointer-<?php echo esc_attr( $post->ID ); ?>" href="<?php echo esc_url( get_edit_post_link( $post->ID ) ); ?>" class="<?php echo $this->get_day_post_classes( $post->ID ); ?>"><?php echo esc_html( get_the_title( $post->ID ) ); ?></a>
 
 		<?php endforeach;
 
@@ -775,7 +858,7 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 
 		$offset   = ( $iterator - $start_day ) + 1;
 
-		//
+		// Position & day info
 		$position     = "position-{$dow}";
 		$day_number   = "day-{$offset}";
 		$month_number = "month-{$this->month}";

@@ -77,13 +77,15 @@ function wp_event_calendar_admin_add_screen_options() {
 	// columns screen option
 	add_screen_option( 'layout_type', array(
 		'label'   => _x( 'Layout', 'Month, Week, or Day (screen options)', 'wp-event-calendar' ),
-		'default' => 'month'
+		'default' => 'month',
+		'option'  => 'calendar_layout'
 	) );
 
 	// Events per day
 	add_screen_option( 'per_page', array(
 		'label'   => _x( 'Events per day', 'Events per day (screen options)', 'wp-event-calendar' ),
-		'default' => 5
+		'default' => 10,
+		'option'  => 'edit_calendar_per_day'
 	) );
 }
 
@@ -229,7 +231,10 @@ function wp_event_calendar_show_admin_calendar() {
  * @since 0.1.0
  */
 function wp_event_calendar_admin_styling() {
-?>
+
+	// Enqueue pointer styling
+	wp_enqueue_script( 'wp-pointer' );
+	wp_enqueue_style( 'wp-pointer' ); ?>
 
 	<style type="text/css">
 		table.calendar thead th,
@@ -314,26 +319,32 @@ function wp_event_calendar_admin_styling() {
 			margin-right: 4px;
 		}
 
+		.wp-pointer-content h3.type-event:before,
 		table.calendar a.type-event:before {
 			content: '\f145';
 		}
 
+		.wp-pointer-content h3.type-post:before,
 		table.calendar a.type-post:before {
 			content: '\f109';
 		}
 
+		.wp-pointer-content h3.type-page:before,
 		table.calendar a.type-page:before {
 			content: '\f105';
 		}
 
+		.wp-pointer-content h3.status-private:before,
 		table.calendar a.status-private:before {
-			content: '\f177';
+			content: '\f530';
 		}
 
+		.wp-pointer-content h3.post-password-required:before,
 		table.calendar a.post-password-required:before {
 			content: '\f315';
 		}
 
+		.wp-pointer-content h3.status-draft:before,
 		table.calendar a.status-draft:before {
 			content: '\f469';
 		}
