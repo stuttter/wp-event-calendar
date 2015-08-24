@@ -190,7 +190,7 @@ function wp_event_calendar_show_admin_calendar() {
 	$post_type_object = get_post_type_object( $post_type );
 
 	// Load the Calendar table
-	$wp_list_table = new WP_Event_Calendar_Calendar_Table();
+	$wp_list_table = new WP_Event_Calendar_Month_Table();
 
 	// Query for calendar content
 	$wp_list_table->prepare_items();

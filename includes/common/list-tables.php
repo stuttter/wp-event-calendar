@@ -25,7 +25,7 @@ if ( class_exists( 'WP_List_Table' ) ) :
  *
  * @todo WP_Table_Lol
  */
-class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
+class WP_Event_Calendar_Month_Table extends WP_List_Table {
 
 	/**
 	 * The month being viewed
@@ -742,6 +742,44 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 		<?php
 	}
 
+	/** Output & Markup *******************************************************/
+
+	/**
+	 * Display the table
+	 *
+	 * @since 0.1.0
+	 *
+	 * @access public
+	 */
+	public function display() {
+
+		// Top
+		$this->display_tablenav( 'top' ); ?>
+
+		<table class="wp-list-table <?php echo implode( ' ', $this->get_table_classes() ); ?>">
+			<thead>
+				<tr>
+					<?php $this->print_column_headers(); ?>
+				</tr>
+			</thead>
+
+			<tbody id="the-list" data-wp-lists='list:<?php echo $this->_args['singular']; ?>'>
+				<?php $this->display_calendar( $this->month, $this->year ); ?>
+			</tbody>
+
+			<tfoot>
+				<tr>
+					<?php $this->print_column_headers( false ); ?>
+				</tr>
+			</tfoot>
+		</table>
+
+		<?php
+
+		// Bottom
+		$this->display_tablenav( 'bottom' );
+	}
+
 	/**
 	 * Message to be displayed when there are no items
 	 */
@@ -791,7 +829,10 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 		if ( $next_month === 13 ) {
 			$next_month_args['month'] = 1;
 			$next_month_args['year']  = $next_year;
-		} ?>
+		}
+
+		// Start an output buffer
+		ob_start(); ?>
 
 		<div class="tablenav-pages previous">
 			<a class="previous-page" href="<?php echo esc_url( add_query_arg( array( 'year' => $prev_year ), $page_url ) ); ?>">
@@ -820,6 +861,9 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 		</div>
 
 		<?php
+
+		// Filter & return
+		return apply_filters( 'wp_event_calendar_get_pagination', ob_get_clean() );
 	}
 
 	/**
@@ -834,7 +878,10 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 		// No bottom extras
 		if ( 'top' !== $which ) {
 			return;
-		} ?>
+		}
+
+		// Start an output buffer
+		ob_start(); ?>
 
 		<label for="month" class="screen-reader-text"><?php esc_html_e( 'Switch to this month', 'wp-event-calendar' ); ?></label>
 		<select name="month" id="month">
@@ -850,43 +897,16 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 		<label for="year" class="screen-reader-text"><?php esc_html_e( 'Switch to this year', 'wp-event-calendar' ); ?></label>
 		<input type="number" name="year" id="year" value="<?php echo (int) $this->year; ?>" size="5">
 
-		<?php submit_button( esc_html__( 'View', 'wp-event-calendar' ), 'action', '', false, array( 'id' => "doaction" ) );
-	}
-
-	/**
-	 * Display the table
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access public
-	 */
-	public function display() {
-
-		// Top
-		$this->display_tablenav( 'top' ); ?>
-
-		<table class="wp-list-table <?php echo implode( ' ', $this->get_table_classes() ); ?>">
-			<thead>
-				<tr>
-					<?php $this->print_column_headers(); ?>
-				</tr>
-			</thead>
-
-			<tbody id="the-list" data-wp-lists='list:<?php echo $this->_args['singular']; ?>'>
-				<?php $this->display_calendar( $this->month, $this->year ); ?>
-			</tbody>
-
-			<tfoot>
-				<tr>
-					<?php $this->print_column_headers( false ); ?>
-				</tr>
-			</tfoot>
-		</table>
-
 		<?php
 
-		// Bottom
-		$this->display_tablenav( 'bottom' );
+		// Allow additional tablenav output before the "View" button
+		do_action( 'wp_event_calendar_before_tablenav_view' );
+
+		// Output the "View" button
+		submit_button( esc_html__( 'View', 'wp-event-calendar' ), 'action', '', false, array( 'id' => "doaction" ) );
+
+		// Filter & return
+		return apply_filters( 'wp_event_calendar_get_extra_tablenav', ob_get_clean() );
 	}
 
 	/**
@@ -1095,23 +1115,29 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 	/**
 	 * Generate the table navigation above or below the table
 	 *
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 *
 	 * @access protected
 	 * @param string $which
 	 */
 	protected function display_tablenav( $which ) {
-	?>
+		?>
 
-		<div class="tablenav <?php echo esc_attr( $which ); ?>">
-			<?php
-				$this->extra_tablenav( $which );
-				$this->pagination( $which );
-			?>
-			<br class="clear" />
-		</div>
+			<div class="tablenav <?php echo esc_attr( $which ); ?>">
 
-	<?php
+				<?php
+
+					// Output Month, Year tablenav
+					echo $this->extra_tablenav( $which );
+
+					// Output year/month pagination
+					echo $this->pagination( $which );
+				?>
+
+				<br class="clear" />
+			</div>
+
+		<?php
 	}
 }
 endif;
