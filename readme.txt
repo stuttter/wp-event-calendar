@@ -11,7 +11,7 @@ Flexible events, with a calendar view.
 
 WP Event Calendar introduces a basic event system, a with a calendar view, and accompanying categories, tags, and types taxonomies.
 
-Also checkout:
+= Also checkout =
 
 * [WP Term Meta](https://wordpress.org/plugins/wp-term-meta/ "Metadata, for taxonomy terms.")
 * [WP Term Order](https://wordpress.org/plugins/wp-term-order/ "Sort taxonomy terms, your way.")
