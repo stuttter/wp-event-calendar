@@ -150,7 +150,7 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 	/**
 	 * Setup the list-table's columns
 	 *
-	 * @see WP_List_Table::::single_row_columns()
+	 * @see WP_List_Table::single_row_columns()
 	 *
 	 * @return array An associative array containing column information
 	 */
@@ -450,6 +450,9 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 	/**
 	 * Always have items
 	 *
+	 * This method forces WordPress to always show our calendar, and never to
+	 * trigger the `no_items()` method.
+	 *
 	 * @since 0.1.0
 	 *
 	 * @return boolean
@@ -481,8 +484,28 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 		// Handle bulk actions
 		$this->process_bulk_action();
 
-		// Query for rentals
-		$this->query = new WP_Query( array(
+		// Query for posts
+		$this->query = new WP_Query( $this->filter_args() );
+
+		// Max per day
+		$max_per_day = $this->get_per_day();
+
+		// Rearrange posts into an array keyed by day of the month
+		foreach ( $this->query->posts as $post ) {
+			$this->setup_pointer( $post );
+			$this->setup_item( $post, $max_per_day );
+		}
+	}
+
+	/**
+	 * Return filtered query arguments
+	 *
+	 * @since 0.1.1
+	 *
+	 * @return array
+	 */
+	private function filter_args() {
+		return apply_filters( 'wp_event_calendar_query', array(
 			'post_type'           => $this->screen->post_type,
 			'post_status'         => $this->get_post_status(),
 			'monthnum'            => $this->month,
@@ -495,44 +518,78 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 			'ignore_sticky_posts' => true,
 			's'                   => $this->get_search()
 		) );
+	}
 
-		// Max per day
-		$max_per_day = $this->get_per_day();
+	/**
+	 * Add a post to the pointers array
+	 *
+	 * @since 0.1.1
+	 *
+	 * @param object $post
+	 */
+	private function setup_pointer( $post = false ) {
 
-		// Rearrange posts into an array keyed by day of the month
-		foreach ( $this->query->posts as $post ) {
+		// Get the post
+		$post = get_post( $post );
 
-			// Pointers
-			$pointer_title     = '<h3 class="' . $this->get_day_post_classes( $post->ID ) . '">' . esc_html( $post->post_title   ) . '</h3>';
-			$pointer_edit_link = current_user_can( 'edit_post', $post->ID ) ? ' <a href="' . esc_url( get_edit_post_link( $post->ID ) ) . '">'  . esc_html__( 'Edit', 'wp-event-calendar' ) . '</a>' : '';
-			$pointer_excerpt   = '<p>'  . esc_js( wp_kses_data( $post->post_content ) ) . $pointer_edit_link . '</p>';
-			$this->pointers[] = array(
-				'content'   => $pointer_title . $pointer_excerpt,
-				'anchor_id' => '#event-pointer-' . $post->ID,
-				'edge'      => 'top',
-				'align'     => 'left'
-			);
+		// Pointer title is maybe clickable
+		$pointer_title_text = current_user_can( 'edit_post', $post->ID )
+			? ' <a href="' . esc_url( get_edit_post_link( $post->ID ) ) . '">'  . esc_js( $post->post_title ) . '</a>'
+			: esc_js( $post->post_title );
 
-			// Reorder posts by day
-			$post_day = mysql2date( 'j', $post->post_date );
-			if ( empty( $this->items[ $post_day ] ) || ( $max_per_day > count( $this->items[ $post_day ] ) ) ) {
-				$this->items[ $post_day ][ $post->ID ] = $post;
-			}
+		// Rebase the pointer content
+		$pointer_content = array();
+
+		// Pointer content
+		$pointer_content[] = '<h3 class="' . $this->get_day_post_classes( $post->ID ) . '">' . $pointer_title_text . '</h3>';
+		$pointer_content[] = '<p>'  . esc_js( wp_kses_data( $post->post_content ) ) . '</p>';
+
+		// Filter pointer content specifically
+		$pointer_content = apply_filters( 'wp_event_calendar_pointer_content', $pointer_content, $post );
+
+		// Filter the entire pointer array
+		$pointer = apply_filters( 'wp_event_calendar_pointer', array(
+			'content'   => implode( '', $pointer_content ),
+			'anchor_id' => '#event-pointer-' . (int) $post->ID,
+			'edge'      => 'top',
+			'align'     => 'left'
+		), $post );
+
+		// Add pointer to pointers array
+		$this->pointers[] = $pointer;
+	}
+
+	/**
+	 * Add a post to the items array, keyed by day
+	 *
+	 * @since 0.1.1
+	 *
+	 * @param  object  $post
+	 * @param  int     $max
+	 */
+	private function setup_item( $post = false, $max = 10 ) {
+		$post     = get_post( $post );
+		$post_day = mysql2date( 'j', $post->post_date );
+		if ( empty( $this->items[ $post_day ] ) || ( $max > count( $this->items[ $post_day ] ) ) ) {
+			$this->items[ $post_day ][ $post->ID ] = $post;
 		}
 	}
 
 	/**
 	 * Output the pointers for each event
 	 *
+	 * This is a pretty horrible way to accomplish this, but it's currently the
+	 * way WordPress's pointer API expects to work, so be it.
+	 *
 	 * @since 0.1.1
 	 */
 	public function admin_pointers_footer() {
-	?>
+		?>
 
 <!-- Start Event Pointers -->
 <script type="text/javascript">
 	/* <![CDATA[ */
-	( function($) {
+	( function( $ ) {
 		$( '.calendar a' ).click( function( event ) {
 			event.preventDefault();
 		} );
@@ -551,7 +608,7 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 			$( this ).pointer( 'open' );
 		} );
 
-	<?php endforeach; ?>		
+	<?php endforeach; ?>
 	} )( jQuery );
 	/* ]]> */
 </script>
@@ -559,7 +616,6 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 
 		<?php
 	}
-
 
 	/**
 	 * Message to be displayed when there are no items

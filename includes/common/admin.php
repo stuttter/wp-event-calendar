@@ -319,6 +319,15 @@ function wp_event_calendar_admin_styling() {
 			margin-right: 4px;
 		}
 
+		.wp-pointer-content h3 a {
+			color: #fff;
+			text-decoration: none;
+		}
+
+		.wp-pointer-content h3 a:hover {
+			color: #eee;
+		}
+
 		.wp-pointer-content h3.type-event:before,
 		table.calendar a.type-event:before {
 			content: '\f145';
