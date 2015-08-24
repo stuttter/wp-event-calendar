@@ -505,11 +505,11 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 			// Pointers
 			$pointer_title     = '<h3 class="' . $this->get_day_post_classes( $post->ID ) . '">' . esc_html( $post->post_title   ) . '</h3>';
 			$pointer_edit_link = current_user_can( 'edit_post', $post->ID ) ? ' <a href="' . esc_url( get_edit_post_link( $post->ID ) ) . '">'  . esc_html__( 'Edit', 'wp-event-calendar' ) . '</a>' : '';
-			$pointer_excerpt   = '<p>'  . wp_kses_data( $post->post_content ) . $pointer_edit_link . '</p>';
+			$pointer_excerpt   = '<p>'  . esc_js( wp_kses_data( $post->post_content ) ) . $pointer_edit_link . '</p>';
 			$this->pointers[] = array(
 				'content'   => $pointer_title . $pointer_excerpt,
 				'anchor_id' => '#event-pointer-' . $post->ID,
-				'edge'      => 'bottom',
+				'edge'      => 'top',
 				'align'     => 'left'
 			);
 
@@ -535,7 +535,6 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 	( function($) {
 		$( '.calendar a' ).click( function( event ) {
 			event.preventDefault();
-			$( 'div.wp-pointer' ).css( 'display', 'none' );
 		} );
 
 	<?php foreach ( $this->pointers as $item ) : ?>
