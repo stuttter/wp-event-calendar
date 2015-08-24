@@ -39,5 +39,12 @@ http://github.com/johnjamesjacoby/wp-event-calendar/
 
 == Changelog ==
 
+= 0.1.1 =
+* Show pointers on event clicks
+* Add flexible methods for pointers output
+* Add actions & filters
+* Rename main class to be for month-only view
+* Use new icon for private posts
+
 = 0.1.0 =
 * Initial release
