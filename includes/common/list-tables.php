@@ -521,6 +521,53 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Add a post to the items array, keyed by day
+	 *
+	 * @since 0.1.1
+	 *
+	 * @param  object  $post
+	 * @param  int     $max
+	 */
+	private function setup_item( $post = false, $max = 10 ) {
+		$post_day = mysql2date( 'j', $post->post_date );
+		if ( empty( $this->items[ $post_day ] ) || ( $max > count( $this->items[ $post_day ] ) ) ) {
+			$this->items[ $post_day ][ $post->ID ] = $post;
+		}
+	}
+
+	/** Event Meta ************************************************************/
+
+	/**
+	 * Get the date of the event
+	 *
+	 * @since 0.1.1
+	 *
+	 * @param  object $post
+	 * @return string
+	 */
+	private function get_event_date( $post = false ) {
+		$retval = get_the_date( get_option( 'date_format' ), $post );
+
+		return apply_filters( 'wp_event_calendar_event_date', $retval, $post );
+	}
+
+	/**
+	 * Get the date of the event
+	 *
+	 * @since 0.1.1
+	 *
+	 * @param  object $post
+	 * @return string
+	 */
+	private function get_event_time( $post = false ) {
+		$retval = get_the_date( get_option( 'time_format' ), $post );
+
+		return apply_filters( 'wp_event_calendar_event_time', $retval, $post );
+	}
+
+	/** Pointers **************************************************************/
+
+	/**
 	 * Add a post to the pointers array
 	 *
 	 * @since 0.1.1
@@ -529,20 +576,12 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 	 */
 	private function setup_pointer( $post = false ) {
 
-		// Get the post
-		$post = get_post( $post );
-
-		// Pointer title is maybe clickable
-		$pointer_title_text = current_user_can( 'edit_post', $post->ID )
-			? ' <a href="' . esc_url( get_edit_post_link( $post->ID ) ) . '">'  . esc_js( $post->post_title ) . '</a>'
-			: esc_js( $post->post_title );
-
 		// Rebase the pointer content
 		$pointer_content = array();
 
 		// Pointer content
-		$pointer_content[] = '<h3 class="' . $this->get_day_post_classes( $post->ID ) . '">' . $pointer_title_text . '</h3>';
-		$pointer_content[] = '<p>'  . esc_js( wp_kses_data( $post->post_content ) ) . '</p>';
+		$pointer_content[] = '<h3 class="' . $this->get_day_post_classes( $post->ID ) . '">' . $this->get_pointer_title( $post ) . '</h3>';
+		$pointer_content[] = '<p>' . implode( '<br>', $this->get_pointer_text( $post ) ) . '</p>';
 
 		// Filter pointer content specifically
 		$pointer_content = apply_filters( 'wp_event_calendar_pointer_content', $pointer_content, $post );
@@ -560,19 +599,105 @@ class WP_Event_Calendar_Calendar_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Add a post to the items array, keyed by day
+	 * Return the pointer title text
 	 *
 	 * @since 0.1.1
 	 *
-	 * @param  object  $post
-	 * @param  int     $max
+	 * @param   object $post
+	 * @return  string
 	 */
-	private function setup_item( $post = false, $max = 10 ) {
-		$post     = get_post( $post );
-		$post_day = mysql2date( 'j', $post->post_date );
-		if ( empty( $this->items[ $post_day ] ) || ( $max > count( $this->items[ $post_day ] ) ) ) {
-			$this->items[ $post_day ][ $post->ID ] = $post;
+	private function get_pointer_title( $post = false ) {
+
+		// Title links to edit
+		if ( current_user_can( 'edit_post', $post->ID ) ) {
+			$retval = '<a href="' . esc_url( get_edit_post_link( $post->ID ) ) . '">'  . esc_js( $post->post_title ) . '</a>';
+
+		// No title link
+		} else {
+			$retval = esc_js( $post->post_title );
 		}
+
+		// Filter & return the pointer title
+		return apply_filters( 'wp_event_calendar_pointer_title', $retval, $post );
+	}
+
+	/**
+	 * Return the pointer title text
+	 *
+	 * @since 0.1.1
+	 *
+	 * @param   object $post
+	 * @return  string
+	 */
+	private function get_pointer_text( $post = false ) {
+		$pointer_text = $this->get_pointer_metadata( $post );
+
+		// Append with new-line if metadata exists
+		$new_line = ! empty( $pointer_text )
+			? '<br>'
+			: '';
+
+		// Special case for password protected posts
+		if ( ! empty( $post->post_password ) ) {
+			$pointer_text[] = $new_line . esc_html__( 'Password required.', 'wp-event-calendar' );
+
+		// Post is not protected
+		} else {
+
+			// No content
+			if ( empty( $post->post_content ) ) {
+				$pointer_text[] = $new_line . esc_html__( 'No description.', 'wp-event-calendar' );
+
+			// Attempt to sanitize content
+			} else {
+
+				// Strip new lines & reduce to allowed tags
+				$no_new_lines = preg_replace( '#\r|\n#', '', $post->post_content );
+				$the_content  = wp_kses( $no_new_lines, $this->get_allowed_pointer_tags() );
+
+				// Texturize
+				$pointer_text[] = $new_line . wptexturize( $the_content );
+			}
+		}
+
+		// Filter & return the pointer title
+		return apply_filters( 'wp_event_calendar_pointer_text', $pointer_text, $post );
+	}
+
+	/**
+	 * Get event metadata for display in a pointer
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param  object  $post
+	 *
+	 * @return array
+	 */
+	private function get_pointer_metadata( $post = false ) {
+		$pointer_metadata = array();
+
+		// Date & Time
+		$pointer_metadata[] = sprintf( esc_html__( 'Date: %s', 'wp-event-calendar' ), $this->get_event_date( $post ) );
+		$pointer_metadata[] = sprintf( esc_html__( 'Time: %s', 'wp-event-calendar' ), $this->get_event_time( $post ) );
+
+		// Filter & return the pointer title
+		return apply_filters( 'wp_event_calendar_pointer_metadata', $pointer_metadata, $post );
+	}
+
+	/**
+	 * Return array of allowed HTML tags to use in admin pointers
+	 *
+	 * @since 0.1.1
+	 *
+	 * @return allay Allowed HTML tags
+	 */
+	private function get_allowed_pointer_tags() {
+		return apply_filters( 'wp_event_calendar_get_allowed_pointer_tags', array(
+			'a'      => array(),
+			'strong' => array(),
+			'em'     => array(),
+			'img'    => array()
+		) );
 	}
 
 	/**
