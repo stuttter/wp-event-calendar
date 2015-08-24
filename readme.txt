@@ -3,7 +3,7 @@ Contributors: johnjamesjacoby
 Tags: event, calendar
 Requires at least: 4.2
 Tested up to: 4.3
-Stable tag: 0.1.0
+Stable tag: 0.1.1
 
 == Description ==
 
