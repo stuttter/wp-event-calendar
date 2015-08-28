@@ -3,69 +3,80 @@
 /**
  * Event Post Types
  *
- * @package EventCalendar
+ * @package Calendar/Events/PostTypes
  */
 
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Event Post Types
+ * Register the User Activity post types
  *
  * @since 0.1.0
  */
 function wp_event_calendar_register_post_types() {
 
-	// Event
-	register_extended_post_type(
-		'event',
-		array(
-			'list_table'           => 'foo',
-			'hierarchical'         => true,
-			'has_archive'          => false,
-			'publicly_queryable'   => false,
-			'menu_position'        => 44,
-			'menu_icon'            => 'dashicons-calendar',
-			'delete_with_user'     => false,
-			'show_in_nav_menus'    => false,
-			'show_in_admin_bar'    => false,
-			'archive_in_nav_menus' => false,
-			'enter_title_here'     => __( 'Name this event', 'wp-event-calendar' ),
-			'featured_image'       => __( 'Event Thumbnail', 'wp-event-calendar' ),
-			'supports'             => array( 'title', 'editor', 'thumbnail' ),
-			'admin_cols' => array(
-				'title' => array(
-					'title' => __( 'Event', 'wp-event-calendar' )
-				),
-				'author' => array(
-					'title' => __( 'Creator', 'wp-event-calendar' )
-				),
-				'types' => array(
-					'taxonomy' => 'event-type'
-				),
-				'categories' => array(
-					'taxonomy' => 'event-category'
-				),
-				'tags' => array(
-					'taxonomy' => 'event-tag'
-				),
-				'published' => array(
-					'title'       => __( 'Created', 'wp-event-calendar' ),
-					'post_field'  => 'post_date'
-				),
-				'modified' => array(
-					'title'       => __( 'Last Modified', 'wp-event-calendar' ),
-					'post_field'  => 'post_modified',
-					'default'     => true
-				),
-			),
-			'admin_filters' => array(
-			)
-		),
-		array(
-			'singular' => __( 'Event',  'wp-event-calendar' ),
-			'plural'   => __( 'Events', 'wp-event-calendar' ),
-			'slug'     => 'events'
-		)
+	// Labels
+	$labels = array(
+		'name'                  => _x( 'Events', 'post type general name', 'wp-event-calendar' ),
+		'singular_name'         => _x( 'Event', 'post type singular name', 'wp-event-calendar' ),
+		'add_new'               => _x( 'Add New', 'event', 'wp-event-calendar' ),
+		'add_new_item'          => __( 'Add New Event', 'wp-event-calendar' ),
+		'edit_item'             => __( 'Edit Event', 'wp-event-calendar' ),
+		'new_item'              => __( 'New Event', 'wp-event-calendar' ),
+		'view_item'             => __( 'View Event', 'wp-event-calendar' ),
+		'search_items'          => __( 'Search Events', 'wp-event-calendar' ),
+		'not_found'             => __( 'No events found.', 'wp-event-calendar' ),
+		'not_found_in_trash'    => __( 'No events found in trash.', 'wp-event-calendar' ),
+		'parent_item_colon'     => __( 'Parent Event:', 'wp-event-calendar' ),
+		'all_items'             => __( 'All Events', 'wp-event-calendar' ),
+		'featured_image'        => __( 'Featured Image', 'wp-event-calendar' ),
+		'set_featured_image'    => __( 'Set featured image', 'wp-event-calendar' ),
+		'remove_featured_image' => __( 'Remove featured image', 'wp-event-calendar' ),
+		'use_featured_image'    => __( 'Use as featured image', 'wp-event-calendar' ),
 	);
+
+	// Supports
+	$supports = array(
+		'title',
+		'editor',
+		'thumbnail'
+	);
+
+	// Capability types
+	$cap_types = array(
+		'event',
+		'events'
+	);
+
+	// Post type arguments
+	$args = array(
+		'labels'               => $labels,
+		'supports'             => $supports,
+		'description'          => '',
+		'public'               => true,
+		'hierarchical'         => true,
+		'exclude_from_search'  => true,
+		'publicly_queryable'   => false,
+		'show_ui'              => true,
+		'show_in_menu'         => true,
+		'show_in_nav_menus'    => false,
+		'archive_in_nav_menus' => false,
+		'show_in_admin_bar'    => true,
+		'menu_position'        => 44,
+		'menu_icon'            => 'dashicons-calendar',
+		'capability_type'      => $cap_types,
+		'capabilities'         => array(),
+		'map_meta_cap'         => true,
+		'register_meta_box_cb' => null,
+		'taxonomies'           => array(),
+		'has_archive'          => false,
+		'rewrite'              => true,
+		'query_var'            => true,
+		'can_export'           => true,
+		'delete_with_user'     => false,
+	);
+
+	// Register the event type
+	register_post_type( 'event', $args );
 }

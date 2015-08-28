@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Event List Tables
+ * Calendar List Tables
  *
- * @package EventCalendar/Common/ListTable
+ * @package Calendar/Common/ListTable
  *
  * @see WP_Posts_List_Table
  */

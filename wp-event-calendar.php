@@ -31,6 +31,30 @@ function wp_event_calendar() {
 	// Event files
 	require $plugin_path . 'includes/events/post-types.php';
 	require $plugin_path . 'includes/events/taxonomies.php';
-	require $plugin_path . 'includes/events/actions.php';
+	require $plugin_path . 'includes/events/metaboxes.php';
+	require $plugin_path . 'includes/events/admin.php';
+	require $plugin_path . 'includes/events/hooks.php';
 }
 add_action( 'plugins_loaded', 'wp_event_calendar' );
+
+/**
+ * Return the plugin's URL
+ *
+ * @since 0.1.1
+ *
+ * @return string
+ */
+function wp_event_calendar_get_plugin_url() {
+	return plugin_dir_url( __FILE__ );
+}
+
+/**
+ * Return the asset version
+ *
+ * @since 0.1.0
+ *
+ * @return int
+ */
+function wp_event_calendar_get_asset_version() {
+	return 201508270001;
+}

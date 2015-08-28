@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Event List Tables
+ * Calendar Admin
  *
- * @package EventCalendar/ListTable
+ * @package Calendar/Common/Admin
  *
  * @see WP_Posts_List_Table
  */
@@ -230,143 +230,12 @@ function wp_event_calendar_show_admin_calendar() {
  *
  * @since 0.1.0
  */
-function wp_event_calendar_admin_styling() {
+function wp_event_calendar_admin_assets() {
 
-	// Enqueue pointer styling
+	// Pointer styling
 	wp_enqueue_script( 'wp-pointer' );
-	wp_enqueue_style( 'wp-pointer' ); ?>
+	wp_enqueue_style( 'wp-pointer' );
 
-	<style type="text/css">
-		table.calendar thead th,
-		table.calendar tfoot th {
-			text-align: center;
-		}
-
-		table.calendar tbody td span.day-number {
-			position: absolute;
-			top: 0px;
-			left: 0px;
-			padding: 2px 10px;
-			opacity: 0.5;
-			border-right: 1px solid #e1e1e1;
-			border-bottom: 1px solid #e1e1e1;
-			background-color: #fafafa;
-		}
-
-		table.calendar tbody td.today span.day-number {
-			background: #f0f0c0;
-		}
-
-		table.calendar tbody td {
-			padding: 0;
-			height: 110px;
-			position: relative;
-			text-align: left;
-			border-bottom: 1px solid #e1e1e1;
-			border-right: 1px solid #e1e1e1;
-		}
-
-		table.calendar tbody th {
-			height: 80px;
-			background-color: #fff;
-			border-bottom: 1px solid #e1e1e1;
-		}
-
-		table.calendar tbody tr th:last-of-type {
-			border-right: 1px solid #e1e1e1;
-		}
-
-		table.calendar tbody td:last-of-type:not(.position-6) {
-			border-right: 1px solid #e1e1e1;
-		}
-
-		table.calendar tbody tr td:last-of-type {
-			border-right: none;
-		}
-
-		table.calendar tbody td.saturday,
-		table.calendar tbody td.sunday {
-			background-color: #f1f1f1;
-		}
-
-		table.calendar div.events-for-day {
-			margin: 30px 0 5px;
-			min-height: 80px
-		}
-
-		table.calendar a {
-			display: block;
-			-o-text-overflow: ellipsis;
-			text-overflow:    ellipsis;
-			overflow-x: hidden;
-			white-space: nowrap;
-			margin: 0;
-			padding: 0 5px;
-		}
-
-		table.calendar a.all-day {
-			background-color: #f4f477;
-		}
-
-		table.calendar a:before {
-			font: normal 15px/20px 'dashicons';
-			vertical-align: top;
-			speak: none;
-			-webkit-font-smoothing: antialiased;
-			-moz-osx-font-smoothing: grayscale;
-			width: 20px;
-			height: 20px;
-			margin-right: 4px;
-		}
-
-		.wp-pointer-content h3 a {
-			color: #fff;
-			text-decoration: none;
-		}
-
-		.wp-pointer-content h3 a:hover {
-			color: #eee;
-		}
-
-		.wp-pointer-content h3.type-event:before,
-		table.calendar a.type-event:before {
-			content: '\f145';
-		}
-
-		.wp-pointer-content h3.type-post:before,
-		table.calendar a.type-post:before {
-			content: '\f109';
-		}
-
-		.wp-pointer-content h3.type-page:before,
-		table.calendar a.type-page:before {
-			content: '\f105';
-		}
-
-		.wp-pointer-content h3.status-private:before,
-		table.calendar a.status-private:before {
-			content: '\f530';
-		}
-
-		.wp-pointer-content h3.post-password-required:before,
-		table.calendar a.post-password-required:before {
-			content: '\f315';
-		}
-
-		.wp-pointer-content h3.status-draft:before,
-		table.calendar a.status-draft:before {
-			content: '\f469';
-		}
-
-		table.calendar a.status-draft {
-			opacity: 0.5;
-		}
-
-		input#year {
-			width: 90px;
-		}
-
-	</style>
-
-<?php
+	// Date picker CSS (for jQuery UI calendar)
+	wp_enqueue_style( 'wp_event_calendar_admin_calendar', wp_event_calendar_get_plugin_url() . '/assets/css/calendar.css', false, wp_event_calendar_get_asset_version(), false );
 }
