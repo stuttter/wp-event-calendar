@@ -5,7 +5,7 @@
  * Plugin URI:  https://wordpress.org/plugins/wp-event-calendar/
  * Description: Flexible events, with a calendar view.
  * Author:      John James Jacoby
- * Version:     0.1.1
+ * Version:     0.1.2
  * Author URI:  https://profiles.wordpress.org/johnjamesjacoby/
  * License:     GPL v2 or later
  */
@@ -40,7 +40,7 @@ add_action( 'plugins_loaded', 'wp_event_calendar' );
 /**
  * Return the plugin's URL
  *
- * @since 0.1.1
+ * @since 0.1.2
  *
  * @return string
  */
@@ -51,7 +51,7 @@ function wp_event_calendar_get_plugin_url() {
 /**
  * Return the asset version
  *
- * @since 0.1.0
+ * @since 0.1.2
  *
  * @return int
  */

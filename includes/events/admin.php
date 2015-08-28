@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Set the placeholder text for the title field for this post type.
  *
- * @since 0.1.1
+ * @since 0.1.2
  *
  * @param   string   $title The placeholder text
  * @param   WP_Post  $post  The current post
@@ -33,7 +33,7 @@ function wp_event_calendar_enter_title_here( $title, WP_Post $post ) {
 /**
  * Sortable event columns
  *
- * @since 0.1.1
+ * @since 0.1.2
  *
  * @param   array  $columns
  *
@@ -48,7 +48,7 @@ function wp_event_calendar_sortable_columns() {
 /**
  * Disable months dropdown
  *
- * @since 0.1.1
+ * @since 0.1.2
  */
 function wp_event_calendar_disable_months_dropdown( $disabled = false, $post_type = 'post' ) {
 
@@ -64,7 +64,7 @@ function wp_event_calendar_disable_months_dropdown( $disabled = false, $post_typ
 /**
  * Output dropdowns & filters
  *
- * @since 0.1.1
+ * @since 0.1.2
  */
 function wp_event_calendar_add_dropdown_filters() {
 
@@ -90,7 +90,7 @@ function wp_event_calendar_add_dropdown_filters() {
 /**
  * Filter events posts list-table columns
  *
- * @since 0.1.1
+ * @since 0.1.2
  *
  * @param   array  $old_columns
  * @return  array
@@ -115,7 +115,7 @@ function wp_event_calendar_manage_posts_columns( $old_columns = array() ) {
 /**
  * Output content for each event column
  *
- * @since 0.1.1
+ * @since 0.1.2
  *
  * @param  string  $column
  * @param  int     $post_id
@@ -236,7 +236,7 @@ function wp_event_calendar_admin_event_assets() {
 /**
  * Output admin area JS
  *
- * @since 0.1.1
+ * @since 0.1.2
  */
 function wp_event_calendar_admin_js() {
 	?>

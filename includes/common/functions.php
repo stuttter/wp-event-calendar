@@ -190,7 +190,7 @@ function wp_event_calendar_human_diff_time( $older_date, $newer_date = false ) {
 	 * Filters the human readable representation of the time elapsed since a
 	 * given date.
 	 *
-	 * @since 0.1.1
+	 * @since 0.1.2
 	 *
 	 * @param string $output     Final string
 	 * @param string $older_date Earlier time from which we're calculating time elapsed
