@@ -151,7 +151,7 @@ function wp_event_calendar_register_taxonomies() {
 		'update_count_callback' => '_update_post_term_count',
 		'query_var'             => true,
 		'show_tagcloud'         => false,
-		'hierarchical'          => true,
+		'hierarchical'          => false,
 		'show_in_nav_menus'     => false,
 		'public'                => false,
 		'show_ui'               => true
