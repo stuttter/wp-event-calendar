@@ -99,7 +99,7 @@ function wp_event_calendar_manage_posts_columns( $old_columns = array() ) {
 	// New columns
 	$new_columns = array(
 		'cb'       => '<input type="checkbox" />',
-		'username' => esc_html__( 'Creator',  'wp-event-calendar' ),
+		'title'    => esc_html__( 'Event',    'wp-event-calendar' ),
 		'start'    => esc_html__( 'Starts',   'wp-event-calendar' ),
 		'end'      => esc_html__( 'Ends',     'wp-event-calendar' ),
 		'duration' => esc_html__( 'Duration', 'wp-event-calendar' ),
@@ -129,17 +129,37 @@ function wp_event_calendar_manage_custom_column_data( $column = '', $post_id = 0
 
 		// Creator
 		case 'username' :
-			echo get_avatar( $post->post_author, 32 );
-			echo '<strong><a href="">' . get_userdata( $post->post_author )->display_name . '</a></strong>';
+			echo get_userdata( $post->post_author )->display_name;
 			break;
 
 		// Type
 		case 'type' :
-			$terms = get_the_term_list( $post->ID, 'event-type', '', ', ', '' );
-			if ( empty( $terms ) ) {
-				$terms = '&mdash;';
+			$taxonomy_object = get_taxonomy( 'event-type' );
+			$terms           = get_the_terms( $post->ID, 'event-type' );
+			if ( is_array( $terms ) ) {
+				$out = array();
+				foreach ( $terms as $t ) {
+					$posts_in_term_qv = array();
+					if ( 'post' != $post->post_type ) {
+						$posts_in_term_qv['post_type'] = $post->post_type;
+					}
+					if ( $taxonomy_object->query_var ) {
+						$posts_in_term_qv[ $taxonomy_object->query_var ] = $t->slug;
+					} else {
+						$posts_in_term_qv['taxonomy'] = 'event-type';
+						$posts_in_term_qv['term'] = $t->slug;
+					}
+
+					$out[] = sprintf( '<a href="%s">%s</a>',
+						esc_url( add_query_arg( $posts_in_term_qv, 'edit.php' ) ),
+						esc_html( sanitize_term_field( 'name', $t->name, $t->term_id, 'event-type', 'display' ) )
+					);
+				}
+				/* translators: used between list items, there is a space after the comma */
+				echo join( __( ', ' ), $out );
+			} else {
+				echo '<span aria-hidden="true">&#8212;</span><span class="screen-reader-text">' . $taxonomy_object->labels->no_terms . '</span>';
 			}
-			echo $terms;
 			break;
 
 		// Starts
