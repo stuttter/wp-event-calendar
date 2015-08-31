@@ -75,6 +75,15 @@ function wp_event_calendar_get_admin_post_type() {
  */
 function wp_event_calendar_human_diff_time( $older_date, $newer_date = false ) {
 
+	// Format
+	if ( ! is_numeric( $older_date ) ) {
+		$older_date = strtotime( $older_date );
+	}
+
+	if ( ! is_numeric( $newer_date ) ) {
+		$newer_date = strtotime( $newer_date );
+	}
+
 	// Catch issues with flipped old vs. new dates
 	$flipped = false;
 
@@ -89,7 +98,7 @@ function wp_event_calendar_human_diff_time( $older_date, $newer_date = false ) {
 		1
 	);
 
-	if ( !empty( $older_date ) && !is_numeric( $older_date ) ) {
+	if ( ! empty( $older_date ) && ! is_numeric( $older_date ) ) {
 		$time_chunks = explode( ':', str_replace( ' ', ':', $older_date ) );
 		$date_chunks = explode( '-', str_replace( ' ', '-', $older_date ) );
 		$older_date  = gmmktime( (int) $time_chunks[1], (int) $time_chunks[2], (int) $time_chunks[3], (int) $date_chunks[1], (int) $date_chunks[2], (int) $date_chunks[0] );
@@ -100,7 +109,9 @@ function wp_event_calendar_human_diff_time( $older_date, $newer_date = false ) {
 	 * a date and the current time. $newer_date will have a value if we want to
 	 * work out time elapsed between two known dates.
 	 */
-	$newer_date = ( !$newer_date ) ? bp_core_current_time( true, 'timestamp' ) : $newer_date;
+	$newer_date = empty( $newer_date )
+		? current_time( 'timestamp' )
+		: $newer_date;
 
 	// Difference in seconds
 	$since = $newer_date - $older_date;

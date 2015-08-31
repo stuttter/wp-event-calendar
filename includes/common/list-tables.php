@@ -492,8 +492,24 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 
 		// Rearrange posts into an array keyed by day of the month
 		foreach ( $this->query->posts as $post ) {
-			$this->setup_pointer( $post );
-			$this->setup_item( $post, $max_per_day );
+
+			// Get start & end
+			$start = get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
+			$end   = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
+
+			// Format start
+			if ( ! empty( $start ) ) {
+				$start = strtotime( $start );
+			}
+
+			// Format end
+			if ( ! empty( $end ) ) {
+				$end = strtotime( $end );
+			}
+
+			// Prepare pointer & item
+			$this->setup_pointer( $post, $start, $end );
+			$this->setup_item( $post, $max_per_day, $start, $end );
 		}
 	}
 
@@ -505,19 +521,53 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	 * @return array
 	 */
 	private function filter_args() {
-		return apply_filters( 'wp_event_calendar_query', array(
-			'post_type'           => $this->screen->post_type,
-			'post_status'         => $this->get_post_status(),
-			'monthnum'            => $this->month,
-			'year'                => $this->year,
-			'day'                 => null,
-			'posts_per_page'      => -1,
-			'orderby'             => $this->get_orderby(),
-			'order'               => $this->get_order(),
-			'hierarchical'        => false,
-			'ignore_sticky_posts' => true,
-			's'                   => $this->get_search()
-		) );
+
+		// Events
+		if ( 'event' === $this->screen->post_type ) {
+			$args = array(
+				'post_type'           => $this->screen->post_type,
+				'post_status'         => $this->get_post_status(),
+				'posts_per_page'      => -1,
+				'orderby'             => $this->get_orderby(),
+				'order'               => $this->get_order(),
+				'hierarchical'        => false,
+				'ignore_sticky_posts' => true,
+				's'                   => $this->get_search(),
+				'meta_query'          => array(
+					'relation'  => 'AND',
+					array(
+						'key'     => 'wp_event_calendar_date_time',
+						'value'   => "{$this->year}-{$this->month}-01 00:00:00",
+						'type'    => 'DATETIME',
+						'compare' => '>=',
+					),
+					array(
+						'key'     => 'wp_event_calendar_end_date_time',
+						'value'   => "{$this->year}-{$this->month}-31 00:00:00",
+						'type'    => 'DATETIME',
+						'compare' => '<=',
+					),
+				)
+			);
+
+		// All others
+		} else {
+			$args = array(
+				'post_type'           => $this->screen->post_type,
+				'post_status'         => $this->get_post_status(),
+				'monthnum'            => $this->month,
+				'year'                => $this->year,
+				'day'                 => null,
+				'posts_per_page'      => -1,
+				'orderby'             => $this->get_orderby(),
+				'order'               => $this->get_order(),
+				'hierarchical'        => false,
+				'ignore_sticky_posts' => true,
+				's'                   => $this->get_search()
+			);
+		}
+
+		return apply_filters( 'wp_event_calendar_query', $args );
 	}
 
 	/**
@@ -527,9 +577,11 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	 *
 	 * @param  object  $post
 	 * @param  int     $max
+	 * @param  string  $start
+	 * @param  string  $end
 	 */
-	private function setup_item( $post = false, $max = 10 ) {
-		$post_day = mysql2date( 'j', $post->post_date );
+	private function setup_item( $post = false, $max = 10, $start = '', $end = '' ) {
+		$post_day = date_i18n( 'd', $start );
 		if ( empty( $this->items[ $post_day ] ) || ( $max > count( $this->items[ $post_day ] ) ) ) {
 			$this->items[ $post_day ][ $post->ID ] = $post;
 		}
@@ -543,12 +595,14 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	 * @since 0.1.1
 	 *
 	 * @param  object $post
+	 * @param  string $date
+	 *
 	 * @return string
 	 */
-	private function get_event_date( $post = false ) {
-		$retval = get_the_date( get_option( 'date_format' ), $post );
+	private function get_event_date( $post = false, $date = '' ) {
+		$retval = date_i18n( get_option( 'date_format' ), $date );
 
-		return apply_filters( 'wp_event_calendar_event_date', $retval, $post );
+		return apply_filters( 'wp_event_calendar_event_date', $retval, $post, $date );
 	}
 
 	/**
@@ -557,12 +611,14 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	 * @since 0.1.1
 	 *
 	 * @param  object $post
+	 * @param  string $date
+	 *
 	 * @return string
 	 */
-	private function get_event_time( $post = false ) {
-		$retval = get_the_date( get_option( 'time_format' ), $post );
+	private function get_event_time( $post = false, $date = '' ) {
+		$retval = date_i18n( get_option( 'time_format' ), $date );
 
-		return apply_filters( 'wp_event_calendar_event_time', $retval, $post );
+		return apply_filters( 'wp_event_calendar_event_time', $retval, $post, $date );
 	}
 
 	/** Pointers **************************************************************/
@@ -572,16 +628,18 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	 *
 	 * @since 0.1.1
 	 *
-	 * @param object $post
+	 * @param  object  $post
+	 * @param  string  $start
+	 * @param  string  $end
 	 */
-	private function setup_pointer( $post = false ) {
+	private function setup_pointer( $post = false, $start = '', $end = '' ) {
 
 		// Rebase the pointer content
 		$pointer_content = array();
 
 		// Pointer content
 		$pointer_content[] = '<h3 class="' . $this->get_day_post_classes( $post->ID ) . '">' . $this->get_pointer_title( $post ) . '</h3>';
-		$pointer_content[] = '<p>' . implode( '<br>', $this->get_pointer_text( $post ) ) . '</p>';
+		$pointer_content[] = '<p>' . implode( '<br>', $this->get_pointer_text( $post, $start, $end ) ) . '</p>';
 
 		// Filter pointer content specifically
 		$pointer_content = apply_filters( 'wp_event_calendar_pointer_content', $pointer_content, $post );
@@ -626,11 +684,14 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	 *
 	 * @since 0.1.1
 	 *
-	 * @param   object $post
+	 * @param   object  $post
+	 * @param   string  $start
+	 * @param   string  $end
+	 *
 	 * @return  string
 	 */
-	private function get_pointer_text( $post = false ) {
-		$pointer_text = $this->get_pointer_metadata( $post );
+	private function get_pointer_text( $post = false, $start = '', $end = '' ) {
+		$pointer_text = $this->get_pointer_metadata( $post, $start, $end );
 
 		// Append with new-line if metadata exists
 		$new_line = ! empty( $pointer_text )
@@ -673,12 +734,46 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	private function get_pointer_metadata( $post = false ) {
+	private function get_pointer_metadata( $post = false, $start = '', $end = '' ) {
 		$pointer_metadata = array();
 
 		// Date & Time
-		$pointer_metadata[] = sprintf( esc_html__( 'Date: %s', 'wp-event-calendar' ), $this->get_event_date( $post ) );
-		$pointer_metadata[] = sprintf( esc_html__( 'Time: %s', 'wp-event-calendar' ), $this->get_event_time( $post ) );
+		if ( ! empty( $start ) ) {
+			$start_date = $this->get_event_date( $post, $start );
+		}
+
+		// Date & Time
+		if ( ! empty( $end ) ) {
+			$end_date = $this->get_event_date( $post, $end );
+		}
+
+		// Date & Time
+		if ( ! empty( $start ) ) {
+			$pointer_metadata[] = '<strong>' . esc_html__( 'Start', 'wp-event-calendar' ) . '</strong>';
+			
+			if ( $start_date !== $end_date ) {
+				$pointer_metadata[] = sprintf( esc_html__( 'Date: %s', 'wp-event-calendar' ), $start_date );
+			}
+
+			$pointer_metadata[] = sprintf( esc_html__( 'Time: %s', 'wp-event-calendar' ), $this->get_event_time( $post, $start ) );
+		}
+
+		// Date & Time
+		if ( ! empty( $end ) ) {
+
+			// Extra padding
+			if ( ! empty( $start ) ) {
+				$pointer_metadata[] = '';
+			}
+
+			$pointer_metadata[] = '<strong>' . esc_html__( 'End', 'wp-event-calendar' ) . '</strong>';
+
+			if ( $start_date !== $end_date ) {
+				$pointer_metadata[] = sprintf( esc_html__( 'Date: %s', 'wp-event-calendar' ), $end_date );
+			}
+
+			$pointer_metadata[] = sprintf( esc_html__( 'Time: %s', 'wp-event-calendar' ), $this->get_event_time( $post, $end ) );
+		}
 
 		// Filter & return the pointer title
 		return apply_filters( 'wp_event_calendar_pointer_metadata', $pointer_metadata, $post );

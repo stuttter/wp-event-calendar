@@ -123,7 +123,7 @@ function wp_event_calendar_manage_posts_columns( $old_columns = array() ) {
 function wp_event_calendar_manage_custom_column_data( $column = '', $post_id = 0 ) {
 
 	// Get post & metadata
-	$post  = get_post( $post_id );
+	$post = get_post( $post_id );
 
 	// Custom column IDs
 	switch ( $column ) {
@@ -148,15 +148,20 @@ function wp_event_calendar_manage_custom_column_data( $column = '', $post_id = 0
 
 			// Date
 			$date = get_post_meta( $post->ID, 'wp_event_calendar_date_time', true );
-			if ( empty( $date ) ) {
-				$date = mysql2date( 'U', $post->post_date );
-			}
-			echo date_i18n( get_option( 'date_format' ), $date );
+			if ( ! empty( $date ) ) {
+				$date = strtotime( $date );
 
-			// Time
-			$time = get_post_meta( $post->ID, 'wp_event_calendar_time_am_pm', true );
-			if ( ! empty( $time ) ) {
-				echo '<br>'. date_i18n( get_option( 'time_format' ), $date );
+				echo date_i18n( get_option( 'date_format' ), $date );
+
+				// Time
+				$time = date_i18n( 'H:i:s', $date );
+				if ( '00:00:00' !== $time  ) {
+					echo '<br>'. date_i18n( get_option( 'time_format' ), $date );
+				}
+
+			// No start date
+			} else {
+				echo '&mdash;';
 			}
 
 			break;
@@ -170,11 +175,13 @@ function wp_event_calendar_manage_custom_column_data( $column = '', $post_id = 0
 			if ( empty( $end_date ) || ( $start_date === $end_date ) ) {
 				echo '&mdash;';
 			} else {
+				$end_date = strtotime( $end_date );
+
 				echo date_i18n( get_option( 'date_format' ), $end_date );
 
 				// Time
-				$end_time = get_post_meta( $post->ID, 'wp_event_calendar_end_time_am_pm', true );
-				if ( ! empty( $end_time ) ) {
+				$end_time = date_i18n( 'H:i:s', $end_date );
+				if ( '00:00:00' !== $end_time  ) {
 					echo '<br>'. date_i18n( get_option( 'time_format' ), $end_date );
 				}
 			}
@@ -205,7 +212,7 @@ function wp_event_calendar_manage_custom_column_data( $column = '', $post_id = 0
 				case 'yearly' :
 					esc_html_e( 'Yearly', 'wp-event-calendar' );
 					break;
-				case 'none' :
+				case 'never' :
 				default :
 					esc_html_e( 'Never', 'wp-event-calendar' );
 					break;

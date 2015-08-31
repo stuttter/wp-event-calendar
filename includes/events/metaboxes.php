@@ -30,15 +30,19 @@ function wp_event_calendar_details_metabox() {
 
 	/** Starts ****************************************************************/
 
-	// Date
-	$date = ! empty( $meta['wp_event_calendar_date'][0] )
-		? date( 'm/d/Y', $meta['wp_event_calendar_date'][0] )
+	// Get date_time
+	$date_time = ! empty( $meta['wp_event_calendar_date_time'][0] )
+		? strtotime( $meta['wp_event_calendar_date_time'][0] )
 		: '';
 
+	// Date
+	$date = date( 'm/d/Y', $date_time );
+
 	// Hour
-	$hour = ! empty( $meta['wp_event_calendar_time_hour'][0] )
-		? $meta['wp_event_calendar_time_hour'][0]
-		: '';
+	$hour = date( 'H', $date_time );
+	if ( '00' === $hour ) {
+		$hour = '';
+	}
 
 	// Adjustment
 	if ( $hour > 12 ) {
@@ -46,26 +50,29 @@ function wp_event_calendar_details_metabox() {
 	}
 
 	// Minute
-	$minute = ! empty( $meta['wp_event_calendar_time_minute'][0] )
-		? $meta['wp_event_calendar_time_minute'][0]
-		: '';
+	$minute = date( 'i', $date_time );
+	if ( '00' === $minute && empty( $hour ) ) {
+		$minute = '';
+	}
 
 	// Day/night
-	$am_pm = ! empty( $meta['wp_event_calendar_time_am_pm'][0]  )
-		? $meta['wp_event_calendar_time_am_pm'][0]
-		: null;
+	$am_pm = date( 'a', $date_time );
 
 	/** Ends ******************************************************************/
 
-	// Date
-	$end_date = ! empty( $meta['wp_event_calendar_end_date'][0] )
-		? date( 'm/d/Y', $meta['wp_event_calendar_end_date'][0] )
+	// Get date_time
+	$end_date_time = ! empty( $meta['wp_event_calendar_end_date_time'][0] )
+		? strtotime( $meta['wp_event_calendar_end_date_time'][0] )
 		: '';
 
+	// Date
+	$end_date = date( 'm/d/Y', $end_date_time );
+
 	// Hour
-	$end_hour = ! empty( $meta['wp_event_calendar_end_time_hour'][0] )
-		? $meta['wp_event_calendar_end_time_hour'][0]
-		: '';
+	$end_hour = date( 'H', $end_date_time );
+	if ( '00' === $end_hour ) {
+		$end_hour = '';
+	}
 
 	// Adjustment
 	if ( $end_hour > 12 ) {
@@ -73,14 +80,13 @@ function wp_event_calendar_details_metabox() {
 	}
 
 	// Minute
-	$end_minute = ! empty( $meta['wp_event_calendar_end_time_minute'][0] )
-		? $meta['wp_event_calendar_end_time_minute'][0]
-		: '';
+	$end_minute = date( 'i', $end_date_time );
+	if ( '00' === $end_minute && empty( $end_hour ) ) {
+		$end_minute = '';
+	}
 
-	// Day/Night
-	$end_am_pm = ! empty( $meta['wp_event_calendar_end_time_am_pm'][0] )
-		? $meta['wp_event_calendar_end_time_am_pm'][0]
-		: null;
+	// Day/night
+	$end_am_pm = date( 'a', $end_date_time );
 
 	/** Repeat ****************************************************************/
 
@@ -91,7 +97,7 @@ function wp_event_calendar_details_metabox() {
 
 	// Filter the intervals
 	$options = apply_filters( 'wp_event_calendar_intervals', array(
-		'none'    => __( 'Never',   'wp-event-calendar' ),
+		'never'   => __( 'Never',   'wp-event-calendar' ),
 		'weekly'  => __( 'Weekly',  'wp-event-calendar' ),
 		'monthly' => __( 'Monthly', 'wp-event-calendar' ),
 		'yearly'  => __( 'Yearly',  'wp-event-calendar' )
@@ -221,25 +227,13 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		$date = strtotime( $date );
 
 		// Day
-		$day   = date( 'D', $date );
-		$dow   = date( 'w', $date );
 		$dom   = date( 'd', $date );
-		$doy   = date( 'z', $date );
 
 		// Month
 		$month = date( 'm', $date );
 
 		// Year
 		$year  = date( 'Y', $date );
-
-		// Many metas
-		update_post_meta( $post_id, 'wp_event_calendar_date',         $date  );
-		update_post_meta( $post_id, 'wp_event_calendar_day',          $day   );
-		update_post_meta( $post_id, 'wp_event_calendar_day_of_week',  $dow   );
-		update_post_meta( $post_id, 'wp_event_calendar_day_of_month', $dom   );
-		update_post_meta( $post_id, 'wp_event_calendar_day_of_year',  $doy   );
-		update_post_meta( $post_id, 'wp_event_calendar_month',        $month );
-		update_post_meta( $post_id, 'wp_event_calendar_year',         $year  );
 
 		// Times
 		if ( ! empty( $_POST['wp_event_calendar_time_hour'] ) || ! empty( $_POST['wp_event_calendar_time_minute'] ) ) {
@@ -266,27 +260,15 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 				$hour -= 12;
 			}
 
-			// More metas
-			update_post_meta( $post_id, 'wp_event_calendar_time_hour',   $hour    );
-			update_post_meta( $post_id, 'wp_event_calendar_time_minute', $minutes );
-			update_post_meta( $post_id, 'wp_event_calendar_time_am_pm',  $am_pm   );
-
 			// Calculate date & time
-			$final_date_time = mktime( intval( $hour ), intval( $minutes ), 0, $month, $dom, $year );
+			$final_date_time = gmdate( 'Y-m-d H:i:s', mktime( intval( $hour ), intval( $minutes ), 0, $month, $dom, $year ) );
 
 			// Ketchup & mayonaise, mixed together
 			update_post_meta( $post_id, 'wp_event_calendar_date_time', $final_date_time );
 
 		// No time (all day event)
 		} else {
-
-			// Delete time metas
-			delete_post_meta( $post_id, 'wp_event_calendar_time_hour'   );
-			delete_post_meta( $post_id, 'wp_event_calendar_time_minute' );
-			delete_post_meta( $post_id, 'wp_event_calendar_time_am_pm'  );
-
-			// Use date only
-			update_post_meta( $post_id, 'wp_event_calendar_date_time', $date );
+			update_post_meta( $post_id, 'wp_event_calendar_date_time', gmdate( 'Y-m-d H:i:s', $date ) );
 		}
 	}
 
@@ -303,10 +285,7 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		$end_date = strtotime( $wp_event_calendar_end_date );
 
 		// Day
-		$end_day   = date( 'D', $end_date );
-		$end_dow   = date( 'w', $end_date );
 		$end_dom   = date( 'd', $end_date );
-		$end_doy   = date( 'z', $end_date );
 
 		// Month
 		$end_month = date( 'm', $end_date );
@@ -316,15 +295,6 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 
 		// Times
 		if ( ! empty( $_POST['wp_event_calendar_end_time_hour'] ) || ! empty( $_POST['wp_event_calendar_end_time_minute'] ) ) {
-
-			// More metas
-			update_post_meta( $post_id, 'wp_event_calendar_end_date',         $end_date  );
-			update_post_meta( $post_id, 'wp_event_calendar_end_day',          $end_day   );
-			update_post_meta( $post_id, 'wp_event_calendar_end_day_of_week',  $end_dow   );
-			update_post_meta( $post_id, 'wp_event_calendar_end_day_of_month', $end_dom   );
-			update_post_meta( $post_id, 'wp_event_calendar_end_day_of_year',  $end_doy   );
-			update_post_meta( $post_id, 'wp_event_calendar_end_month',        $end_month );
-			update_post_meta( $post_id, 'wp_event_calendar_end_year',         $end_year  );
 
 			// Hour
 			$end_hour = ! empty( $_POST['wp_event_calendar_end_time_hour'] )
@@ -348,13 +318,8 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 				$end_hour -= 12;
 			}
 
-			// More metas
-			update_post_meta( $post_id, 'wp_event_calendar_end_time_hour',   $end_hour    );
-			update_post_meta( $post_id, 'wp_event_calendar_end_time_minute', $end_minutes );
-			update_post_meta( $post_id, 'wp_event_calendar_end_time_am_pm',  $end_am_pm   );
-
 			// Calculate date & time
-			$final_end_date_time = mktime( intval( $end_hour ), intval( $end_minutes ), 0, $end_month, $end_dom, $end_year );
+			$final_end_date_time = gmdate( 'Y-m-d H:i:s', mktime( intval( $end_hour ), intval( $end_minutes ), 0, $end_month, $end_dom, $end_year ) );
 
 			// Ranch & blue-cheese, mixed together
 			update_post_meta( $post_id, 'wp_event_calendar_end_date_time', $final_end_date_time );
@@ -364,13 +329,7 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 
 			// Use date only
 			if ( $end_date !== $date ) {
-
-				// Delete time metas
-				delete_post_meta( $post_id, 'wp_event_calendar_end_time_hour'   );
-				delete_post_meta( $post_id, 'wp_event_calendar_end_time_minute' );
-				delete_post_meta( $post_id, 'wp_event_calendar_end_time_am_pm'  );
-
-				update_post_meta( $post_id, 'wp_event_calendar_end_date_time', $end_date );
+				update_post_meta( $post_id, 'wp_event_calendar_end_date_time', gmdate( 'Y-m-d H:i:s', $end_date ) );
 			} else {
 				$delete_end_data = true;
 			}
@@ -383,17 +342,7 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 
 	// Maybe delete existing end-day data
 	if ( true === $delete_end_data ) {
-		delete_post_meta( $post_id, 'wp_event_calendar_end_date'          );
-		delete_post_meta( $post_id, 'wp_event_calendar_end_day'           );
-		delete_post_meta( $post_id, 'wp_event_calendar_end_day_of_week'   );
-		delete_post_meta( $post_id, 'wp_event_calendar_end_day_of_month'  );
-		delete_post_meta( $post_id, 'wp_event_calendar_end_day_of_year'   );
-		delete_post_meta( $post_id, 'wp_event_calendar_end_month'         );
-		delete_post_meta( $post_id, 'wp_event_calendar_end_year'          );
-		delete_post_meta( $post_id, 'wp_event_calendar_end_time_hour'     );
-		delete_post_meta( $post_id, 'wp_event_calendar_end_time_minute'   );
-		delete_post_meta( $post_id, 'wp_event_calendar_end_time_am_pm'    );
-		delete_post_meta( $post_id, 'wp_event_calendar_end_date_time'     );		
+		delete_post_meta( $post_id, 'wp_event_calendar_end_date_time' );
 	}
 
 	/** Repeat ****************************************************************/
@@ -416,7 +365,7 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		: '';
 
 	// Save only if repeating
-	if ( ! empty( $expire ) && ( 'none' !== $repeat ) ) {
+	if ( ! empty( $expire ) && ( 'never' !== $repeat ) ) {
 		update_post_meta( $post_id, 'wp_event_calendar_expire', strtotime( $expire ) );
 	} else {
 		delete_post_meta( $post_id, 'wp_event_calendar_expire' );
