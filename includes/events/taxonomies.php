@@ -10,13 +10,11 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Event taxonomies
+ * Event type taxonomy
  *
  * @since 0.1.0
  */
-function wp_event_calendar_register_taxonomies() {
-
-	/** Types *****************************************************************/
+function wp_event_calendar_register_type_taxonomy() {
 
 	// Labels
 	$labels = array(
@@ -63,8 +61,14 @@ function wp_event_calendar_register_taxonomies() {
 
 	// Register
 	register_taxonomy( 'event-type', 'event', $args );
+}
 
-	/** Categories ************************************************************/
+/**
+ * Event category taxonomy
+ *
+ * @since 0.1.2
+ */
+function wp_event_calendar_register_category_taxonomy() {
 
 	// Labels
 	$labels = array(
@@ -111,8 +115,14 @@ function wp_event_calendar_register_taxonomies() {
 
 	// Register
 	register_taxonomy( 'event-category', 'event', $args );
+}
 
-	/** Tags ******************************************************************/
+/**
+ * Event tag taxonomy
+ *
+ * @since 0.1.2
+ */
+function wp_event_calendar_register_tag_taxonomy() {
 
 	// Labels
 	$labels = array(

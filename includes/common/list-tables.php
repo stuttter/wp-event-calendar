@@ -484,7 +484,7 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 		// Handle bulk actions
 		$this->process_bulk_action();
 
-		// Query for posts
+		// Query for posts for this month only
 		$this->query = new WP_Query( $this->filter_args() );
 
 		// Max per day
@@ -527,7 +527,7 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 				'post_type'           => $this->screen->post_type,
 				'post_status'         => $this->get_post_status(),
 				'posts_per_page'      => -1,
-				'orderby'             => $this->get_orderby(),
+				'orderby'             => 'meta_value',
 				'order'               => $this->get_order(),
 				'hierarchical'        => false,
 				'ignore_sticky_posts' => true,
@@ -603,6 +603,8 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 			if ( empty( $this->items[ $day ] ) || ( $max > count( $this->items[ $day ] ) ) ) {
 				$this->items[ $day ][ $post->ID ] = $post;
 			}
+
+			// Bump the day
 			++$day;
 		}
 	}
