@@ -534,19 +534,12 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 				'ignore_sticky_posts' => true,
 				's'                   => $this->get_search(),
 				'meta_query'          => array(
-					'relation'  => 'AND',
 					array(
 						'key'     => 'wp_event_calendar_date_time',
-						'value'   => "{$this->year}-{$this->month}-01 00:00:00",
-						'type'    => 'DATETIME',
-						'compare' => '>=',
-					),
-					array(
-						'key'     => 'wp_event_calendar_end_date_time',
-						'value'   => "{$this->year}-{$this->month}-31 00:00:00",
-						'type'    => 'DATETIME',
-						'compare' => '<=',
-					),
+						'value'   => array( "{$this->year}-{$this->month}-01" ), array( "{$this->year}-{$this->month}-31" ),
+						'type'    => 'DATE',
+						'compare' => 'BETWEEN',
+					)
 				)
 			);
 
@@ -573,6 +566,8 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	/**
 	 * Add a post to the items array, keyed by day
 	 *
+	 * @todo Repeat & expire
+	 *
 	 * @since 0.1.1
 	 *
 	 * @param  object  $post
@@ -581,9 +576,30 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	 * @param  string  $end
 	 */
 	private function setup_item( $post = false, $max = 10, $start = '', $end = '' ) {
-		$post_day = date_i18n( 'd', $start );
-		if ( empty( $this->items[ $post_day ] ) || ( $max > count( $this->items[ $post_day ] ) ) ) {
-			$this->items[ $post_day ][ $post->ID ] = $post;
+
+		// Calculate start day
+		if ( ! empty( $start ) ) {
+			$start_day = date_i18n( 'j', $start );
+		} else {
+			$start_day = 0;
+		}
+
+		// Calculate end day
+		if ( ! empty( $end ) ) {
+			$end_day = date_i18n( 'j', $end   );
+		} else {
+			$end_day = $start_day;
+		}
+
+		// Start the days loop with the start day
+		$days = $start_day;
+
+		// Loop through days
+		while ( $days <= $end_day ) {
+			if ( empty( $this->items[ $days ] ) || ( $max > count( $this->items[ $days ] ) ) ) {
+				$this->items[ $days ][ $post->ID ] = $post;
+			}
+			++$days;
 		}
 	}
 
@@ -740,17 +756,21 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 		// Date & Time
 		if ( ! empty( $start ) ) {
 			$start_date = $this->get_event_date( $post, $start );
+		} else {
+			$start_date = 0;
 		}
 
 		// Date & Time
 		if ( ! empty( $end ) ) {
 			$end_date = $this->get_event_date( $post, $end );
+		} else {
+			$end_date = 0;
 		}
 
 		// Date & Time
 		if ( ! empty( $start ) ) {
 			$pointer_metadata[] = '<strong>' . esc_html__( 'Start', 'wp-event-calendar' ) . '</strong>';
-			
+
 			if ( $start_date !== $end_date ) {
 				$pointer_metadata[] = sprintf( esc_html__( 'Date: %s', 'wp-event-calendar' ), $start_date );
 			}
@@ -1176,6 +1196,14 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 		return implode( ' ', $classes );
 	}
 
+	/**
+	 * Display a calendar by month and year
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param int $month
+	 * @param int $year
+	 */
 	protected function display_calendar( $month = 1, $year = 2015 ) {
 
 		// Get timestamp

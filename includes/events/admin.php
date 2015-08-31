@@ -76,7 +76,6 @@ function wp_event_calendar_add_dropdown_filters() {
 	// Output lable & dropdown
 	echo '<label class="screen-reader-text" for="cat">' . __( 'Filter by type', 'wp-event-calendar' ) . '</label>';
 	wp_dropdown_categories( array(
-		'show_option_all'  => __( 'All types', 'wp-event-calendar' ),
 		'show_option_none' => __( 'All types', 'wp-event-calendar' ),
 		'hide_empty'       => false,
 		'hierarchical'     => false,
@@ -192,7 +191,7 @@ function wp_event_calendar_manage_custom_column_data( $column = '', $post_id = 0
 		case 'duration' :
 			$start_date = get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
 			$end_date   = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
-			if ( empty( $end_date ) || ( $start_date === $end_date ) ) {
+			if ( empty( $start_date ) || empty( $end_date ) || ( $start_date === $end_date ) ) {
 				echo '&mdash;';
 			} else {
 				echo wp_event_calendar_human_diff_time( $start_date, $end_date );

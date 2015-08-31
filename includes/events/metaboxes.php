@@ -33,10 +33,13 @@ function wp_event_calendar_details_metabox() {
 	// Get date_time
 	$date_time = ! empty( $meta['wp_event_calendar_date_time'][0] )
 		? strtotime( $meta['wp_event_calendar_date_time'][0] )
-		: '';
+		: 0;
 
 	// Date
 	$date = date( 'm/d/Y', $date_time );
+	if ( '01/01/1970' === $date ) {
+		$date = '';
+	}
 
 	// Hour
 	$hour = date( 'H', $date_time );
@@ -63,10 +66,13 @@ function wp_event_calendar_details_metabox() {
 	// Get date_time
 	$end_date_time = ! empty( $meta['wp_event_calendar_end_date_time'][0] )
 		? strtotime( $meta['wp_event_calendar_end_date_time'][0] )
-		: '';
+		: 0;
 
 	// Date
 	$end_date = date( 'm/d/Y', $end_date_time );
+	if ( '01/01/1970' === $end_date ) {
+		$end_date = '';
+	}
 
 	// Hour
 	$end_hour = date( 'H', $end_date_time );
@@ -114,10 +120,10 @@ function wp_event_calendar_details_metabox() {
 	ob_start(); ?>
 
 	<input type="hidden" name="wp_event_calendar_metabox_nonce" value="<?php echo wp_create_nonce( 'wp_event_calendar' ); ?>" />
-	<table class="form-table">
+	<table class="form-table rowfat">
 		<tr>
 			<td>
-				<label for="wp_event_calendar_date"><?php esc_html_e( 'Start', 'wp-event-calendar'); ?></label>
+				<label for="wp_event_calendar_date"><?php esc_html_e( 'Start Day', 'wp-event-calendar'); ?></label>
 			</td>
 
 			<td>
@@ -125,7 +131,11 @@ function wp_event_calendar_details_metabox() {
 			</td>
 
 			<td>
-				<input type="text" class="small-text" name="wp_event_calendar_time_hour" value="<?php echo esc_attr( $hour ); ?>" placeholder="10" />
+				<label for="wp_event_calendar_time_hour"><?php esc_html_e( 'Start Time', 'wp-event-calendar'); ?></label>
+			</td>
+
+			<td>
+				<input type="text" class="small-text" name="wp_event_calendar_time_hour" id="wp_event_calendar_time_hour" value="<?php echo esc_attr( $hour ); ?>" placeholder="10" />
 				<span class="wp_event_calendar_time_separator">&nbsp;:&nbsp;</span>
 				<input type="number" min="00" max="59" step="1" class="small-text wp_event_calendar_minutes" name="wp_event_calendar_time_minute" value="<?php echo esc_attr( $minute ); ?>" placeholder="00" />
 				<select name="wp_event_calendar_time_am_pm">
@@ -137,7 +147,7 @@ function wp_event_calendar_details_metabox() {
 
 		<tr>
 			<td>
-				<label for="wp_event_calendar_end_date"><?php esc_html_e( 'End', 'wp-event-calendar' ); ?></label>
+				<label for="wp_event_calendar_end_date"><?php esc_html_e( 'End Day', 'wp-event-calendar' ); ?></label>
 			</td>
 
 			<td>
@@ -145,7 +155,11 @@ function wp_event_calendar_details_metabox() {
 			</td>
 
 			<td>
-				<input type="text" class="small-text" name="wp_event_calendar_end_time_hour" value="<?php echo esc_attr( $end_hour ); ?>" placeholder="11" />
+				<label for="wp_event_calendar_end_time_hour"><?php esc_html_e( 'End Time', 'wp-event-calendar'); ?></label>
+			</td>
+
+			<td>
+				<input type="text" class="small-text" name="wp_event_calendar_end_time_hour" id="wp_event_calendar_end_time_hour" value="<?php echo esc_attr( $end_hour ); ?>" placeholder="11" />
 				<span class="wp_event_calendar_time_separator">&nbsp;:&nbsp;</span>
 				<input type="number" min="00" max="59" step="1" class="small-text wp_event_calendar_minutes" name="wp_event_calendar_end_time_minute" value="<?php echo esc_attr( $end_minute ); ?>" placeholder="00" />
 				<select class="wp_event_calendar_end_time_am_pm" name="wp_event_calendar_end_time_am_pm">
@@ -161,7 +175,7 @@ function wp_event_calendar_details_metabox() {
 			</td>
 
 			<td>
-				<select name="wp_event_calendar_repeat" class="wp_event_calendar_repeat">
+				<select name="wp_event_calendar_repeat" class="wp_event_calendar_repeat" id="wp_event_calendar_repeat">
 
 					<?php foreach ( $options as $key => $option ) : ?>
 
@@ -173,8 +187,11 @@ function wp_event_calendar_details_metabox() {
 			</td>
 
 			<td>
-				<?php esc_html_e( 'Expire', 'wp-event-calendar' ); ?>
-				<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_expire" value="<?php echo esc_attr( $expire ); ?>" placeholder="mm/dd/yyyy" />
+				<label for="wp_event_calendar_expire"><?php esc_html_e( 'Until', 'wp-event-calendar'); ?></label>
+			</td>
+
+			<td>
+				<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_expire" id="wp_event_calendar_expire" value="<?php echo esc_attr( $expire ); ?>" placeholder="mm/dd/yyyy" />
 			</td>
 		</tr>
 	</table>
