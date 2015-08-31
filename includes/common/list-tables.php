@@ -508,7 +508,6 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 			}
 
 			// Prepare pointer & item
-			$this->setup_pointer( $post, $start, $end );
 			$this->setup_item( $post, $max_per_day, $start, $end );
 		}
 	}
@@ -592,14 +591,19 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 		}
 
 		// Start the days loop with the start day
-		$days = $start_day;
+		$day = $start_day;
 
 		// Loop through days
-		while ( $days <= $end_day ) {
-			if ( empty( $this->items[ $days ] ) || ( $max > count( $this->items[ $days ] ) ) ) {
-				$this->items[ $days ][ $post->ID ] = $post;
+		while ( $day <= $end_day ) {
+
+			// Setup the pointer for each day
+			$this->setup_pointer( $post, $day, $start, $end );
+
+			// Add post to items for each day in it's duration
+			if ( empty( $this->items[ $day ] ) || ( $max > count( $this->items[ $day ] ) ) ) {
+				$this->items[ $day ][ $post->ID ] = $post;
 			}
-			++$days;
+			++$day;
 		}
 	}
 
@@ -645,10 +649,11 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	 * @since 0.1.1
 	 *
 	 * @param  object  $post
+	 * @param  int     $day
 	 * @param  string  $start
 	 * @param  string  $end
 	 */
-	private function setup_pointer( $post = false, $start = '', $end = '' ) {
+	private function setup_pointer( $post = false, $day = 1, $start = '', $end = '' ) {
 
 		// Rebase the pointer content
 		$pointer_content = array();
@@ -663,7 +668,7 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 		// Filter the entire pointer array
 		$pointer = apply_filters( 'wp_event_calendar_pointer', array(
 			'content'   => implode( '', $pointer_content ),
-			'anchor_id' => '#event-pointer-' . (int) $post->ID,
+			'anchor_id' => "#event-pointer-{$post->ID}-{$day}",
 			'edge'      => 'top',
 			'align'     => 'left'
 		), $post );
@@ -1124,7 +1129,7 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 		// Loop through today's posts
 		foreach ( $posts as $post ) : ?>
 
-			<a id="event-pointer-<?php echo esc_attr( $post->ID ); ?>" href="<?php echo esc_url( get_edit_post_link( $post->ID ) ); ?>" class="<?php echo $this->get_day_post_classes( $post->ID ); ?>"><?php echo esc_html( get_the_title( $post->ID ) ); ?></a>
+			<a id="event-pointer-<?php echo esc_attr( $post->ID ); ?>-<?php echo esc_attr( $day ); ?>" href="<?php echo esc_url( get_edit_post_link( $post->ID ) ); ?>" class="<?php echo $this->get_day_post_classes( $post->ID ); ?>"><?php echo esc_html( get_the_title( $post->ID ) ); ?></a>
 
 		<?php endforeach;
 
