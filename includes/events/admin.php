@@ -66,7 +66,12 @@ function wp_event_calendar_disable_months_dropdown( $disabled = false, $post_typ
  *
  * @since 0.1.2
  */
-function wp_event_calendar_add_dropdown_filters() {
+function wp_event_calendar_add_dropdown_filters( $post_type = '' ) {
+
+	// Bail if not the event post type
+	if ( 'event' !== $post_type ) {
+		return;
+	}
 
 	// Bail if event type taxonomy was unregistered
 	if ( ! is_object_in_taxonomy( 'event', 'event-type' ) ) {

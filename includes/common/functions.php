@@ -136,25 +136,25 @@ function wp_event_calendar_human_diff_time( $older_date, $newer_date = false ) {
 	// Set output var
 	switch ( $seconds ) {
 		case YEAR_IN_SECONDS :
-			$output = sprintf( _n( '%s year',   '%s years',   $count, 'wp-event-calander' ), $count );
+			$output = sprintf( _n( '%s year',   '%s years',   $count, 'wp-event-calendar' ), $count );
 			break;
 		case 30 * DAY_IN_SECONDS :
-			$output = sprintf( _n( '%s month',  '%s months',  $count, 'wp-event-calander' ), $count );
+			$output = sprintf( _n( '%s month',  '%s months',  $count, 'wp-event-calendar' ), $count );
 			break;
 		case WEEK_IN_SECONDS :
-			$output = sprintf( _n( '%s week',   '%s weeks',   $count, 'wp-event-calander' ), $count );
+			$output = sprintf( _n( '%s week',   '%s weeks',   $count, 'wp-event-calendar' ), $count );
 			break;
 		case DAY_IN_SECONDS :
-			$output = sprintf( _n( '%s day',    '%s days',    $count, 'wp-event-calander' ), $count );
+			$output = sprintf( _n( '%s day',    '%s days',    $count, 'wp-event-calendar' ), $count );
 			break;
 		case HOUR_IN_SECONDS :
-			$output = sprintf( _n( '%s hour',   '%s hours',   $count, 'wp-event-calander' ), $count );
+			$output = sprintf( _n( '%s hour',   '%s hours',   $count, 'wp-event-calendar' ), $count );
 			break;
 		case MINUTE_IN_SECONDS :
-			$output = sprintf( _n( '%s minute', '%s minutes', $count, 'wp-event-calander' ), $count );
+			$output = sprintf( _n( '%s minute', '%s minutes', $count, 'wp-event-calendar' ), $count );
 			break;
 		default:
-			$output = sprintf( _n( '%s second', '%s seconds', $count, 'wp-event-calander' ), $count );
+			$output = sprintf( _n( '%s second', '%s seconds', $count, 'wp-event-calendar' ), $count );
 	}
 
 	// Step two: the second chunk
@@ -169,26 +169,26 @@ function wp_event_calendar_human_diff_time( $older_date, $newer_date = false ) {
 
 		// Add to output var
 		if ( 0 != $count2 ) {
-			$output .= _x( ',', 'Separator in time since', 'wp-event-calander' ) . ' ';
+			$output .= _x( ',', 'Separator in time since', 'wp-event-calendar' ) . ' ';
 
 			switch ( $seconds2 ) {
 				case 30 * DAY_IN_SECONDS :
-					$output .= sprintf( _n( '%s month',  '%s months',  $count2, 'wp-event-calander' ), $count2 );
+					$output .= sprintf( _n( '%s month',  '%s months',  $count2, 'wp-event-calendar' ), $count2 );
 					break;
 				case WEEK_IN_SECONDS :
-					$output .= sprintf( _n( '%s week',   '%s weeks',   $count2, 'wp-event-calander' ), $count2 );
+					$output .= sprintf( _n( '%s week',   '%s weeks',   $count2, 'wp-event-calendar' ), $count2 );
 					break;
 				case DAY_IN_SECONDS :
-					$output .= sprintf( _n( '%s day',    '%s days',    $count2, 'wp-event-calander' ), $count2 );
+					$output .= sprintf( _n( '%s day',    '%s days',    $count2, 'wp-event-calendar' ), $count2 );
 					break;
 				case HOUR_IN_SECONDS :
-					$output .= sprintf( _n( '%s hour',   '%s hours',   $count2, 'wp-event-calander' ), $count2 );
+					$output .= sprintf( _n( '%s hour',   '%s hours',   $count2, 'wp-event-calendar' ), $count2 );
 					break;
 				case MINUTE_IN_SECONDS :
-					$output .= sprintf( _n( '%s minute', '%s minutes', $count2, 'wp-event-calander' ), $count2 );
+					$output .= sprintf( _n( '%s minute', '%s minutes', $count2, 'wp-event-calendar' ), $count2 );
 					break;
 				default:
-					$output .= sprintf( _n( '%s second', '%s seconds', $count2, 'wp-event-calander' ), $count2 );
+					$output .= sprintf( _n( '%s second', '%s seconds', $count2, 'wp-event-calendar' ), $count2 );
 			}
 		}
 	}

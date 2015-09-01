@@ -222,6 +222,11 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		return $post_id;
 	}
 
+	// Only save event metadata to event post type
+	if ( 'event' !== get_post_type( $post_id ) ) {
+		return $post_id;
+	}
+
 	// Bail if revision
 	if ( wp_is_post_revision( $post_id ) ) {
 		return $post_id;
@@ -356,6 +361,11 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		} else {
 			delete_post_meta( $post_id, 'wp_event_calendar_end_date_time' );
 		}
+	}
+
+	// Maybe delete existing end-day data
+	if ( $final_date_time === $final_end_date_time ) {
+		delete_post_meta( $post_id, 'wp_event_calendar_end_date_time' );
 	}
 
 	/** Repeat ****************************************************************/
