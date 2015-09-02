@@ -535,8 +535,8 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 				'meta_query'          => array(
 					array(
 						'key'     => 'wp_event_calendar_date_time',
-						'value'   => array( "{$this->year}-{$this->month}-01" ), array( "{$this->year}-{$this->month}-31" ),
-						'type'    => 'DATE',
+						'value'   => array( "{$this->year}-{$this->month}-01 00:00:00","{$this->year}-{$this->month}-31 00:00:00" ),
+						'type'    => 'DATETIME',
 						'compare' => 'BETWEEN',
 					)
 				)
