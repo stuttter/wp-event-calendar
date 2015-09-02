@@ -689,13 +689,18 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	 */
 	private function get_pointer_title( $post = false ) {
 
+		// Handle empty titles
+		$title = ! empty( $post->post_title )
+			? $post->post_title
+			: esc_html__( '(No title)', 'wp-event-calendar' );
+
 		// Title links to edit
 		if ( current_user_can( 'edit_event', $post->ID ) ) {
-			$retval = '<a href="' . esc_url( get_edit_post_link( $post->ID ) ) . '">'  . esc_js( $post->post_title ) . '</a>';
+			$retval = '<a href="' . esc_url( get_edit_post_link( $post->ID ) ) . '">'  . esc_js( $title ) . '</a>';
 
 		// No title link
 		} else {
-			$retval = esc_js( $post->post_title );
+			$retval = esc_js( $title );
 		}
 
 		// Filter & return the pointer title
@@ -1129,9 +1134,21 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 		ob_start();
 
 		// Loop through today's posts
-		foreach ( $posts as $post ) : ?>
+		foreach ( $posts as $post ) :
 
-			<a id="event-pointer-<?php echo esc_attr( $post->ID ); ?>-<?php echo esc_attr( $day ); ?>" href="<?php echo esc_url( get_edit_post_link( $post->ID ) ); ?>" class="<?php echo $this->get_day_post_classes( $post->ID ); ?>"><?php echo esc_html( get_the_title( $post->ID ) ); ?></a>
+			// Setup the pointer ID
+			$ponter_id = "{$post->ID}-{$day}";
+
+			// Get the post link
+			$post_link = get_edit_post_link( $post->ID );
+
+			// Handle empty titles
+			$post_title = get_the_title( $post->ID );
+			if ( empty( $post_title ) ) {
+				$post_title = esc_html__( '(No title)', 'wp-event-calendar' );
+			} ?>
+
+			<a id="event-pointer-<?php echo esc_attr( $ponter_id ); ?>" href="<?php echo esc_url( $post_link ); ?>" class="<?php echo $this->get_day_post_classes( $post->ID ); ?>"><?php echo esc_html( $post_title ); ?></a>
 
 		<?php endforeach;
 
