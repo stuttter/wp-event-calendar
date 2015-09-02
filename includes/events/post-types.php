@@ -43,23 +43,6 @@ function wp_event_calendar_register_post_types() {
 		'thumbnail'
 	);
 
-	// Capability types
-	$cap_types = array(
-		'event',
-		'events'
-	);
-
-	// Caps
-	$caps = array(
-		'edit_posts'          => 'edit_events',
-		'edit_others_posts'   => 'edit_others_events',
-		'publish_posts'       => 'publish_events',
-		'read_private_posts'  => 'read_private_events',
-		'read_hidden_posts'   => 'read_hidden_events',
-		'delete_posts'        => 'delete_events',
-		'delete_others_posts' => 'delete_others_events'
-	);
-
 	// Post type arguments
 	$args = array(
 		'labels'               => $labels,
@@ -76,9 +59,7 @@ function wp_event_calendar_register_post_types() {
 		'show_in_admin_bar'    => true,
 		'menu_position'        => 44,
 		'menu_icon'            => 'dashicons-calendar',
-		//'capability_type'      => $cap_types,
-		//'capabilities'         => $caps,
-		//'map_meta_cap'         => false,
+		'capability_type'      => 'page',
 		'register_meta_box_cb' => null,
 		'taxonomies'           => array(),
 		'has_archive'          => false,
