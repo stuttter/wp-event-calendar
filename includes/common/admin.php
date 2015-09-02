@@ -38,7 +38,7 @@ function wp_event_calendar_add_submenus() {
 			$parent,
 			__( 'Calendar', 'bbpress' ),
 			__( 'Calendar', 'bbpress' ),
-			'edit_posts',
+			'read',
 			$post_type . '-calendar',
 			'wp_event_calendar_show_admin_calendar'
 		);
