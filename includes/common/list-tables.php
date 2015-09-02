@@ -690,7 +690,7 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	private function get_pointer_title( $post = false ) {
 
 		// Title links to edit
-		if ( current_user_can( 'edit_post', $post->ID ) ) {
+		if ( current_user_can( 'edit_event', $post->ID ) ) {
 			$retval = '<a href="' . esc_url( get_edit_post_link( $post->ID ) ) . '">'  . esc_js( $post->post_title ) . '</a>';
 
 		// No title link

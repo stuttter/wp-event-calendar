@@ -17,6 +17,12 @@ add_action( 'init', 'wp_event_calendar_register_type_taxonomy'     );
 add_action( 'init', 'wp_event_calendar_register_category_taxonomy' );
 add_action( 'init', 'wp_event_calendar_register_tag_taxonomy'      );
 
+// Caps
+add_filter( 'map_meta_cap', 'wp_event_calendar_meta_caps',          10, 4 );
+add_filter( 'map_meta_cap', 'wp_event_calendar_type_meta_caps',     10, 4 );
+add_filter( 'map_meta_cap', 'wp_event_calendar_category_meta_caps', 10, 4 );
+add_filter( 'map_meta_cap', 'wp_event_calendar_tag_meta_caps',      10, 4 );
+
 // Metaboxes
 add_action( 'add_meta_boxes', 'wp_event_calendar_add_metabox'  );
 add_action( 'save_post',      'wp_event_calendar_metabox_save' );
