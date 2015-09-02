@@ -214,12 +214,28 @@ function wp_event_calendar_manage_custom_column_data( $column = '', $post_id = 0
 
 		// Duration
 		case 'duration' :
+
+			// Get metas
+			$all_day    = get_post_meta( $post->ID, 'wp_event_calendar_all_day',       true );
 			$start_date = get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
 			$end_date   = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
-			if ( empty( $start_date ) || empty( $end_date ) || ( $start_date === $end_date ) ) {
-				echo '&mdash;';
+			$human_time = wp_event_calendar_human_diff_time( $start_date, $end_date );
+
+			// All day event
+			if ( ! empty( $all_day ) ) {
+				if ( $start_date === $end_date ) {
+					esc_html_e( 'All Day', 'wp-event-calendar' );
+				} else {
+					echo $human_time;
+				}
+
+			// Specific times
 			} else {
-				echo wp_event_calendar_human_diff_time( $start_date, $end_date );
+				if ( empty( $start_date ) || empty( $end_date ) || ( $start_date === $end_date ) ) {
+					echo '&mdash;';
+				} else {
+					echo $human_time;
+				}
 			}
 			break;
 
@@ -260,31 +276,12 @@ function wp_event_calendar_admin_event_assets() {
 	// Enqueue the date picker
 	wp_enqueue_script( 'jquery-ui-datepicker' );
 
+	$url = wp_event_calendar_get_plugin_url();
+	$ver = wp_event_calendar_get_asset_version();
+
 	// Date picker CSS (for jQuery UI calendar)
-	wp_enqueue_style( 'wp_event_calendar_datepicker', wp_event_calendar_get_plugin_url() . '/assets/css/datepicker.css', false, wp_event_calendar_get_asset_version(), false );
-}
+	wp_enqueue_style( 'wp_event_calendar_datepicker', $url . '/assets/css/datepicker.css', false,             $ver, false );
 
-/**
- * Output admin area JS
- *
- * @since 0.1.2
- */
-function wp_event_calendar_admin_js() {
-	?>
-
-	<script type="text/javascript">
-		jQuery( document ).ready( function( $ ) {
-			if ( $( '.wp_event_calendar_datepicker' ).length > 0 ) {
-				var dateFormat = 'mm/dd/yy';
-				$('.wp_event_calendar_datepicker').datepicker( {
-					dateFormat: dateFormat
-				} );
-			}
-			$( '.wp_event_calendar_minutes' ).keyup( function( e ) {
-				return ( e < 10 ? '0' : '' ) + e;
-			} );
-		} );
-	</script>
-
-	<?php
+	// Datepicker & event JS
+	wp_enqueue_script( 'wp_event_calendar_all_event', $url . '/assets/js/event.js',        array( 'jquery' ), $ver, true  );
 }

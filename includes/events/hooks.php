@@ -30,7 +30,6 @@ add_action( 'save_post',      'wp_event_calendar_metabox_save' );
 // Admin Menu
 add_action( 'admin_menu', 'wp_event_calendar_add_submenus' );
 add_action( 'admin_head', 'wp_event_calendar_admin_assets' );
-add_action( 'admin_head', 'wp_event_calendar_admin_js'     );
 
 // Admin Scripts
 add_action( 'admin_enqueue_scripts', 'wp_event_calendar_admin_event_assets' );
