@@ -3,7 +3,7 @@ Contributors: johnjamesjacoby
 Tags: event, calendar
 Requires at least: 4.2
 Tested up to: 4.3
-Stable tag: 0.1.2
+Stable tag: 0.1.3
 
 == Description ==
 
@@ -51,6 +51,9 @@ The WordPress support forums: https://wordpress.org/tags/wp-event-calendar/
 http://github.com/johnjamesjacoby/wp-event-calendar/
 
 == Changelog ==
+
+= 0.1.3 =
+* Revert role & capability changes
 
 = 0.1.2 =
 * Remove dependency

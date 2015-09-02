@@ -49,7 +49,7 @@ function wp_event_calendar_register_type_taxonomy() {
 	$args = array(
 		'labels'                => $labels,
 		'rewrite'               => $rewrite,
-		'capabilities'          => $caps,
+		//'capabilities'          => $caps,
 		'update_count_callback' => '_update_post_term_count',
 		'query_var'             => true,
 		'show_tagcloud'         => true,
@@ -103,7 +103,7 @@ function wp_event_calendar_register_category_taxonomy() {
 	$args = array(
 		'labels'                => $labels,
 		'rewrite'               => $rewrite,
-		'capabilities'          => $caps,
+		//'capabilities'          => $caps,
 		'update_count_callback' => '_update_post_term_count',
 		'query_var'             => true,
 		'show_tagcloud'         => false,
@@ -157,7 +157,7 @@ function wp_event_calendar_register_tag_taxonomy() {
 	$args = array(
 		'labels'                => $labels,
 		'rewrite'               => $rewrite,
-		'capabilities'          => $caps,
+		//'capabilities'          => $caps,
 		'update_count_callback' => '_update_post_term_count',
 		'query_var'             => true,
 		'show_tagcloud'         => false,
