@@ -82,6 +82,33 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	public $pointers = array();
 
 	/**
+	 * All-day meta of the current event
+	 *
+	 * @since 0.1.5
+	 *
+	 * @var bool
+	 */
+	private $_all_day = false;
+
+	/**
+	 * Start meta of the current event
+	 *
+	 * @since 0.1.5
+	 *
+	 * @var bool
+	 */
+	private $_start = '';
+
+	/**
+	 * End meta of the current event
+	 *
+	 * @since 0.1.5
+	 *
+	 * @var bool
+	 */
+	private $_end = '';
+
+	/**
 	 * The main constructor method
 	 */
 	public function __construct( $args = array() ) {
@@ -494,21 +521,22 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 		foreach ( $this->query->posts as $post ) {
 
 			// Get start & end
-			$start = get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
-			$end   = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
+			$this->_all_day = get_post_meta( $post->ID, 'wp_event_calendar_all_day',       true );
+			$this->_start   = get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
+			$this->_end     = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
 
 			// Format start
-			if ( ! empty( $start ) ) {
-				$start = strtotime( $start );
+			if ( ! empty( $this->_start ) ) {
+				$this->_start = strtotime( $this->_start );
 			}
 
 			// Format end
-			if ( ! empty( $end ) ) {
-				$end = strtotime( $end );
+			if ( ! empty( $this->_end ) ) {
+				$this->_end = strtotime( $this->_end );
 			}
 
 			// Prepare pointer & item
-			$this->setup_item( $post, $max_per_day, $start, $end );
+			$this->setup_item( $post, $max_per_day );
 		}
 	}
 
@@ -571,21 +599,19 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	 *
 	 * @param  object  $post
 	 * @param  int     $max
-	 * @param  string  $start
-	 * @param  string  $end
 	 */
-	private function setup_item( $post = false, $max = 10, $start = '', $end = '' ) {
+	private function setup_item( $post = false, $max = 10 ) {
 
 		// Calculate start day
-		if ( ! empty( $start ) ) {
-			$start_day = date_i18n( 'j', $start );
+		if ( ! empty( $this->_start ) ) {
+			$start_day = date_i18n( 'j', $this->_start );
 		} else {
 			$start_day = 0;
 		}
 
 		// Calculate end day
-		if ( ! empty( $end ) ) {
-			$end_day = date_i18n( 'j', $end   );
+		if ( ! empty( $this->_end ) ) {
+			$end_day = date_i18n( 'j', $this->_end );
 		} else {
 			$end_day = $start_day;
 		}
@@ -597,7 +623,7 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 		while ( $day <= $end_day ) {
 
 			// Setup the pointer for each day
-			$this->setup_pointer( $post, $day, $start, $end );
+			$this->setup_pointer( $post, $day );
 
 			// Add post to items for each day in it's duration
 			if ( empty( $this->items[ $day ] ) || ( $max > count( $this->items[ $day ] ) ) ) {
@@ -652,17 +678,15 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	 *
 	 * @param  object  $post
 	 * @param  int     $day
-	 * @param  string  $start
-	 * @param  string  $end
 	 */
-	private function setup_pointer( $post = false, $day = 1, $start = '', $end = '' ) {
+	private function setup_pointer( $post = false, $day = 1 ) {
 
 		// Rebase the pointer content
 		$pointer_content = array();
 
 		// Pointer content
 		$pointer_content[] = '<h3 class="' . $this->get_day_post_classes( $post->ID ) . '">' . $this->get_pointer_title( $post ) . '</h3>';
-		$pointer_content[] = '<p>' . implode( '<br>', $this->get_pointer_text( $post, $start, $end ) ) . '</p>';
+		$pointer_content[] = '<p>' . implode( '<br>', $this->get_pointer_text( $post ) ) . '</p>';
 
 		// Filter pointer content specifically
 		$pointer_content = apply_filters( 'wp_event_calendar_pointer_content', $pointer_content, $post );
@@ -713,13 +737,11 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	 * @since 0.1.1
 	 *
 	 * @param   object  $post
-	 * @param   string  $start
-	 * @param   string  $end
 	 *
 	 * @return  string
 	 */
-	private function get_pointer_text( $post = false, $start = '', $end = '' ) {
-		$pointer_text = $this->get_pointer_metadata( $post, $start, $end );
+	private function get_pointer_text( $post = false ) {
+		$pointer_text = $this->get_pointer_metadata( $post );
 
 		// Append with new-line if metadata exists
 		$new_line = ! empty( $pointer_text )
@@ -762,39 +784,39 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	private function get_pointer_metadata( $post = false, $start = '', $end = '' ) {
+	private function get_pointer_metadata( $post = false ) {
 		$pointer_metadata = array();
 
 		// Date & Time
-		if ( ! empty( $start ) ) {
-			$start_date = $this->get_event_date( $post, $start );
+		if ( ! empty( $this->_start ) ) {
+			$start_date = $this->get_event_date( $post, $this->_start );
 		} else {
 			$start_date = 0;
 		}
 
 		// Date & Time
-		if ( ! empty( $end ) ) {
-			$end_date = $this->get_event_date( $post, $end );
+		if ( ! empty( $this->_end ) ) {
+			$end_date = $this->get_event_date( $post, $this->_end );
 		} else {
 			$end_date = 0;
 		}
 
 		// Date & Time
-		if ( ! empty( $start ) ) {
+		if ( ! empty( $this->_start ) ) {
 			$pointer_metadata[] = '<strong>' . esc_html__( 'Start', 'wp-event-calendar' ) . '</strong>';
 
 			if ( $start_date !== $end_date ) {
 				$pointer_metadata[] = sprintf( esc_html__( 'Date: %s', 'wp-event-calendar' ), $start_date );
 			}
 
-			$pointer_metadata[] = sprintf( esc_html__( 'Time: %s', 'wp-event-calendar' ), $this->get_event_time( $post, $start ) );
+			$pointer_metadata[] = sprintf( esc_html__( 'Time: %s', 'wp-event-calendar' ), $this->get_event_time( $post, $this->_start ) );
 		}
 
 		// Date & Time
-		if ( ! empty( $end ) ) {
+		if ( ! empty( $this->_end ) ) {
 
 			// Extra padding
-			if ( ! empty( $start ) ) {
+			if ( ! empty( $this->_start ) ) {
 				$pointer_metadata[] = '';
 			}
 
@@ -804,7 +826,7 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 				$pointer_metadata[] = sprintf( esc_html__( 'Date: %s', 'wp-event-calendar' ), $end_date );
 			}
 
-			$pointer_metadata[] = sprintf( esc_html__( 'Time: %s', 'wp-event-calendar' ), $this->get_event_time( $post, $end ) );
+			$pointer_metadata[] = sprintf( esc_html__( 'Time: %s', 'wp-event-calendar' ), $this->get_event_time( $post, $this->_end ) );
 		}
 
 		// Filter & return the pointer title
