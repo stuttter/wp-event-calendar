@@ -164,8 +164,6 @@ function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 
 		// Start (default)
 		case 'start_date' :
-		case 'menu_order title' :
-		default :
 			$wp_query->set( 'order',     $order );
 			$wp_query->set( 'orderby',   'meta_value' );
 			$wp_query->set( 'meta_key',  'wp_event_calendar_date_time' );
