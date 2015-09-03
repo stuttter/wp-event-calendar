@@ -118,7 +118,6 @@ function wp_event_calendar_sortable_columns( $columns = array() ) {
 		'title'    => 'title',
 		'start'    => 'start_date',
 		'end'      => 'end_date',
-		'duration' => 'duration',
 		'repeat'   => 'repeat'
 	);
 
@@ -128,7 +127,7 @@ function wp_event_calendar_sortable_columns( $columns = array() ) {
 /**
  * Set the relevant query vars for sorting posts by our front-end sortables.
  *
- * @since 0.1.5
+ * @since 0.1.6
  *
  * @param WP_Query $wp_query The current WP_Query object.
  */
@@ -144,7 +143,7 @@ function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 		? strtoupper( $wp_query->query['order'] )
 		: 'DESC';
 
-	//
+	// Set by 'orderby'
 	switch ( $wp_query->query['orderby'] ) {
 
 		// End
@@ -173,10 +172,6 @@ function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 			$wp_query->set( 'meta_type', 'DATETIME' );
 			break;
 	}
-
-	//foreach ( $sort as $key => $value ) {
-	//	$wp_query->set( $key, $value );
-	//}
 }
 
 /**
