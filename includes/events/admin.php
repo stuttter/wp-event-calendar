@@ -132,11 +132,6 @@ function wp_event_calendar_manage_custom_column_data( $column = '', $post_id = 0
 	// Custom column IDs
 	switch ( $column ) {
 
-		// Creator
-		case 'username' :
-			echo get_userdata( $post->post_author )->display_name;
-			break;
-
 		// Type
 		case 'type' :
 			$taxonomy_object = get_taxonomy( 'event-type' );
@@ -169,74 +164,17 @@ function wp_event_calendar_manage_custom_column_data( $column = '', $post_id = 0
 
 		// Starts
 		case 'start' :
-
-			// Date
-			$date = get_post_meta( $post->ID, 'wp_event_calendar_date_time', true );
-			if ( ! empty( $date ) ) {
-				$date = strtotime( $date );
-
-				echo date_i18n( get_option( 'date_format' ), $date );
-
-				// Time
-				$time = date_i18n( 'H:i:s', $date );
-				if ( '00:00:00' !== $time  ) {
-					echo '<br>'. date_i18n( get_option( 'time_format' ), $date );
-				}
-
-			// No start date
-			} else {
-				echo '&mdash;';
-			}
-
+			echo wp_get_event_start_date_time( $post );
 			break;
 
 		// Ends
 		case 'end' :
-
-			// Date
-			$start_date = get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
-			$end_date   = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
-			if ( empty( $end_date ) || ( $start_date === $end_date ) ) {
-				echo '&mdash;';
-			} else {
-				$end_date = strtotime( $end_date );
-
-				echo date_i18n( get_option( 'date_format' ), $end_date );
-
-				// Time
-				$end_time = date_i18n( 'H:i:s', $end_date );
-				if ( '00:00:00' !== $end_time  ) {
-					echo '<br>'. date_i18n( get_option( 'time_format' ), $end_date );
-				}
-			}
-
+			echo wp_get_event_end_date_time( $post );
 			break;
 
 		// Duration
 		case 'duration' :
-
-			// Get metas
-			$all_day    = get_post_meta( $post->ID, 'wp_event_calendar_all_day',       true );
-			$start_date = get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
-			$end_date   = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
-			$human_time = wp_event_calendar_human_diff_time( $start_date, $end_date );
-
-			// All day event
-			if ( ! empty( $all_day ) ) {
-				if ( $start_date === $end_date ) {
-					esc_html_e( 'All Day', 'wp-event-calendar' );
-				} else {
-					echo $human_time;
-				}
-
-			// Specific times
-			} else {
-				if ( empty( $start_date ) || empty( $end_date ) || ( $start_date === $end_date ) ) {
-					echo '&mdash;';
-				} else {
-					echo $human_time;
-				}
-			}
+			echo wp_get_event_duration( $post );
 			break;
 
 		// Repeat
