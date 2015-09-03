@@ -1,10 +1,4 @@
 /* Date Picker Default Styles */
-#wp_event_calendar_details .inside,
-#wp_event_calendar_details table {
-	padding: 0;
-	margin: 0;
-}
-
 .ui-datepicker {
     padding: 0;
 	margin: 0;
@@ -34,10 +28,7 @@
 }
 
 .ui-datepicker .ui-datepicker-header {
-    background: #00a0d2;
-	border: 1px solid #3592b6;
 	border-bottom: none;
-    color: #fff;
     font-weight: normal;
 }
 
@@ -45,14 +36,6 @@
     background: transparent;
     border-color: transparent;
     cursor: pointer;
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
-    border-radius: 0;
-}
-
-.ui-datepicker thead {
-    background: #222;
-    color: #fff;
 }
 
 .ui-datepicker .ui-datepicker-title {
@@ -103,27 +86,22 @@
 	content: '\f345';
 }
 
-.ui-datepicker .ui-datepicker-prev-hover:before {
-	color: #eee;
+.ui-datepicker .ui-datepicker-prev-hover:before,
+.ui-datepicker .ui-datepicker-next-hover:before {
+	opacity: 0.7;
 }
 
-.ui-datepicker .ui-datepicker-next-hover:before {
-	color: #eee;
+.ui-datepicker thead {
+	color: #fff;
+	font-weight: 600;
 }
 
 .ui-datepicker th {
     padding: 10px;
-    color: #fff;
-    font-weight: normal;
-    border: 1px solid #222 !important;
-	font-weight: 600;
 }
 
 .ui-datepicker td {
-    background: #fff;
-    border: none;
     padding: 0;
-	width: auto;
 	border: 1px solid #f4f4f4;
 }
 
@@ -156,135 +134,128 @@
     color: #444;
 }
 
-.ui-datepicker td .ui-state-hover {
-    background: #00a0d2;
-    color: #fff;
+.ui-datepicker td.ui-state-disabled .ui-state-default {
+    opacity: 0.5;
 }
 
-.ui-datepicker td.ui-state-disabled,
-.ui-datepicker td.ui-state-disabled .ui-state-default {
-    opacity: 1;
-    color: #999;
+/* All Color Schemes */
+/* Fresh */
+.admin-color-fresh .ui-datepicker .ui-datepicker-header {
+    background: #00a0d2;
+}
+
+.admin-color-fresh .ui-datepicker thead {
+    background: #32373c;
+}
+
+.admin-color-fresh .ui-datepicker td .ui-state-hover {
+    background: #0073aa;
+	color: #fff;
 }
 
 /* Other Datepicker Color Schemes */
 /* Blue */
-.admin-color-blue .ui-datepicker .ui-datepicker-header,
-.admin-color-blue .ui-datepicker .ui-datepicker-header .ui-state-hover,
+.admin-color-blue .ui-datepicker .ui-datepicker-header {
+    background: #52accc;
+}
+
 .admin-color-blue .ui-datepicker thead {
     background: #4796b3;
 }
 
-.admin-color-blue .ui-datepicker th {
-    border-color: #52accc;
-}
-
 .admin-color-blue .ui-datepicker td .ui-state-hover {
     background: #096484;
+	color: #fff;
 }
 
 /* Coffee */
-.admin-color-coffee .ui-datepicker .ui-datepicker-header,
-.admin-color-coffee .ui-datepicker .ui-datepicker-header .ui-state-hover,
-.admin-color-coffee .ui-datepicker thead {
-    background: #46403c;
+.admin-color-coffee .ui-datepicker .ui-datepicker-header {
+    background: #59524c;
 }
 
-.admin-color-coffee .ui-datepicker th {
-    border-color: #59524c;
+.admin-color-coffee .ui-datepicker thead {
+	background: #46403c;
 }
 
 .admin-color-coffee .ui-datepicker td .ui-state-hover {
     background: #c7a589;
+	color: #fff;
 }
 
 /* Ectoplasm */
-.admin-color-ectoplasm .ui-datepicker .ui-datepicker-header,
-.admin-color-ectoplasm .ui-datepicker .ui-datepicker-header .ui-state-hover,
+.admin-color-ectoplasm .ui-datepicker .ui-datepicker-header {
+    background: #523f6d;
+}
+
 .admin-color-ectoplasm .ui-datepicker thead {
     background: #413256;
 }
 
-.admin-color-ectoplasm .ui-datepicker th {
-    border-color: #523f6d;
-}
-
 .admin-color-ectoplasm .ui-datepicker td .ui-state-hover {
     background: #a3b745;
+	color: #fff;
 }
 
 /* Midnight */
-.admin-color-midnight .ui-datepicker .ui-datepicker-header,
-.admin-color-midnight .ui-datepicker .ui-datepicker-header .ui-state-hover,
+.admin-color-midnight .ui-datepicker .ui-datepicker-header {
+    background: #363b3f;
+}
+
 .admin-color-midnight .ui-datepicker thead {
     background: #26292c;
 }
 
-.admin-color-midnight .ui-datepicker th {
-    border-color: #363b3f;
-}
-
 .admin-color-midnight .ui-datepicker td .ui-state-hover {
     background: #e14d43;
+	color: #fff;
 }
 
 /* Ocean */
-.admin-color-ocean .ui-datepicker .ui-datepicker-header,
-.admin-color-ocean .ui-datepicker .ui-datepicker-header .ui-state-hover,
-.admin-color-ocean .ui-datepicker thead {
-    background: #627c83;
+.admin-color-ocean .ui-datepicker .ui-datepicker-header {
+    background: #738e96;
 }
 
-.admin-color-ocean .ui-datepicker th {
-    border-color: #738e96;
+.admin-color-ocean .ui-datepicker thead {
+	background: #627c83;
 }
 
 .admin-color-ocean .ui-datepicker td .ui-state-hover {
     background: #9ebaa0;
+	color: #fff;
 }
 
 /* Sunrise */
 .admin-color-sunrise .ui-datepicker .ui-datepicker-header,
-.admin-color-sunrise .ui-datepicker .ui-datepicker-header .ui-state-hover,
-.admin-color-sunrise .ui-datepicker thead {
-    background: #be3631;
+.admin-color-sunrise .ui-datepicker .ui-datepicker-header .ui-state-hover {
+    background: #cf4944;
 }
 
 .admin-color-sunrise .ui-datepicker th {
-    border-color: #cf4944;
+    border-color: #be3631;
+    background: #be3631;
 }
 
 .admin-color-sunrise .ui-datepicker td .ui-state-hover {
     background: #dd823b;
+	color: #fff;
 }
 
 /* Light */
-.admin-color-light .ui-datepicker .ui-datepicker-header,
-.admin-color-light .ui-datepicker .ui-datepicker-header .ui-state-hover,
-.admin-color-light .ui-datepicker thead {
+.admin-color-light .ui-datepicker .ui-datepicker-header {
     background: #e5e5e5;
 }
 
-.admin-color-light .ui-datepicker td {
-    background: #fff;
-}
-
-.admin-color-light .ui-datepicker th {
-    border-color: #fff;
+.admin-color-light .ui-datepicker thead {
+	background: #888;
 }
 
 .admin-color-light .ui-datepicker .ui-datepicker-title,
 .admin-color-light .ui-datepicker td .ui-state-default,
-.admin-color-light .ui-datepicker th {
+.admin-color-light .ui-datepicker .ui-datepicker-prev:before,
+.admin-color-light .ui-datepicker .ui-datepicker-next:before {
     color: #555;
 }
 
 .admin-color-light .ui-datepicker td .ui-state-hover {
-    color: #fff;
-    background: #888;
-}
-
-.admin-color-light .ui-datepicker td.ui-state-disabled,
-.admin-color-light .ui-datepicker td.ui-state-disabled .ui-state-default {
-    color: #ccc;
+    background: #e5e5e5;
 }
