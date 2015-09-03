@@ -55,6 +55,7 @@ http://github.com/johnjamesjacoby/wp-event-calendar/
 
 = 0.1.5 =
 * All-day events
+* Sort by start, end, and repetition
 
 = 0.1.4 =
 * More flexibile mapped capabilities
