@@ -485,7 +485,7 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 		$this->process_bulk_action();
 
 		// Query for posts for this month only
-		$this->query = new WP_Query( $this->filter_args() );
+		$this->query = new WP_Query( $this->filter_month_args() );
 
 		// Max per day
 		$max_per_day = $this->get_per_day();
@@ -519,7 +519,7 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	private function filter_args() {
+	private function filter_month_args() {
 
 		// Events
 		if ( 'event' === $this->screen->post_type ) {
@@ -559,7 +559,7 @@ class WP_Event_Calendar_Month_Table extends WP_List_Table {
 			);
 		}
 
-		return apply_filters( 'wp_event_calendar_query', $args );
+		return apply_filters( 'wp_event_calendar_month_query', $args );
 	}
 
 	/**
