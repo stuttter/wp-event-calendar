@@ -103,13 +103,14 @@ function wp_event_calendar_manage_posts_columns( $old_columns = array() ) {
 
 	// New columns
 	$new_columns = array(
-		'cb'       => '<input type="checkbox" />',
-		'title'    => esc_html__( 'Event',    'wp-event-calendar' ),
-		'start'    => esc_html__( 'Starts',   'wp-event-calendar' ),
-		'end'      => esc_html__( 'Ends',     'wp-event-calendar' ),
-		'duration' => esc_html__( 'Duration', 'wp-event-calendar' ),
-		'repeat'   => esc_html__( 'Repeat',   'wp-event-calendar' ),
-		'type'     => esc_html__( 'Types',    'wp-event-calendar' ),
+		'cb'         => '<input type="checkbox" />',
+		'title'      => esc_html__( 'Event',      'wp-event-calendar' ),
+		'start'      => esc_html__( 'Starts',     'wp-event-calendar' ),
+		'end'        => esc_html__( 'Ends',       'wp-event-calendar' ),
+		'duration'   => esc_html__( 'Duration',   'wp-event-calendar' ),
+		'repeat'     => esc_html__( 'Repeat',     'wp-event-calendar' ),
+		'categories' => esc_html__( 'Categories', 'wp-event-calendar' ),
+		'types'      => esc_html__( 'Types',      'wp-event-calendar' ),
 	);
 
 	// Filter & return
@@ -133,33 +134,13 @@ function wp_event_calendar_manage_custom_column_data( $column = '', $post_id = 0
 	switch ( $column ) {
 
 		// Type
-		case 'type' :
-			$taxonomy_object = get_taxonomy( 'event-type' );
-			$terms           = get_the_terms( $post->ID, 'event-type' );
-			if ( is_array( $terms ) ) {
-				$out = array();
-				foreach ( $terms as $t ) {
-					$posts_in_term_qv = array();
-					if ( 'post' != $post->post_type ) {
-						$posts_in_term_qv['post_type'] = $post->post_type;
-					}
-					if ( $taxonomy_object->query_var ) {
-						$posts_in_term_qv[ $taxonomy_object->query_var ] = $t->slug;
-					} else {
-						$posts_in_term_qv['taxonomy'] = 'event-type';
-						$posts_in_term_qv['term'] = $t->slug;
-					}
+		case 'types' :
+			echo wp_get_event_taxonomy_column_data( $post, 'event-type' );
+			break;
 
-					$out[] = sprintf( '<a href="%s">%s</a>',
-						esc_url( add_query_arg( $posts_in_term_qv, 'edit.php' ) ),
-						esc_html( sanitize_term_field( 'name', $t->name, $t->term_id, 'event-type', 'display' ) )
-					);
-				}
-				/* translators: used between list items, there is a space after the comma */
-				echo join( __( ', ' ), $out );
-			} else {
-				echo '<span aria-hidden="true">&#8212;</span><span class="screen-reader-text">' . $taxonomy_object->labels->no_terms . '</span>';
-			}
+		// Category
+		case 'categories' :
+			echo wp_get_event_taxonomy_column_data( $post, 'event-category' );
 			break;
 
 		// Starts
@@ -197,6 +178,44 @@ function wp_event_calendar_manage_custom_column_data( $column = '', $post_id = 0
 			}
 			break;
 	}
+}
+
+function wp_get_event_taxonomy_column_data( $post = false, $taxonomy = '' ) {
+
+	// Get post & taxonomy
+	$post            = get_post( $post );
+	$taxonomy_object = get_taxonomy( $taxonomy );
+	$terms           = get_the_terms( $post->ID, $taxonomy );
+
+	// Has terms
+	if ( is_array( $terms ) ) {
+		$out = array();
+		foreach ( $terms as $t ) {
+			$posts_in_term_qv = array();
+			if ( 'post' != $post->post_type ) {
+				$posts_in_term_qv['post_type'] = $post->post_type;
+			}
+			if ( $taxonomy_object->query_var ) {
+				$posts_in_term_qv[ $taxonomy_object->query_var ] = $t->slug;
+			} else {
+				$posts_in_term_qv['taxonomy'] = $taxonomy;
+				$posts_in_term_qv['term']     = $t->slug;
+			}
+
+			$out[] = sprintf( '<a href="%s">%s</a>',
+				esc_url( add_query_arg( $posts_in_term_qv, 'edit.php' ) ),
+				esc_html( sanitize_term_field( 'name', $t->name, $t->term_id, $taxonomy, 'display' ) )
+			);
+		}
+		/* translators: used between list items, there is a space after the comma */
+		$retval = join( __( ', ' ), $out );
+
+	// No terms
+	} else {
+		$retval = '<span aria-hidden="true">&#8212;</span><span class="screen-reader-text">' . esc_html( $taxonomy_object->labels->no_terms ) . '</span>';
+	}
+
+	return apply_filters( 'wp_event_calendar_taxonomy_column_data', $retval, $post, $taxonomy );
 }
 
 /**

@@ -1,8 +1,12 @@
 .widefat .column-start,
 .widefat .column-end,
-.widefat .column-duration,
-.widefat .column-type {
+.widefat .column-duration {
 	width: 15%
+}
+
+.widefat .column-types,
+.widefat .column-categories {
+	width: 10%;
 }
 
 .widefat .column-repeat {
