@@ -22,27 +22,12 @@ defined( 'ABSPATH' ) || exit;
 function wp_event_calendar_enter_title_here( $title, WP_Post $post ) {
 
 	// Override if 'event' post type
-	if ( 'event' == $post->post_type ) {
+	if ( 'event' === $post->post_type ) {
 		$title = esc_html__( 'Name this event', 'wp-event-calendar' );
 	}
 
 	// Return possibly modified title
 	return $title;
-}
-
-/**
- * Sortable event columns
- *
- * @since 0.1.2
- *
- * @param   array  $columns
- *
- * @return  array
- */
-function wp_event_calendar_sortable_columns() {
-	return array(
-		'start'
-	);
 }
 
 /**
@@ -118,6 +103,83 @@ function wp_event_calendar_manage_posts_columns( $old_columns = array() ) {
 }
 
 /**
+ * Sortable event columns
+ *
+ * @since 0.1.2
+ *
+ * @param   array  $columns
+ *
+ * @return  array
+ */
+function wp_event_calendar_sortable_columns( $columns = array() ) {
+
+	// Override columns
+	$columns = array(
+		'title'    => 'title',
+		'start'    => 'start_date',
+		'end'      => 'end_date',
+		'duration' => 'duration',
+		'repeat'   => 'repeat'
+	);
+
+	return $columns;
+}
+
+/**
+ * Set the relevant query vars for sorting posts by our front-end sortables.
+ *
+ * @since 0.1.5
+ *
+ * @param WP_Query $wp_query The current WP_Query object.
+ */
+function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
+
+	// Bail if not 'event' post type
+	if ( empty( $wp_query->query['post_type'] ) || ! in_array( 'event', (array) $wp_query->query['post_type'] ) ) {
+		return;
+	}
+
+	// Some default order values
+	$order = ! empty( $wp_query->query['order'] )
+		? strtoupper( $wp_query->query['order'] )
+		: 'DESC';
+
+	//
+	switch ( $wp_query->query['orderby'] ) {
+
+		// End
+		case 'repeat' :
+			$wp_query->set( 'order',     $order );
+			$wp_query->set( 'orderby',   'meta_value' );
+			$wp_query->set( 'meta_key',  'wp_event_calendar_repeat' );
+			$wp_query->set( 'meta_type', 'NUMERIC' );
+			break;
+
+		// End
+		case 'end_date' :
+			$wp_query->set( 'order',     $order );
+			$wp_query->set( 'orderby',   'meta_value' );
+			$wp_query->set( 'meta_key',  'wp_event_calendar_end_date_time' );
+			$wp_query->set( 'meta_type', 'DATETIME' );
+			break;
+
+		// Start (default)
+		case 'start_date' :
+		case 'menu_order title' :
+		default :
+			$wp_query->set( 'order',     $order );
+			$wp_query->set( 'orderby',   'meta_value' );
+			$wp_query->set( 'meta_key',  'wp_event_calendar_date_time' );
+			$wp_query->set( 'meta_type', 'DATETIME' );
+			break;
+	}
+
+	//foreach ( $sort as $key => $value ) {
+	//	$wp_query->set( $key, $value );
+	//}
+}
+
+/**
  * Output content for each event column
  *
  * @since 0.1.2
@@ -162,16 +224,16 @@ function wp_event_calendar_manage_custom_column_data( $column = '', $post_id = 0
 		case 'repeat' :
 			$repeat = get_post_meta( $post->ID, 'wp_event_calendar_repeat', true );
 			switch( $repeat ) {
-				case 'weekly' :
-					esc_html_e( 'Weekly', 'wp-event-calendar' );
-					break;
-				case 'monthly' :
-					esc_html_e( 'Monthly', 'wp-event-calendar' );
-					break;
-				case 'yearly' :
+				case '1000' :
 					esc_html_e( 'Yearly', 'wp-event-calendar' );
 					break;
-				case 'never' :
+				case '100' :
+					esc_html_e( 'Monthly', 'wp-event-calendar' );
+					break;
+				case '10' :
+					esc_html_e( 'Weekly', 'wp-event-calendar' );
+					break;
+				case '0' :
 				default :
 					esc_html_e( 'Never', 'wp-event-calendar' );
 					break;
@@ -180,6 +242,15 @@ function wp_event_calendar_manage_custom_column_data( $column = '', $post_id = 0
 	}
 }
 
+/**
+ * Helper function for getting column data for event taxonomies
+ *
+ * @since 0.1.5
+ *
+ * @param   int     $post
+ * @param   string  $taxonomy
+ * @return  string
+ */
 function wp_get_event_taxonomy_column_data( $post = false, $taxonomy = '' ) {
 
 	// Get post & taxonomy

@@ -110,10 +110,10 @@ function wp_event_calendar_details_metabox() {
 
 	// Filter the intervals
 	$options = apply_filters( 'wp_event_calendar_intervals', array(
-		'never'   => __( 'Never',   'wp-event-calendar' ),
-		'weekly'  => __( 'Weekly',  'wp-event-calendar' ),
-		'monthly' => __( 'Monthly', 'wp-event-calendar' ),
-		'yearly'  => __( 'Yearly',  'wp-event-calendar' )
+		'0'      => __( 'Never',   'wp-event-calendar' ),
+		'10'     => __( 'Weekly',  'wp-event-calendar' ),
+		'100'    => __( 'Monthly', 'wp-event-calendar' ),
+		'1000'   => __( 'Yearly',  'wp-event-calendar' )
 	) );
 
 	// When to stop repeating?
