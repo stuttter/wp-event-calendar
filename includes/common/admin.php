@@ -171,6 +171,8 @@ function wp_event_calendar_change_menu_order( $menu_order = array() ) {
 					unset( $submenu[ $parent ][ $child ] );
 				}
 			}
+
+			ksort( $submenu[ $parent ] );
 		}
 	}
 
