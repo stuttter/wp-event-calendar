@@ -184,3 +184,8 @@ table.week th {
 table.week tbody tr.this-hour td {
 	background: #fbf9ee;
 }
+
+table.week tr.all-day th,
+table.week tr.all-day td {
+	border-bottom: 2px solid #e1e1e1;
+}

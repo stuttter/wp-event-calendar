@@ -367,6 +367,33 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	 *
 	 * @since 0.1.8
 	 */
+	protected function get_all_day_row() {
+
+		// Start an output buffer
+		ob_start(); ?>
+
+		<tr class="all-day">
+			<th><?php esc_html_e( 'All day', 'wp-event-calendar' ); ?></th>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+
+		<?php
+
+		// Return the output buffer
+		return ob_get_clean();
+	}
+
+	/**
+	 * Start the week with a table row, and a th to show the time
+	 *
+	 * @since 0.1.8
+	 */
 	protected function get_hour_start( $time = 0 ) {
 
 		// No row classes
@@ -375,11 +402,17 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 		// Is this this hour?
 		if ( date_i18n( 'H' ) === date_i18n( 'H', $time ) ) {
 			$class = 'class="this-hour"';
-		} ?>
+		}
+
+		// Start an output buffer
+		ob_start(); ?>
 
 		<tr <?php echo $class; ?>><th><?php echo date_i18n( 'g:i a', $time ); ?></th>
 
 		<?php
+
+		// Return the output buffer
+		return ob_get_clean();
 	}
 
 	/**
@@ -388,11 +421,16 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	 * @since 0.1.8
 	 */
 	protected function get_hour_end() {
-		?>
+
+		// Start an output buffer
+		ob_start(); ?>
 
 			</tr>
 
 		<?php
+
+		// Return the output buffer
+		return ob_get_clean();
 	}
 
 	/**
@@ -406,6 +444,9 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 		$week_start = date_i18n( 'j', $this->week_start );
 		$hour       = date_i18n( 'H', $time );
 
+		// Start an output buffer
+		ob_start();
+
 		// Calculate the day of the month
 		for ( $dow = 0; $dow <= 6; $dow++ ) :
 			$day = ( $dow + $week_start ); ?>
@@ -417,6 +458,9 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 			</td>
 
 		<?php endfor;
+
+		// Return the output buffer
+		return ob_get_clean();
 	}
 
 	/**
@@ -550,6 +594,9 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	 */
 	protected function display_mode( $year = 2015, $month = 1, $day = 1 ) {
 
+		// All day events
+		echo $this->get_all_day_row( $year, $month, $day );
+
 		// Loop through days of the month
 		for ( $i = 0; $i <= 23; $i++ ) {
 
@@ -557,13 +604,13 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 			$timestamp = mktime( $i, 0, 0, $month, $day, $year );
 
 			// New row
-			$this->get_hour_start( $timestamp );
+			echo $this->get_hour_start( $timestamp );
 
 			// Get table cells for all days this week in this hour
-			$this->get_hour_for_week( $timestamp );
+			echo $this->get_hour_for_week( $timestamp );
 
 			// Close row
-			$this->get_hour_end();
+			echo $this->get_hour_end();
 		}
 	}
 }
