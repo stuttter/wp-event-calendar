@@ -35,6 +35,12 @@ function wp_event_calendar_details_metabox() {
 		: false;
 	$disabled = disabled( $all_day, true, false );
 
+	/** Location **************************************************************/
+
+	$location = ! empty( $meta['wp_event_calendar_location'][0] )
+		? $meta['wp_event_calendar_location'][0]
+		: '';
+
 	/** Ends ******************************************************************/
 
 	// Get date_time
@@ -129,22 +135,6 @@ function wp_event_calendar_details_metabox() {
 	<input type="hidden" name="wp_event_calendar_metabox_nonce" value="<?php echo wp_create_nonce( 'wp_event_calendar' ); ?>" />
 	<table class="form-table rowfat">
 		<tr>
-
-			<td>
-				<label for="wp_event_calendar_all_day" class="screen-reader-text"><?php esc_html_e( 'All Day', 'wp-event-calendar' ); ?></label>
-			</td>
-
-			<td>
-				<label>
-					<input type="checkbox" name="wp_event_calendar_all_day" id="wp_event_calendar_all_day" value="1" <?php checked( $all_day ); ?> />
-					<?php esc_html_e( 'All-day event', 'wp-event-calendar' ); ?>
-				</label>
-			</td>
-
-			<td colspan="2"></td>
-		</tr>
-
-		<tr>
 			<td>
 				<label for="wp_event_calendar_date"><?php esc_html_e( 'Start Day', 'wp-event-calendar'); ?></label>
 			</td>
@@ -189,6 +179,29 @@ function wp_event_calendar_details_metabox() {
 					<option value="am" <?php selected( $end_am_pm, 'am' ); ?>><?php esc_html_e( 'AM', 'wp-event-calendar' ); ?></option>
 					<option value="pm" <?php selected( $end_am_pm, 'pm' ); ?>><?php esc_html_e( 'PM', 'wp-event-calendar' ); ?></option>
 				</select>
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				<label for="wp_event_calendar_location"><?php esc_html_e( 'Location', 'wp-event-calendar' ); ?></label>
+			</td>
+
+			<td>
+				<label>
+					<textarea name="wp_event_calendar_location" id="wp_event_calendar_location" placeholder="<?php esc_html_e( '(Optional)', 'wp-event-calendar' ); ?>"><?php echo esc_textarea( $location ); ?></textarea>
+				</label>
+			</td>
+
+			<td>
+				<label for="wp_event_calendar_all_day" class="screen-reader-text"><?php esc_html_e( 'All Day', 'wp-event-calendar' ); ?></label>
+			</td>
+
+			<td>
+				<label>
+					<input type="checkbox" name="wp_event_calendar_all_day" id="wp_event_calendar_all_day" value="1" <?php checked( $all_day ); ?> />
+					<?php esc_html_e( 'All-day event', 'wp-event-calendar' ); ?>
+				</label>
 			</td>
 		</tr>
 
@@ -262,10 +275,17 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 
 	/** All Day ***************************************************************/
 
-	// Get calendar date
+	// Get all-day status
 	$all_day = ! empty( $_POST['wp_event_calendar_all_day'] )
 		? (bool) $_POST['wp_event_calendar_all_day']
 		: false;
+
+	/** Location **************************************************************/
+
+	// Get event location
+	$location = ! empty( $_POST['wp_event_calendar_location'] )
+		? wp_kses( $_POST['wp_event_calendar_location'], array() )
+		: '';
 
 	/** Starts ****************************************************************/
 
@@ -416,6 +436,13 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 	// Nothing, so delete
 	} else {
 		delete_post_meta( $post_id, 'wp_event_calendar_end_date_time' );
+	}
+
+	// Save location
+	if ( ! empty( $location ) ) {
+		update_post_meta( $post_id, 'wp_event_calendar_location', $location );
+	} else {
+		delete_post_meta( $post_id, 'wp_event_calendar_location' );
 	}
 
 	// Save all-day
