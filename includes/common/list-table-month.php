@@ -27,6 +27,9 @@ class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 	public function __construct( $args = array() ) {
 		parent::__construct( $args );
 
+		// Set the mode
+		$this->mode = 'month';
+
 		// Setup the view ranges
 		$this->view_start = "{$this->year}-{$this->month}-01 00:00:00";
 		$this->view_end   = "{$this->year}-{$this->month}-31 00:00:00";

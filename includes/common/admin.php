@@ -203,11 +203,19 @@ function wp_event_calendar_show_admin_calendar() {
 	// Get the post type for easy caps checking
 	$post_type        = wp_event_calendar_get_admin_post_type();
 	$post_type_object = get_post_type_object( $post_type );
+	$user_id          = get_current_user_id();
 
-	// Get the calendar mode
-	$mode = isset( $_GET['mode'] )
-		? sanitize_key( $_GET['mode'] )
-		: 'month';
+	// Check for new mode
+	if ( ! empty( $_REQUEST['mode'] ) ) {
+		if ( in_array( $_REQUEST['mode'], array( 'month', 'week', 'day' ) ) ) {
+			$mode = $_REQUEST['mode'];
+		}
+		update_user_option( $user_id, 'event_calendar_mode', $mode );
+
+	// Use existing mode
+	} else {
+		$mode = get_user_option( 'event_calendar_mode', $user_id );
+	}
 
 	// Load the list table based on the mode
 	switch ( $mode ) {

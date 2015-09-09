@@ -47,6 +47,9 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	public function __construct( $args = array() ) {
 		parent::__construct( $args );
 
+		// Set the mode
+		$this->mode = 'week';
+
 		// Setup the week ranges
 		$this->week_start = strtotime( 'last Sunday midnight',   $this->today );
 		$this->week_end   = strtotime( 'this Saturday midnight', $this->today );

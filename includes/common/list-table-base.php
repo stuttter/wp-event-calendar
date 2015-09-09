@@ -188,24 +188,6 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Set the mode based on the current request
-	 *
-	 * @since 0.1.8
-	 */
-	protected function set_mode() {
-
-		// Look for a specific mode
-		$mode = isset( $_REQUEST['mode'] )
-			? sanitize_key( $_REQUEST['mode'] )
-			: 'month';
-
-		// Maybe set mode if being requested
-		if ( in_array( $mode, array_keys( $this->modes ) ) ) {
-			$this->mode = $mode;
-		}
-	}
-
-	/**
 	 * Return the post type of the current screen
 	 *
 	 * @since 0.1.0
@@ -554,6 +536,9 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 * @uses $this->get_order()
 	 */
 	public function prepare_items() {
+
+		// Set the mode
+		$this->set_mode();
 
 		// Set column headers
 		$this->_column_headers = array(
@@ -973,9 +958,6 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 * @access public
 	 */
 	public function display() {
-
-		// Set the mode
-		$this->set_mode();
 
 		// Top
 		$this->display_tablenav( 'top' ); ?>
