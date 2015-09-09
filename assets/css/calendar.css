@@ -107,10 +107,6 @@ table.month div.events-for-day {
 	min-height: 80px
 }
 
-table.month a.all-day {
-	background-color: #f4f477;
-}
-
 table.month a:before {
 	font: normal 15px/20px 'dashicons';
 	vertical-align: top;
@@ -146,6 +142,11 @@ table.month a.type-page:before {
 	content: '\f105';
 }
 
+.wp-pointer-content h3.status-trash:before,
+table.month a.status-trash:before {
+	content: '\f182';
+}
+
 .wp-pointer-content h3.status-private:before,
 table.month a.status-private:before {
 	content: '\f530';
@@ -156,8 +157,13 @@ table.month a.post-password-required:before {
 	content: '\f315';
 }
 
-.wp-pointer-content h3.status-draft:before,
-table.month a.status-draft:before {
+.wp-pointer-content h3.has-location:before,
+table.month a.has-location:before {
+	content: "\f230";
+}
+
+.wp-pointer-content h3.all-day:before,
+table.month a.all-day:before {
 	content: '\f469';
 }
 
