@@ -23,7 +23,22 @@ defined( 'ABSPATH' ) || exit;
  */
 class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 
+	/**
+	 * Unix time week start
+	 *
+	 * @since 0.1.8
+	 *
+	 * @var int
+	 */
 	private $week_start = 0;
+
+	/**
+	 * Unix time week end
+	 *
+	 * @since 0.1.8
+	 *
+	 * @var int
+	 */
 	private $week_end = 0;
 
 	/**
@@ -35,6 +50,10 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 		// Setup the week ranges
 		$this->week_start = strtotime( 'last Sunday midnight',   $this->today );
 		$this->week_end   = strtotime( 'this Saturday midnight', $this->today );
+
+		// Setup the week ranges
+		$this->view_start = date_i18n( 'Y-m-d H:i:s', $this->week_start );
+		$this->view_end   = date_i18n( 'Y-m-d H:i:s', $this->week_end   );
 	}
 
 	/**
@@ -60,7 +79,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	/**
 	 * Get a list of CSS classes for the list table table tag.
 	 *
-	 * @since 3.1.0
+	 * @since 0.1.8
 	 * @access protected
 	 *
 	 * @return array List of CSS classes for the table tag.
@@ -70,63 +89,11 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	}
 
 	/**
-	 * Prepare the list-table items for display
-	 *
-	 * @since 0.1.8
-	 *
-	 * @uses $this->_column_headers
-	 * @uses $this->items
-	 * @uses $this->get_columns()
-	 * @uses $this->get_orderby()
-	 * @uses $this->get_order()
-	 */
-	public function prepare_items() {
-
-		// Set column headers
-		$this->_column_headers = array(
-			$this->get_columns(),
-			array(),
-			array()
-		);
-
-		// Handle bulk actions
-		$this->process_bulk_action();
-
-		// Query for posts for this month only
-		$this->query = new WP_Query( $this->filter_month_args() );
-
-		// Max per day
-		$max_per_day = $this->get_per_day();
-
-		// Rearrange posts into an array keyed by day of the month
-		foreach ( $this->query->posts as $post ) {
-
-			// Get start & end
-			$this->_all_day = get_post_meta( $post->ID, 'wp_event_calendar_all_day',       true );
-			$this->_start   = get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
-			$this->_end     = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
-
-			// Format start
-			if ( ! empty( $this->_start ) ) {
-				$this->_start = strtotime( $this->_start );
-			}
-
-			// Format end
-			if ( ! empty( $this->_end ) ) {
-				$this->_end = strtotime( $this->_end );
-			}
-
-			// Prepare pointer & item
-			$this->setup_item( $post, $max_per_day );
-		}
-	}
-
-	/**
 	 * Add a post to the items array, keyed by day
 	 *
 	 * @todo Repeat & expire
 	 *
-	 * @since 0.1.1
+	 * @since 0.1.8
 	 *
 	 * @param  object  $post
 	 * @param  int     $max
@@ -178,63 +145,33 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	/**
 	 * Return filtered query arguments
 	 *
-	 * @since 0.1.1
+	 * @since 0.1.8
 	 *
 	 * @return array
 	 */
-	private function filter_month_args() {
+	protected function main_query_args( $args = array() ) {
 
 		// Events
 		if ( 'event' === $this->screen->post_type ) {
-
-			// Get boundaries
-			$week_start = date_i18n( 'Y-m-d H:i:s', $this->week_start );
-			$week_end   = date_i18n( 'Y-m-d H:i:s', $this->week_end   );
-
-			// Setup args
 			$args = array(
-				'post_type'           => $this->screen->post_type,
-				'post_status'         => $this->get_post_status(),
-				'posts_per_page'      => -1,
-				'orderby'             => 'meta_value',
-				'order'               => $this->get_order(),
-				'hierarchical'        => false,
-				'ignore_sticky_posts' => true,
-				's'                   => $this->get_search(),
-				'meta_query'          => array(
+				'meta_query' => array(
 					array(
 						'key'     => 'wp_event_calendar_date_time',
-						'value'   => array( $week_start, $week_end ),
+						'value'   => array( $this->view_start, $this->view_end ),
 						'type'    => 'DATETIME',
 						'compare' => 'BETWEEN',
 					),
 
-					// Skip all day events in the loop
+					// Skip all day events in this loop
 					array(
 						'key'     => 'wp_event_calendar_all_day',
 						'compare' => 'NOT EXISTS'
 					)
 				)
 			);
-
-		// All others
-		} else {
-			$args = array(
-				'post_type'           => $this->screen->post_type,
-				'post_status'         => $this->get_post_status(),
-				'monthnum'            => $this->month,
-				'year'                => $this->year,
-				'day'                 => null,
-				'posts_per_page'      => -1,
-				'orderby'             => $this->get_orderby(),
-				'order'               => $this->get_order(),
-				'hierarchical'        => false,
-				'ignore_sticky_posts' => true,
-				's'                   => $this->get_search()
-			);
 		}
 
-		return apply_filters( 'wp_event_calendar_month_query', $args );
+		return parent::main_query_args( $args );
 	}
 
 	/**
@@ -260,49 +197,6 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 
 		// Return pagination
 		return parent::pagination( $args );
-	}
-
-	/**
-	 * Output month & year inputs, for viewing relevant posts
-	 *
-	 * @since 0.1.8
-	 *
-	 * @param  string  $which
-	 */
-	protected function extra_tablenav( $which = '' ) {
-
-		// No bottom extras
-		if ( 'top' !== $which ) {
-			return;
-		}
-
-		// Start an output buffer
-		ob_start(); ?>
-
-		<label for="month" class="screen-reader-text"><?php esc_html_e( 'Switch to this month', 'wp-event-calendar' ); ?></label>
-		<select name="month" id="month">
-
-			<?php for ( $month_index = 1; $month_index <= 12; $month_index++ ) : ?>
-
-				<option value="<?php echo esc_attr( $month_index ); ?>" <?php selected( $month_index, $this->month ); ?>><?php echo $GLOBALS['wp_locale']->get_month( $month_index ); ?></option>
-
-			<?php endfor;?>
-
-		</select>
-
-		<label for="year" class="screen-reader-text"><?php esc_html_e( 'Switch to this year', 'wp-event-calendar' ); ?></label>
-		<input type="number" name="year" id="year" value="<?php echo (int) $this->year; ?>" size="5">
-
-		<?php
-
-		// Allow additional tablenav output before the "View" button
-		do_action( 'wp_event_calendar_before_tablenav_view' );
-
-		// Output the "View" button
-		submit_button( esc_html__( 'View', 'wp-event-calendar' ), 'action', '', false, array( 'id' => "doaction" ) );
-
-		// Filter & return
-		return apply_filters( 'wp_event_calendar_get_extra_tablenav', ob_get_clean() );
 	}
 
 	/**
@@ -337,7 +231,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	 *
 	 * @since 0.1.8
 	 */
-	protected function get_hour_start( $time = 0 ) {
+	protected function get_row_start( $time = 0 ) {
 
 		// No row classes
 		$class = '';
@@ -363,7 +257,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	 *
 	 * @since 0.1.8
 	 */
-	protected function get_hour_end() {
+	protected function get_row_end() {
 
 		// Start an output buffer
 		ob_start(); ?>
@@ -381,7 +275,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	 *
 	 * @since 0.1.8
 	 */
-	protected function get_hour_for_week( $time = 0 ) {
+	protected function get_row_contents( $time = 0 ) {
 
 		// Get week start day
 		$week_start = date_i18n( 'j', $this->week_start );
@@ -394,9 +288,9 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 		for ( $dow = 0; $dow <= 6; $dow++ ) :
 			$day = ( $dow + $week_start ); ?>
 
-			<td class="<?php echo $this->get_day_classes( $dow, $day ); ?>">
+			<td class="<?php echo $this->get_event_classes( $dow, $day ); ?>">
 				<div class="events-for-day">
-					<?php echo $this->get_hour_posts_for_day( $hour, $day ); ?>
+					<?php echo $this->get_posts_for_cell( $hour, $day ); ?>
 				</div>
 			</td>
 
@@ -430,7 +324,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	 *
 	 * @return string
 	 */
-	protected function get_hour_posts_for_day( $hour = 0, $day = 1 ) {
+	protected function get_posts_for_cell( $hour = 0, $day = 1 ) {
 
 		// Get posts and bail if none
 		$posts = $this->get_day_queried_posts( $hour, $day );
@@ -464,69 +358,6 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	}
 
 	/**
-	 * Get classes for post in day
-	 *
-	 * @since 0.1.8
-	 *
-	 * @param int $post_id
-	 */
-	protected function get_day_post_classes( $post_id = 0 ) {
-		return join( ' ', get_post_class( '', $post_id ) );
-	}
-
-	/**
-	 * Is the current calendar view today
-	 *
-	 * @since 0.1.8
-	 *
-	 * @return bool
-	 */
-	protected function is_today( $month, $day, $year ) {
-		$_month = (bool) ( $month == date_i18n( 'n' ) );
-		$_day   = (bool) ( $day   == date_i18n( 'j' ) );
-		$_year  = (bool) ( $year  == date_i18n( 'Y' ) );
-
-		return (bool) ( true === $_month && true === $_day && true === $_year );
-	}
-
-	/**
-	 * Get classes for table cell
-	 *
-	 * @since 0.1.8
-	 *
-	 * @param   type  $iterator
-	 * @param   type  $start_day
-	 *
-	 * @return  type
-	 */
-	protected function get_day_classes( $iterator = 1, $start_day = 1 ) {
-		$dow      = ( $iterator % 7 );
-		$day_key  = sanitize_key( $GLOBALS['wp_locale']->get_weekday( $dow ) );
-
-		// Position & day info
-		$position     = "position-{$dow}";
-		$day_number   = "day-{$start_day}";
-		$month_number = "month-{$this->month}";
-		$year_number  = "year-{$this->year}";
-
-		$is_today = $this->is_today( $this->month, $start_day, $this->year )
-			? 'today'
-			: '';
-
-		// Assemble classes
-		$classes = array(
-			$day_key,
-			$is_today,
-			$position,
-			$day_number,
-			$month_number,
-			$year_number
-		);
-
-		return implode( ' ', $classes );
-	}
-
-	/**
 	 * Display a calendar by month and year
 	 *
 	 * @since 0.1.8
@@ -547,13 +378,13 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 			$timestamp = mktime( $i, 0, 0, $month, $day, $year );
 
 			// New row
-			echo $this->get_hour_start( $timestamp );
+			echo $this->get_row_start( $timestamp );
 
 			// Get table cells for all days this week in this hour
-			echo $this->get_hour_for_week( $timestamp );
+			echo $this->get_row_contents( $timestamp );
 
 			// Close row
-			echo $this->get_hour_end();
+			echo $this->get_row_end();
 		}
 	}
 }

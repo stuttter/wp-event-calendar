@@ -90,6 +90,33 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	public $pointers = array();
 
 	/**
+	 * The mode of the current view
+	 *
+	 * @since 0.1.8
+	 *
+	 * @var array
+	 */
+	public $mode = 'month';
+
+	/**
+	 * The beginning boundary for the current view
+	 *
+	 * @since 0.1.8
+	 *
+	 * @var string
+	 */
+	public $view_start = '';
+
+	/**
+	 * The end boundary for the current view
+	 *
+	 * @since 0.1.8
+	 *
+	 * @var string
+	 */
+	public $view_end = '';
+
+	/**
 	 * All-day meta of the current event
 	 *
 	 * @since 0.1.5
@@ -161,6 +188,24 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Set the mode based on the current request
+	 *
+	 * @since 0.1.8
+	 */
+	protected function set_mode() {
+
+		// Look for a specific mode
+		$mode = isset( $_REQUEST['mode'] )
+			? sanitize_key( $_REQUEST['mode'] )
+			: 'month';
+
+		// Maybe set mode if being requested
+		if ( in_array( $mode, array_keys( $this->modes ) ) ) {
+			$this->mode = $mode;
+		}
+	}
+
+	/**
 	 * Return the post type of the current screen
 	 *
 	 * @since 0.1.0
@@ -199,11 +244,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 
 		// Setup "page" argument
 		$args['page'] = $post_type . '-calendar';
-
-		// Include the mode if it's already set
-		if ( isset( $_GET['mode'] ) ) {
-			$args['mode'] = sanitize_key( $_GET['mode'] );
-		}
+		$args['mode'] = $this->mode;
 
 		// Add args & return
 		return add_query_arg( $args, admin_url( 'edit.php' ) );
@@ -380,7 +421,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 *
 	 * @return int
 	 */
-	protected function get_per_day() {
+	protected function get_max() {
 		$user_option = get_user_option( get_current_screen()->base . 'per_day' );
 
 		if ( empty( $user_option ) ) {
@@ -393,8 +434,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	/**
 	 * Get a list of CSS classes for the list table table tag.
 	 *
-	 * @since 3.1.0
-	 * @access protected
+	 * @since 0.1.0
 	 *
 	 * @return array List of CSS classes for the table tag.
 	 */
@@ -500,6 +540,105 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 		}
 
 		return $status_links;
+	}
+
+	/**
+	 * Prepare the list-table items for display
+	 *
+	 * @since 0.1.0
+	 *
+	 * @uses $this->_column_headers
+	 * @uses $this->items
+	 * @uses $this->get_columns()
+	 * @uses $this->get_orderby()
+	 * @uses $this->get_order()
+	 */
+	public function prepare_items() {
+
+		// Set column headers
+		$this->_column_headers = array(
+			$this->get_columns(),
+			array(),
+			array()
+		);
+
+		// Query for posts for this month only
+		$this->query = new WP_Query( $this->main_query_args() );
+
+		// Max per day
+		$max_per = $this->get_max();
+
+		// Rearrange posts into an array keyed by day of the month
+		foreach ( $this->query->posts as $post ) {
+
+			// Get start & end
+			$this->_all_day = get_post_meta( $post->ID, 'wp_event_calendar_all_day',       true );
+			$this->_start   = get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
+			$this->_end     = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
+
+			// Format start
+			if ( ! empty( $this->_start ) ) {
+				$this->_start = strtotime( $this->_start );
+			}
+
+			// Format end
+			if ( ! empty( $this->_end ) ) {
+				$this->_end = strtotime( $this->_end );
+			}
+
+			// Prepare pointer & item
+			$this->setup_item( $post, $max_per );
+		}
+	}
+
+	/**
+	 *
+	 * @return type
+	 */
+	protected function main_query_args( $args = array() ) {
+
+		// Events
+		if ( 'event' === $this->screen->post_type ) {
+			$defaults = array(
+				'post_type'           => $this->screen->post_type,
+				'post_status'         => $this->get_post_status(),
+				'posts_per_page'      => -1,
+				'orderby'             => 'meta_value',
+				'order'               => $this->get_order(),
+				'hierarchical'        => false,
+				'ignore_sticky_posts' => true,
+				's'                   => $this->get_search(),
+				'meta_query'          => array(
+					array(
+						'key'     => 'wp_event_calendar_date_time',
+						'value'   => array( $this->view_start, $this->view_end ),
+						'type'    => 'DATETIME',
+						'compare' => 'BETWEEN',
+					)
+				)
+			);
+
+		// All others
+		} else {
+			$defaults = array(
+				'post_type'           => $this->screen->post_type,
+				'post_status'         => $this->get_post_status(),
+				'monthnum'            => $this->month,
+				'year'                => $this->year,
+				'day'                 => null,
+				'posts_per_page'      => -1,
+				'orderby'             => $this->get_orderby(),
+				'order'               => $this->get_order(),
+				'hierarchical'        => false,
+				'ignore_sticky_posts' => true,
+				's'                   => $this->get_search()
+			);
+		}
+
+		// Parse the arguments
+		$r = wp_parse_args( $args, $defaults );
+
+		return apply_filters( 'wp_event_calendar_month_query', $r, $args, $defaults );
 	}
 
 	/**
@@ -618,7 +757,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 		$pointer_content = array();
 
 		// Pointer content
-		$pointer_content[] = '<h3 class="' . $this->get_day_post_classes( $post->ID ) . '">' . $this->get_pointer_title( $post ) . '</h3>';
+		$pointer_content[] = '<h3 class="' . $this->get_event_classes( $post->ID ) . '">' . $this->get_pointer_title( $post ) . '</h3>';
 		$pointer_content[] = '<p>' . implode( '<br>', $this->get_pointer_text( $post ) ) . '</p>';
 
 		// Filter pointer content specifically
@@ -835,6 +974,9 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 */
 	public function display() {
 
+		// Set the mode
+		$this->set_mode();
+
 		// Top
 		$this->display_tablenav( 'top' ); ?>
 
@@ -870,15 +1012,147 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Display the view switcher
+	 * Get classes for post in day
 	 *
-	 * @since 0.1.8
+	 * @since 0.1.0
 	 *
-	 * @param string $current_mode
+	 * @param int $post_id
 	 */
-	protected function view_switcher( $which = 'top', $current_mode = '' ) {
+	protected function get_event_classes( $post_id = 0 ) {
 
-		// Only switch on top
+		// Empty classes array
+		$classes = array();
+
+		// Is the event all day?
+		$classes[] = get_post_meta( $post_id, 'wp_event_calendar_all_day' )
+			? 'all-day'
+			: '';
+
+		// Is the event all day?
+		$classes[] = get_post_meta( $post_id, 'wp_event_calendar_location' )
+			? 'has-location'
+			: '';
+
+		// Get event terms
+		$terms = wp_get_object_terms( $post_id, array( 'event-type', 'event-category', 'event-tag' ) );
+		foreach ( $terms as $term ) {
+			$classes[] = "tax-{$term->taxonomy}";
+			$classes[] = "term-{$term->slug}";
+		}
+
+		// Remove any empties
+		$classes = get_post_class( $classes, $post_id );
+
+		// Join & return
+		return join( ' ', $classes );
+	}
+
+	/**
+	 * Is the current calendar view today
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return bool
+	 */
+	protected function is_today( $month, $day, $year ) {
+		$_month = (bool) ( $month == date_i18n( 'n' ) );
+		$_day   = (bool) ( $day   == date_i18n( 'j' ) );
+		$_year  = (bool) ( $year  == date_i18n( 'Y' ) );
+
+		return (bool) ( true === $_month && true === $_day && true === $_year );
+	}
+
+	/**
+	 * Get classes for table cell
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param   type  $iterator
+	 * @param   type  $start_day
+	 *
+	 * @return  type
+	 */
+	protected function get_day_classes( $iterator = 1, $start_day = 1 ) {
+		$dow      = ( $iterator % 7 );
+		$day_key  = sanitize_key( $GLOBALS['wp_locale']->get_weekday( $dow ) );
+		$offset   = ( $iterator - $start_day ) + 1;
+
+		// Position & day info
+		$position     = "position-{$dow}";
+		$day_number   = "day-{$offset}";
+		$month_number = "month-{$this->month}";
+		$year_number  = "year-{$this->year}";
+
+		$is_today = $this->is_today( $this->month, $offset, $this->year )
+			? 'today'
+			: '';
+
+		// Assemble classes
+		$classes = array(
+			$day_key,
+			$is_today,
+			$position,
+			$day_number,
+			$month_number,
+			$year_number
+		);
+
+		return implode( ' ', $classes );
+	}
+
+	/**
+	 * Display a calendar by month and year
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param int $year
+	 * @param int $month
+	 * @param int $day
+	 */
+	protected function display_mode( $year = 2015, $month = 1, $day = 1 ) {
+		// Performed by subclass
+	}
+
+	/**
+	 * Generate the table navigation above or below the table
+	 *
+	 * @since 0.1.0
+	 *
+	 * @access protected
+	 * @param string $which
+	 */
+	protected function display_tablenav( $which ) {
+		?>
+
+		<div class="tablenav <?php echo esc_attr( $which ); ?>">
+
+			<?php
+
+				// Output Month, Year tablenav
+				echo $this->extra_tablenav( $which );
+
+				// Output year/month pagination
+				echo $this->pagination( $which );
+
+				// Output month/week/day switcher
+				echo $this->view_switcher( $which ); ?>
+
+			<br class="clear" />
+		</div>
+
+		<?php
+	}
+
+	/**
+	 * Output month & year inputs, for viewing relevant posts
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param  string  $which
+	 */
+	protected function extra_tablenav( $which = '' ) {
+
+		// No bottom extras
 		if ( 'top' !== $which ) {
 			return;
 		}
@@ -886,35 +1160,30 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 		// Start an output buffer
 		ob_start(); ?>
 
-		<div class="view-switch">
-			<input type="hidden" name="mode" value="<?php echo esc_attr( $current_mode ); ?>" />
+		<label for="month" class="screen-reader-text"><?php esc_html_e( 'Switch to this month', 'wp-event-calendar' ); ?></label>
+		<select name="month" id="month">
 
-			<?php
+			<?php for ( $month_index = 1; $month_index <= 12; $month_index++ ) : ?>
 
-			// Loop through modes
-			foreach ( $this->modes as $mode => $title ) :
+				<option value="<?php echo esc_attr( $month_index ); ?>" <?php selected( $month_index, $this->month ); ?>><?php echo $GLOBALS['wp_locale']->get_month( $month_index ); ?></option>
 
-				$url = add_query_arg( 'mode', $mode );
+			<?php endfor;?>
 
-				// Setup classes
-				$classes = array( 'view-' . $mode );
-				if ( $current_mode === $mode ) {
-					$classes[] = 'current';
-				} ?>
+		</select>
 
-
-				<a href="<?php echo esc_url( $url ); ?>" class="<?php echo implode( ' ', $classes ); ?>" id="view-switch-<?php echo esc_attr( $mode ); ?>" title="<?php echo esc_attr( $title ); ?>">
-					<span class='screen-reader-text'><?php echo esc_html( $title ); ?></span>
-				</a>
-
-			<?php endforeach; ?>
-
-		</div>
+		<label for="year" class="screen-reader-text"><?php esc_html_e( 'Switch to this year', 'wp-event-calendar' ); ?></label>
+		<input type="number" name="year" id="year" value="<?php echo (int) $this->year; ?>" size="5">
 
 		<?php
 
-		// Return the output buffer
-		return ob_get_clean();
+		// Allow additional tablenav output before the "View" button
+		do_action( 'wp_event_calendar_before_tablenav_view' );
+
+		// Output the "View" button
+		submit_button( esc_html__( 'View', 'wp-event-calendar' ), 'action', '', false, array( 'id' => "doaction" ) );
+
+		// Filter & return
+		return apply_filters( 'wp_event_calendar_get_extra_tablenav', ob_get_clean() );
 	}
 
 	/**
@@ -1013,193 +1282,59 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 
 		<?php
 
+		// Get the output buffer
+		$retval = ob_get_clean();
+
 		// Filter & return
-		return apply_filters( 'wp_event_calendar_get_pagination', ob_get_clean() );
+		return apply_filters( 'wp_event_calendar_get_pagination', $retval, $r, $args );
 	}
 
 	/**
-	 * Get the already queried posts for a given day
+	 * Display the view switcher
 	 *
-	 * @since 0.1.0
+	 * @since 0.1.8
 	 *
-	 * @param int $day
-	 *
-	 * @return array
+	 * @param string $which
 	 */
-	protected function get_day_queried_posts( $day = 1 ) {
-		return isset( $this->items[ $day ] )
-			? $this->items[ $day ]
-			: array();
-	}
+	protected function view_switcher( $which = 'top' ) {
 
-	/**
-	 * Get posts for the day
-	 *
-	 * @since 0.1.0
-	 *
-	 * @param int $day
-	 *
-	 * @return string
-	 */
-	protected function get_day_posts( $day = 1 ) {
-
-		// Get posts and bail if none
-		$posts = $this->get_day_queried_posts( $day );
-		if ( empty( $posts ) ) {
-			return '';
+		// Only switch on top
+		if ( 'top' !== $which ) {
+			return;
 		}
 
 		// Start an output buffer
-		ob_start();
+		ob_start(); ?>
 
-		// Loop through today's posts
-		foreach ( $posts as $post ) :
-
-			// Setup the pointer ID
-			$ponter_id = "{$post->ID}-{$day}";
-
-			// Get the post link
-			$post_link = get_edit_post_link( $post->ID );
-
-			// Handle empty titles
-			$post_title = get_the_title( $post->ID );
-			if ( empty( $post_title ) ) {
-				$post_title = esc_html__( '(No title)', 'wp-event-calendar' );
-			} ?>
-
-			<a id="event-pointer-<?php echo esc_attr( $ponter_id ); ?>" href="<?php echo esc_url( $post_link ); ?>" class="<?php echo $this->get_day_post_classes( $post->ID ); ?>"><?php echo esc_html( $post_title ); ?></a>
-
-		<?php endforeach;
-
-		return ob_get_clean();
-	}
-
-	/**
-	 * Get classes for post in day
-	 *
-	 * @since 0.1.0
-	 *
-	 * @param int $post_id
-	 */
-	protected function get_day_post_classes( $post_id = 0 ) {
-
-		// Empty classes array
-		$classes = array();
-
-		// Is the event all day?
-		$classes[] = get_post_meta( $post_id, 'wp_event_calendar_all_day' )
-			? 'all-day'
-			: '';
-
-		// Get event terms
-		$terms = wp_get_object_terms( $post_id, array( 'event-type', 'event-category', 'event-tag' ) );
-		foreach ( $terms as $term ) {
-			$classes[] = "tax-{$term->taxonomy}";
-			$classes[] = "term-{$term->slug}";
-		}
-
-		return join( ' ', get_post_class( $classes, $post_id ) );
-	}
-
-	/**
-	 * Is the current calendar view today
-	 *
-	 * @since 0.1.0
-	 *
-	 * @return bool
-	 */
-	protected function is_today( $month, $day, $year ) {
-		$_month = (bool) ( $month == date_i18n( 'n' ) );
-		$_day   = (bool) ( $day   == date_i18n( 'j' ) );
-		$_year  = (bool) ( $year  == date_i18n( 'Y' ) );
-
-		return (bool) ( true === $_month && true === $_day && true === $_year );
-	}
-
-	/**
-	 * Get classes for table cell
-	 *
-	 * @since 0.1.0
-	 *
-	 * @param   type  $iterator
-	 * @param   type  $start_day
-	 *
-	 * @return  type
-	 */
-	protected function get_day_classes( $iterator = 1, $start_day = 1 ) {
-		$dow      = ( $iterator % 7 );
-		$day_key  = sanitize_key( $GLOBALS['wp_locale']->get_weekday( $dow ) );
-
-		$offset   = ( $iterator - $start_day ) + 1;
-
-		// Position & day info
-		$position     = "position-{$dow}";
-		$day_number   = "day-{$offset}";
-		$month_number = "month-{$this->month}";
-		$year_number  = "year-{$this->year}";
-
-		$is_today = $this->is_today( $this->month, $offset, $this->year )
-			? 'today'
-			: '';
-
-		// Assemble classes
-		$classes = array(
-			$day_key,
-			$is_today,
-			$position,
-			$day_number,
-			$month_number,
-			$year_number
-		);
-
-		return implode( ' ', $classes );
-	}
-
-	/**
-	 * Display a calendar by month and year
-	 *
-	 * @since 0.1.0
-	 *
-	 * @param int $year
-	 * @param int $month
-	 * @param int $day
-	 */
-	protected function display_mode( $year = 2015, $month = 1, $day = 1 ) {
-		// Performed by subclass
-	}
-
-	/**
-	 * Generate the table navigation above or below the table
-	 *
-	 * @since 0.1.0
-	 *
-	 * @access protected
-	 * @param string $which
-	 */
-	protected function display_tablenav( $which ) {
-
-		// Get the mode, if there is one
-		$mode = isset( $_GET['mode'] ) && in_array( $_GET['mode'], array_keys( $this->modes ) )
-			? $_GET['mode']
-			: 'month'; ?>
-
-		<div class="tablenav <?php echo esc_attr( $which ); ?>">
+		<div class="view-switch">
+			<input type="hidden" name="mode" value="<?php echo esc_attr( $this->mode ); ?>" />
 
 			<?php
 
-				// Output Month, Year tablenav
-				echo $this->extra_tablenav( $which );
+			// Loop through modes
+			foreach ( $this->modes as $mode => $title ) :
 
-				// Output year/month pagination
-				echo $this->pagination( $which );
+				$url = add_query_arg( 'mode', $mode );
 
-				// Output month/week/day switcher
-				echo $this->view_switcher( $which, $mode ); ?>
+				// Setup classes
+				$classes = array( 'view-' . $mode );
+				if ( $this->mode === $mode ) {
+					$classes[] = 'current';
+				} ?>
 
-			<br class="clear" />
+
+				<a href="<?php echo esc_url( $url ); ?>" class="<?php echo implode( ' ', $classes ); ?>" id="view-switch-<?php echo esc_attr( $mode ); ?>" title="<?php echo esc_attr( $title ); ?>">
+					<span class='screen-reader-text'><?php echo esc_html( $title ); ?></span>
+				</a>
+
+			<?php endforeach; ?>
+
 		</div>
 
 		<?php
+
+		// Return the output buffer
+		return ob_get_clean();
 	}
 }
 endif;
