@@ -191,8 +191,24 @@ function wp_event_calendar_show_admin_calendar() {
 	$post_type        = wp_event_calendar_get_admin_post_type();
 	$post_type_object = get_post_type_object( $post_type );
 
-	// Load the Calendar table
-	$wp_list_table = new WP_Event_Calendar_Month_Table();
+	// Get the calendar mode
+	$mode = isset( $_GET['mode'] )
+		? sanitize_key( $_GET['mode'] )
+		: 'month';
+
+	// Load the list table based on the mode
+	switch ( $mode ) {
+		case 'day' :
+			$wp_list_table = new WP_Event_Calendar_Day_Table();
+			break;
+		case 'week' :
+			$wp_list_table = new WP_Event_Calendar_Week_Table();
+			break;
+		case 'month' :
+		default :
+			$wp_list_table = new WP_Event_Calendar_Month_Table();
+			break;
+	}
 
 	// Query for calendar content
 	$wp_list_table->prepare_items();

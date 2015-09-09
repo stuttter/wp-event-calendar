@@ -1,8 +1,4 @@
-#wp_event_calendar_details .inside,
-#wp_event_calendar_details table {
-	padding: 0;
-	margin: 0;
-}
+/** Edit & Rows ***************************************************************/
 
 .widefat .column-start,
 .widefat .column-end,
@@ -19,61 +15,37 @@
 	width: 10%;
 }
 
+#wp_event_calendar_details .inside,
+#wp_event_calendar_details table {
+	padding: 0;
+	margin: 0;
+}
+
+/** Common ********************************************************************/
+
+.view-switch .view-month:before {
+	content: '\f509';
+}
+
+.view-switch .view-week:before {
+	content: '\f164';
+}
+
+.view-switch .view-day:before {
+	content: '\f163';
+}
+
 table.calendar thead th,
 table.calendar tfoot th {
 	text-align: center;
 }
 
-table.calendar tbody td span.day-number {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	padding: 2px 10px;
-	opacity: 0.5;
-	border-right: 1px solid #e1e1e1;
-	border-bottom: 1px solid #e1e1e1;
-	background-color: #fafafa;
-}
-
-table.calendar tbody td.today span.day-number {
-	background: #f0f0c0;
-}
-
 table.calendar tbody td {
 	padding: 0;
-	height: 110px;
 	position: relative;
 	text-align: left;
 	border-bottom: 1px solid #e1e1e1;
 	border-right: 1px solid #e1e1e1;
-}
-
-table.calendar tbody th {
-	height: 80px;
-	background-color: #fff;
-	border-bottom: 1px solid #e1e1e1;
-}
-
-table.calendar tbody tr th:last-of-type {
-	border-right: 1px solid #e1e1e1;
-}
-
-table.calendar tbody td:last-of-type:not(.position-6) {
-	border-right: 1px solid #e1e1e1;
-}
-
-table.calendar tbody tr td:last-of-type {
-	border-right: none;
-}
-
-table.calendar tbody td.saturday,
-table.calendar tbody td.sunday {
-	background-color: #f1f1f1;
-}
-
-table.calendar div.events-for-day {
-	margin: 30px 0 5px;
-	min-height: 80px
 }
 
 table.calendar a {
@@ -86,11 +58,60 @@ table.calendar a {
 	padding: 0 5px;
 }
 
-table.calendar a.all-day {
+table.calendar tbody td.saturday,
+table.calendar tbody td.sunday {
+	background-color: #f1f1f1;
+}
+
+/** Month *********************************************************************/
+
+table.month tbody td span.day-number {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	padding: 2px 10px;
+	opacity: 0.5;
+	border-right: 1px solid #e1e1e1;
+	border-bottom: 1px solid #e1e1e1;
+	background-color: #fafafa;
+}
+
+table.month tbody td.today span.day-number {
+	background: #fbf9ee;
+}
+
+table.month tbody td {
+	min-height: 110px;
+}
+
+table.month tbody th {
+	height: 80px;
+	background-color: #fff;
+	border-bottom: 1px solid #e1e1e1;
+}
+
+table.month tbody tr th:last-of-type {
+	border-right: 1px solid #e1e1e1;
+}
+
+table.month tbody td:last-of-type:not(.position-6) {
+	border-right: 1px solid #e1e1e1;
+}
+
+table.month tbody tr td:last-of-type {
+	border-right: none;
+}
+
+table.month div.events-for-day {
+	margin: 30px 0 5px;
+	min-height: 80px
+}
+
+table.month a.all-day {
 	background-color: #f4f477;
 }
 
-table.calendar a:before {
+table.month a:before {
 	font: normal 15px/20px 'dashicons';
 	vertical-align: top;
 	speak: none;
@@ -111,39 +132,55 @@ table.calendar a:before {
 }
 
 .wp-pointer-content h3.type-event:before,
-table.calendar a.type-event:before {
+table.month a.type-event:before {
 	content: '\f145';
 }
 
 .wp-pointer-content h3.type-post:before,
-table.calendar a.type-post:before {
+table.month a.type-post:before {
 	content: '\f109';
 }
 
 .wp-pointer-content h3.type-page:before,
-table.calendar a.type-page:before {
+table.month a.type-page:before {
 	content: '\f105';
 }
 
 .wp-pointer-content h3.status-private:before,
-table.calendar a.status-private:before {
+table.month a.status-private:before {
 	content: '\f530';
 }
 
 .wp-pointer-content h3.post-password-required:before,
-table.calendar a.post-password-required:before {
+table.month a.post-password-required:before {
 	content: '\f315';
 }
 
 .wp-pointer-content h3.status-draft:before,
-table.calendar a.status-draft:before {
+table.month a.status-draft:before {
 	content: '\f469';
 }
 
-table.calendar a.status-draft {
+table.month a.status-draft {
 	opacity: 0.5;
 }
 
 input#year {
 	width: 90px;
+}
+
+/** Week **********************************************************************/
+
+table.week th {
+	width: 30px;
+	background-color: #fff;
+	color: #333;
+	border-bottom: 1px solid #e1e1e1;
+	border-right: 1px solid #e1e1e1;
+	text-align: center;
+	cursor: default;
+}
+
+table.week tbody tr.this-hour td {
+	background: #fbf9ee;
 }
