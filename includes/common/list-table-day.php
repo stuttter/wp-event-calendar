@@ -164,78 +164,24 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param string $which
+	 * @param array $args
 	 */
-	protected function pagination( $which = '' ) {
+	protected function pagination( $args = array() ) {
 
-		// No botton pagination
-		if ( 'top' !== $which ) {
-			return;
-		}
+		// Parse args
+		$args = wp_parse_args( $args, array(
+			'small'  => '1 day',
+			'large'  => '1 week',
+			'labels' => array(
+				'next_small' => esc_html__( 'Tomorrow',  'wp-event-calendar' ),
+				'next_large' => esc_html__( 'Next Week', 'wp-event-calendar' ),
+				'prev_small' => esc_html__( 'Yesterday', 'wp-event-calendar' ),
+				'prev_large' => esc_html__( 'Last Week', 'wp-event-calendar' )
+			)
+		) );
 
-		// Base URLs
-		$today    = $this->get_base_url();
-		$page_url = add_query_arg( array(
-			'month' => $this->month,
-			'year'  => $this->year,
-			'day'   => $this->day,
-		), $today );
-
-		// Adjust previous & next
-		$prev_year  = $this->year - 1;
-		$next_year  = $this->year + 1;
-		$prev_month = $this->month - 1;
-		$next_month = $this->month + 1;
-
-		// Setup month args
-		$prev_month_args = array( 'month' => $prev_month );
-		$next_month_args = array( 'month' => $next_month );
-
-		// Previous month is last year
-		if ( $prev_month === 0 ) {
-			$prev_month_args['month'] = 12;
-			$prev_month_args['year']  = $prev_year;
-		}
-
-		// Next month is a new year
-		if ( $next_month === 13 ) {
-			$next_month_args['month'] = 1;
-			$next_month_args['year']  = $next_year;
-		}
-
-		// Start an output buffer
-		ob_start(); ?>
-
-		<div class="tablenav-pages previous">
-			<a class="previous-page" href="<?php echo esc_url( add_query_arg( array( 'year' => $prev_year ), $page_url ) ); ?>">
-				<span class="screen-reader-text"><?php esc_html_e( 'Previous year', 'wp-event-calendar' ); ?></span>
-				<span aria-hidden="true">&laquo;</span>
-			</a>
-			<a class="previous-page" href="<?php echo esc_url( add_query_arg( $prev_month_args, $page_url ) ); ?>">
-				<span class="screen-reader-text"><?php esc_html_e( 'Previous month', 'wp-event-calendar' ); ?></span>
-				<span aria-hidden="true">&lsaquo;</span>
-			</a>
-
-			<a href="<?php echo esc_url( $today ); ?>" class="previous-page">
-				<span class="screen-reader-text"><?php esc_html_e( 'Today', 'wp-event-calendar' ); ?></span>
-				<span aria-hidden="true">&Colon;</span>
-			</a>
-
-			<a class="next-page" href="<?php echo esc_url( add_query_arg( $next_month_args, $page_url ) ); ?>">
-				<span class="screen-reader-text"><?php esc_html_e( 'Next month', 'wp-event-calendar' ); ?></span>
-				<span aria-hidden="true">&rsaquo;</span>
-			</a>
-
-			<a class="next-page" href="<?php echo esc_url( add_query_arg( array( 'year' => $next_year ), $page_url ) ); ?>">
-				<span class="screen-reader-text"><?php esc_html_e( 'Next year', 'wp-event-calendar' ); ?></span>
-				<span aria-hidden="true">&raquo;</span>
-			</a>
-		</div>
-
-		<?php
-
-		// Filter & return
-		return apply_filters( 'wp_event_calendar_get_pagination', ob_get_clean() );
+		// Return pagination
+		return parent::pagination( $args );
 	}
 
 	/**

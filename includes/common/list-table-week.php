@@ -242,85 +242,24 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	 *
 	 * @since 0.1.8
 	 *
-	 * @param string $which
+	 * @param array $args
 	 */
-	protected function pagination( $which = '' ) {
+	protected function pagination( $args = array() ) {
 
-		// No botton pagination
-		if ( 'top' !== $which ) {
-			return;
-		}
+		// Parse args
+		$args = wp_parse_args( $args, array(
+			'small'  => '1 week',
+			'large'  => '1 month',
+			'labels' => array(
+				'next_small' => esc_html__( 'Next Week',      'wp-event-calendar' ),
+				'next_large' => esc_html__( 'Next Month',     'wp-event-calendar' ),
+				'prev_small' => esc_html__( 'Previous Week',  'wp-event-calendar' ),
+				'prev_large' => esc_html__( 'Previous Month', 'wp-event-calendar' )
+			)
+		) );
 
-		// Base URLs
-		$today = $this->get_base_url();
-
-		// Calculate previous & next weeks & months
-		$prev_small = strtotime( '-1 week',  $this->today );
-		$next_small = strtotime( '+1 week',  $this->today );
-		$prev_large = strtotime( '-1 month', $this->today );
-		$next_large = strtotime( '+1 month', $this->today );
-
-		// Week
-		$prev_small_d = date_i18n( 'j', $prev_small );
-		$prev_small_m = date_i18n( 'n', $prev_small );
-		$prev_small_y = date_i18n( 'Y', $prev_small );
-		$next_small_d = date_i18n( 'j', $next_small );
-		$next_small_m = date_i18n( 'n', $next_small );
-		$next_small_y = date_i18n( 'Y', $next_small );
-
-		// Month
-		$prev_large_d = date_i18n( 'j', $prev_large );
-		$prev_large_m = date_i18n( 'n', $prev_large );
-		$prev_large_y = date_i18n( 'Y', $prev_large );
-		$next_large_d = date_i18n( 'j', $next_large );
-		$next_large_m = date_i18n( 'n', $next_large );
-		$next_large_y = date_i18n( 'Y', $next_large );
-
-		// Setup month args
-		$prev_small_args = array( 'year' => $prev_small_y, 'month' => $prev_small_m, 'day' => $prev_small_d );
-		$prev_large_args = array( 'year' => $prev_large_y, 'month' => $prev_large_m, 'day' => $prev_large_d );
-		$next_small_args = array( 'year' => $next_small_y, 'month' => $next_small_m, 'day' => $next_small_d );
-		$next_large_args = array( 'year' => $next_large_y, 'month' => $next_large_m, 'day' => $next_large_d );
-
-		// Setup links
-		$prev_small_link = add_query_arg( $prev_small_args, $today );
-		$next_small_link = add_query_arg( $next_small_args, $today );
-		$prev_large_link = add_query_arg( $prev_large_args, $today );
-		$next_large_link = add_query_arg( $next_large_args, $today );
-
-		// Start an output buffer
-		ob_start(); ?>
-
-		<div class="tablenav-pages previous">
-			<a class="previous-page" href="<?php echo esc_url( $prev_large_link ); ?>">
-				<span class="screen-reader-text"><?php esc_html_e( 'Previous month', 'wp-event-calendar' ); ?></span>
-				<span aria-hidden="true">&laquo;</span>
-			</a>
-			<a class="previous-page" href="<?php echo esc_url( $prev_small_link ); ?>">
-				<span class="screen-reader-text"><?php esc_html_e( 'Previous week', 'wp-event-calendar' ); ?></span>
-				<span aria-hidden="true">&lsaquo;</span>
-			</a>
-
-			<a href="<?php echo esc_url( $today ); ?>" class="previous-page">
-				<span class="screen-reader-text"><?php esc_html_e( 'Today', 'wp-event-calendar' ); ?></span>
-				<span aria-hidden="true">&Colon;</span>
-			</a>
-
-			<a class="next-page" href="<?php echo esc_url( $next_small_link ); ?>">
-				<span class="screen-reader-text"><?php esc_html_e( 'Next week', 'wp-event-calendar' ); ?></span>
-				<span aria-hidden="true">&rsaquo;</span>
-			</a>
-
-			<a class="next-page" href="<?php echo esc_url( $next_large_link ); ?>">
-				<span class="screen-reader-text"><?php esc_html_e( 'Next month', 'wp-event-calendar' ); ?></span>
-				<span aria-hidden="true">&raquo;</span>
-			</a>
-		</div>
-
-		<?php
-
-		// Filter & return
-		return apply_filters( 'wp_event_calendar_get_pagination', ob_get_clean() );
+		// Return pagination
+		return parent::pagination( $args );
 	}
 
 	/**
