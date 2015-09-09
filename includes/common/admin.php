@@ -44,10 +44,23 @@ function wp_event_calendar_add_submenus() {
 		);
 
 		// Highlight helper
-		add_action( "admin_head-$hook", 'wp_event_calendar_modify_admin_submenu_highlight' );
-		add_action( "admin_head-$hook", 'wp_event_calendar_admin_add_screen_options'       );
-		add_action( "admin_head-$hook", 'wp_event_calendar_admin_add_help_tabs'            );
+		add_action( "admin_head-$hook", 'wp_event_calendar_admin_submenu_highlight'  );
+		add_action( "admin_head-$hook", 'wp_event_calendar_admin_add_screen_options' );
+		add_action( "admin_head-$hook", 'wp_event_calendar_admin_add_help_tabs'      );
+		add_action( "admin_head-$hook", 'wp_event_calendar_admin_pointer_buttons'    );
 	}
+}
+
+/**
+ * Override the pointer dismiss button text, to make it clear that "Dismiss"
+ * does not mean the event itself is being dismissed in same way.
+ *
+ * @since 0.1.8
+ */
+function wp_event_calendar_admin_pointer_buttons() {
+	wp_localize_script( 'wp-pointer', 'wpPointerL10n', array(
+		'dismiss' => esc_html__( 'Close', 'wp-event-calendar' ),
+	) );
 }
 
 /**
@@ -58,7 +71,7 @@ function wp_event_calendar_add_submenus() {
  * @global string $plugin_page
  * @global array  $submenu
  */
-function wp_event_calendar_modify_admin_submenu_highlight() {
+function wp_event_calendar_admin_submenu_highlight() {
 	global $plugin_page, $submenu_file;
 
 	// Highlight both, since they're the same thing.
