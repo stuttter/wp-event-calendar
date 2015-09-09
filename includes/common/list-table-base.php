@@ -27,6 +27,15 @@ if ( class_exists( 'WP_List_Table' ) ) :
 class WP_Event_Calendar_List_Table extends WP_List_Table {
 
 	/**
+	 * The year being viewed
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var int
+	 */
+	protected $year = 2015;
+
+	/**
 	 * The month being viewed
 	 *
 	 * @since 0.1.0
@@ -45,13 +54,13 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	protected $day = 1;
 
 	/**
-	 * The year being viewed
+	 * The exact day being viewed based on year/month/day
 	 *
-	 * @since 0.1.0
+	 * @since 0.1.8
 	 *
 	 * @var int
 	 */
-	protected $year = 2015;
+	protected $today = '';
 
 	/**
 	 * The posts query being run
@@ -115,10 +124,13 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 		// Ready the pointer content
 		add_action( 'admin_print_footer_scripts', array( $this, 'admin_pointers_footer' ) );
 
-		// Set month, day, & year
-		$this->month = $this->get_month();
+		// Set year, month, & day
 		$this->year  = $this->get_year();
+		$this->month = $this->get_month();
 		$this->day   = $this->get_day();
+
+		// Set "today" based on current request
+		$this->today = strtotime( "{$this->year}/{$this->month}/{$this->day}" );
 
 		// Set modes
 		$this->modes = $this->get_modes();
