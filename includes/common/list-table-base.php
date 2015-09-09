@@ -1082,7 +1082,23 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 * @param int $post_id
 	 */
 	protected function get_day_post_classes( $post_id = 0 ) {
-		return join( ' ', get_post_class( '', $post_id ) );
+
+		// Empty classes array
+		$classes = array();
+
+		// Is the event all day?
+		$classes[] = get_post_meta( $post_id, 'wp_event_calendar_all_day' )
+			? 'all-day'
+			: '';
+
+		// Get event terms
+		$terms = wp_get_object_terms( $post_id, array( 'event-type', 'event-category', 'event-tag' ) );
+		foreach ( $terms as $term ) {
+			$classes[] = "tax-{$term->taxonomy}";
+			$classes[] = "term-{$term->slug}";
+		}
+
+		return join( ' ', get_post_class( $classes, $post_id ) );
 	}
 
 	/**
