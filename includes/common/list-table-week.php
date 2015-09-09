@@ -3,6 +3,8 @@
 /**
  * Calendar Week List Table
  *
+ * @since 0.1.8
+ *
  * @package Calendar/ListTables/Week
  *
  * @see WP_Posts_List_Table
@@ -16,6 +18,8 @@ defined( 'ABSPATH' ) || exit;
  *
  * This list table is responsible for showing events in a traditional table,
  * even though it extends the `WP_List_Table` class. Tables & lists & tables.
+ *
+ * @since 0.1.8
  */
 class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 
@@ -33,8 +37,8 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 		// Setup the week ranges
 		$day              = $this->get_year() . '/' . $this->get_month() . '/' . $this->get_day();
 		$this->today      = strtotime( $day );
-		$this->week_start = strtotime( 'last Sunday midnight', $this->today );
-		$this->week_end   = strtotime( 'next Monday midnight', $this->today );
+		$this->week_start = strtotime( 'last Sunday midnight',   $this->today );
+		$this->week_end   = strtotime( 'this Saturday midnight', $this->today );
 	}
 
 	/**
@@ -72,7 +76,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	/**
 	 * Prepare the list-table items for display
 	 *
-	 * @since 0.1.0
+	 * @since 0.1.8
 	 *
 	 * @uses $this->_column_headers
 	 * @uses $this->items
@@ -91,7 +95,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 
 		// Handle bulk actions
 		$this->process_bulk_action();
-return;
+
 		// Query for posts for this month only
 		$this->query = new WP_Query( $this->filter_month_args() );
 
@@ -107,17 +111,71 @@ return;
 			$this->_end     = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
 
 			// Format start
-			if ( ! empty( $this->week_start ) ) {
-				$this->week_start = strtotime( $this->week_start );
+			if ( ! empty( $this->_start ) ) {
+				$this->_start = strtotime( $this->_start );
 			}
 
 			// Format end
-			if ( ! empty( $this->week_end ) ) {
-				$this->week_end = strtotime( $this->week_end );
+			if ( ! empty( $this->_end ) ) {
+				$this->_end = strtotime( $this->_end );
 			}
 
 			// Prepare pointer & item
 			$this->setup_item( $post, $max_per_day );
+		}
+	}
+
+	/**
+	 * Add a post to the items array, keyed by day
+	 *
+	 * @todo Repeat & expire
+	 *
+	 * @since 0.1.1
+	 *
+	 * @param  object  $post
+	 * @param  int     $max
+	 */
+	protected function setup_item( $post = false, $max = 10 ) {
+
+		// Calculate start day
+		if ( ! empty( $this->_start ) ) {
+			$start_day  = date_i18n( 'j', $this->_start );
+			$start_hour = date_i18n( 'H', $this->_start );
+		} else {
+			$start_day  = 0;
+			$start_hour = 0;
+		}
+
+		// Calculate end day
+		if ( ! empty( $this->_end ) ) {
+			$end_day  = date_i18n( 'j', $this->_end );
+			$end_hour = date_i18n( 'H', $this->_end );
+		} else {
+			$end_day  = $start_day;
+			$end_hour = $start_hour;
+		}
+
+		// Skip overnights for now
+		if ( $end_day > $start_day ) {
+			return;
+		}
+
+		// Start the days loop with the start day
+		$hour = $start_hour;
+
+		// Loop through days
+		while ( $hour <= $end_hour ) {
+
+			// Setup the pointer for each day
+			//$this->setup_pointer( $post, $hour );
+
+			// Add post to items for each day in it's duration
+			if ( empty( $this->items[ $hour ][ $start_day ] ) || ( $max > count( $this->items[ $hour ][ $start_day ] ) ) ) {
+				$this->items[ $hour ][ $start_day ][ $post->ID ] = $post;
+			}
+
+			// Bump the hour
+			++$hour;
 		}
 	}
 
@@ -132,6 +190,12 @@ return;
 
 		// Events
 		if ( 'event' === $this->screen->post_type ) {
+
+			// Get boundaries
+			$week_start = date_i18n( 'Y-m-d H:i:s', $this->week_start );
+			$week_end   = date_i18n( 'Y-m-d H:i:s', $this->week_end   );
+
+			// Setup args
 			$args = array(
 				'post_type'           => $this->screen->post_type,
 				'post_status'         => $this->get_post_status(),
@@ -144,9 +208,15 @@ return;
 				'meta_query'          => array(
 					array(
 						'key'     => 'wp_event_calendar_date_time',
-						'value'   => array( "{$this->year}-{$this->month}-01 00:00:00","{$this->year}-{$this->month}-31 00:00:00" ),
+						'value'   => array( $week_start, $week_end ),
 						'type'    => 'DATETIME',
 						'compare' => 'BETWEEN',
+					),
+
+					// Skip all day events in the loop
+					array(
+						'key'     => 'wp_event_calendar_all_day',
+						'compare' => 'NOT EXISTS'
 					)
 				)
 			);
@@ -174,7 +244,7 @@ return;
 	/**
 	 * Paginate through months & years
 	 *
-	 * @since 0.1.0
+	 * @since 0.1.8
 	 *
 	 * @param string $which
 	 */
@@ -252,7 +322,7 @@ return;
 	/**
 	 * Output month & year inputs, for viewing relevant posts
 	 *
-	 * @since 0.1.0
+	 * @since 0.1.8
 	 *
 	 * @param  string  $which
 	 */
@@ -293,9 +363,9 @@ return;
 	}
 
 	/**
-	 * Start the week with a table row
+	 * Start the week with a table row, and a th to show the time
 	 *
-	 * @since 0.1.0
+	 * @since 0.1.8
 	 */
 	protected function get_hour_start( $time = 0 ) {
 
@@ -315,7 +385,7 @@ return;
 	/**
 	 * End the week with a closed table row
 	 *
-	 * @since 0.1.0
+	 * @since 0.1.8
 	 */
 	protected function get_hour_end() {
 		?>
@@ -328,21 +398,23 @@ return;
 	/**
 	 * Start the week with a table row
 	 *
-	 * @since 0.1.0
+	 * @since 0.1.8
 	 */
-	protected function get_hour_for_week( $hour = 0 ) {
+	protected function get_hour_for_week( $time = 0 ) {
 
 		// Get week start day
 		$week_start = date_i18n( 'j', $this->week_start );
+		$hour       = date_i18n( 'H', $time );
 
 		// Calculate the day of the month
-		for ( $dow = 0; $dow <= 6; $dow++ ) : ?>
+		for ( $dow = 0; $dow <= 6; $dow++ ) :
+			$day = ( $dow + $week_start ); ?>
 
-		<td class="<?php echo $this->get_day_classes( $dow, $week_start ); ?>">
-			<div class="events-for-day">
-				<?php echo $this->get_day_posts_for_hour( $dow ); ?>
-			</div>
-		</td>
+			<td class="<?php echo $this->get_day_classes( $dow, $day ); ?>">
+				<div class="events-for-day">
+					<?php echo $this->get_hour_posts_for_day( $hour, $day ); ?>
+				</div>
+			</td>
 
 		<?php endfor;
 	}
@@ -350,31 +422,31 @@ return;
 	/**
 	 * Get the already queried posts for a given day
 	 *
-	 * @since 0.1.0
+	 * @since 0.1.8
 	 *
 	 * @param int $day
 	 *
 	 * @return array
 	 */
-	protected function get_day_queried_posts( $day = 1 ) {
-		return isset( $this->items[ $day ] )
-			? $this->items[ $day ]
+	protected function get_day_queried_posts( $hour = 0, $day = 1 ) {
+		return isset( $this->items[ $hour ][ $day ] )
+			? $this->items[ $hour ][ $day ]
 			: array();
 	}
 
 	/**
 	 * Get posts for the day
 	 *
-	 * @since 0.1.0
+	 * @since 0.1.8
 	 *
 	 * @param int $day
 	 *
 	 * @return string
 	 */
-	protected function get_day_posts_for_hour( $day = 1, $hour = 0 ) {
+	protected function get_hour_posts_for_day( $hour = 0, $day = 1 ) {
 
 		// Get posts and bail if none
-		$posts = $this->get_day_queried_posts( $day );
+		$posts = $this->get_day_queried_posts( $hour, $day );
 		if ( empty( $posts ) ) {
 			return '';
 		}
@@ -407,7 +479,7 @@ return;
 	/**
 	 * Get classes for post in day
 	 *
-	 * @since 0.1.0
+	 * @since 0.1.8
 	 *
 	 * @param int $post_id
 	 */
@@ -418,7 +490,7 @@ return;
 	/**
 	 * Is the current calendar view today
 	 *
-	 * @since 0.1.0
+	 * @since 0.1.8
 	 *
 	 * @return bool
 	 */
@@ -433,7 +505,7 @@ return;
 	/**
 	 * Get classes for table cell
 	 *
-	 * @since 0.1.0
+	 * @since 0.1.8
 	 *
 	 * @param   type  $iterator
 	 * @param   type  $start_day
@@ -443,15 +515,14 @@ return;
 	protected function get_day_classes( $iterator = 1, $start_day = 1 ) {
 		$dow      = ( $iterator % 7 );
 		$day_key  = sanitize_key( $GLOBALS['wp_locale']->get_weekday( $dow ) );
-		$offset   = ( $iterator + $start_day );
 
 		// Position & day info
 		$position     = "position-{$dow}";
-		$day_number   = "day-{$offset}";
+		$day_number   = "day-{$start_day}";
 		$month_number = "month-{$this->month}";
 		$year_number  = "year-{$this->year}";
 
-		$is_today = $this->is_today( $this->month, $offset, $this->year )
+		$is_today = $this->is_today( $this->month, $start_day, $this->year )
 			? 'today'
 			: '';
 
@@ -471,7 +542,7 @@ return;
 	/**
 	 * Display a calendar by month and year
 	 *
-	 * @since 0.1.0
+	 * @since 0.1.8
 	 *
 	 * @param int $year
 	 * @param int $month
