@@ -224,12 +224,17 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 			$args['post_type'] = $post_type;
 		}
 
-		// Include post status
+		// Persistent `post_status`
 		if ( isset( $_GET['post_status'] ) ) {
 			$args['post_status'] = sanitize_key( $_GET['post_status'] );
 		}
 
-		// Setup "page" argument
+		// Persistent searches
+		if ( isset( $_GET['s'] ) ) {
+			$args['s'] = urlencode( $_GET['s'] );
+		}
+
+		// Setup `page` & `mode` arguments
 		$args['page'] = $post_type . '-calendar';
 		$args['mode'] = $this->mode;
 
