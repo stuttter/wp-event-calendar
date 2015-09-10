@@ -111,17 +111,63 @@ function wp_event_calendar_admin_add_help_tabs() {
 
 	// Calendar
 	get_current_screen()->add_help_tab( array(
-		'id'		=> 'bulk-actions',
-		'title'		=> __( 'Calendar', 'wp-event-calendar' ),
+		'id'		=> 'calendar',
+		'title'		=> esc_html__( 'Calendar', 'wp-event-calendar' ),
 		'content'	=>
-			'<p>' . __( 'Holy schmoly! This is a basic calendar that lays out your content chronologically.',    'wp-event-calendar' ) . '</p>' .
-			'<p>' . __( 'Right now only the "month" view is available, but "day" and "week" views are in the works', 'wp-event-calendar' ) . '</p>'
+			'<p>'  . esc_html__( 'This is a calendar that lays out your content chronologically.',   'wp-event-calendar' ) . '</p><ul>' .
+			'<li>' . esc_html__( 'You can view events in month and week modes.',                     'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Clicking an event shows a snapshot of the event for that period.', 'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Events may have icons and styling to differentiate them.',         'wp-event-calendar' ) . '</li></ul>' .
+
+			'<p><strong>'  . esc_html__( 'Events', 'wp-event-calendar' ) . '</strong></p><ul>' .
+			'<li>' . esc_html__( 'Most events are single-day, for a few hours.',       'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Location data can be attached.',                     'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Some events span multiple days, or have intervals.', 'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Organize events with types, categories, & tags.',    'wp-event-calendar' ) . '</li></ul>'	) );
+
+	// Month View
+	get_current_screen()->add_help_tab( array(
+		'id'		=> 'month',
+		'title'		=> esc_html__( '&mdash; Month', 'wp-event-calendar' ),
+		'content'	=>
+			'<p>'  . esc_html__( 'This is a traditional monthly calendar view.',             'wp-event-calendar' ) . '</p><ul>' .
+			'<li>' . esc_html__( 'Events are listed chronologically in each day.',           'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Events may happen over several days.',                     'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Events may repeat in daily, weekly, or yearly intervals.', 'wp-event-calendar' ) . '</li></ul>' .
+
+			'<p><strong>'  . esc_html__( 'Navigation', 'wp-event-calendar' ) . '</strong></p><ul>' .
+			'<li>' . esc_html__( 'View specific months & years via the dropdown on the left.', 'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Paginate through years with double-arrow buttons.',          'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Paginate through months with single-arrow buttons.',         'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Return to today with the double-colon button.',              'wp-event-calendar' ) . '</li></ul>'
+	) );
+
+	// Month View
+	get_current_screen()->add_help_tab( array(
+		'id'		=> 'week',
+		'title'		=> __( '&mdash; Week', 'wp-event-calendar' ),
+		'content'	=>
+			'<p>'  . esc_html__( 'This is a traditional weekly calendar view.',    'wp-event-calendar' ) . '</p><ul>' .
+			'<li>' . esc_html__( 'Events are listed chronologically in each day.', 'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Events spanning more than 1 day are omitted.',   'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'All-day events appear in the top row.',          'wp-event-calendar' ) . '</li></ul>' .
+
+			'<p><strong>'  . esc_html__( 'Navigation', 'wp-event-calendar' ) . '</strong></p><ul>' .
+			'<li>' . esc_html__( 'View specific months & years via the dropdown on the left.', 'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Paginate through months with double-arrow buttons.',         'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Paginate through weeks with single-arrow buttons.',          'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Return to today with the double-colon button.',              'wp-event-calendar' ) . '</li></ul>'
 	) );
 
 	// Help Sidebar
 	get_current_screen()->set_help_sidebar(
-		'<p><strong>' . __( 'This calendar shows:', 'wp-event-calendar' ) . '</strong></p>' .
-		'<p>' . __( 'Public, private, pending, password-protected, and draft content.', 'wp-event-calendar' ) . '</p>'
+		'<p><i class="dashicons dashicons-calendar"></i> ' . esc_html__( 'Regular Event', 'wp-event-calendar' ) . '</p>' .
+		'<p><i class="dashicons dashicons-location"></i> ' . esc_html__( 'Has Location',  'wp-event-calendar' ) . '</p>' .
+		'<p><i class="dashicons dashicons-clock"></i> '    . esc_html__( 'All Day',       'wp-event-calendar' ) . '</p>' .
+		'<p><i class="dashicons dashicons-backup"></i> '   . esc_html__( 'Recurring',     'wp-event-calendar' ) . '</p>' .
+		'<p><i class="dashicons dashicons-trash"></i> '    . esc_html__( 'Trashed',       'wp-event-calendar' ) . '</p>' .
+		'<p><i class="dashicons dashicons-hidden"></i> '   . esc_html__( 'Private',       'wp-event-calendar' ) . '</p>' .
+		'<p><i class="dashicons dashicons-lock"></i> '     . esc_html__( 'Protected',     'wp-event-calendar' ) . '</p>'
 	);
 }
 
