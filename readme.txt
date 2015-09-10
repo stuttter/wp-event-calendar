@@ -23,7 +23,10 @@ WP Event Calendar introduces a basic event system, a with a calendar view, and a
 
 == Screenshots ==
 
-1. Event Calendar Month View
+1. Month View
+2. Week View
+3. Metabox
+4. Datepicker
 
 == Installation ==
 
