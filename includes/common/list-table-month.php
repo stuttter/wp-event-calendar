@@ -132,7 +132,7 @@ class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 			</span>
 
 			<div class="events-for-day">
-				<?php echo $this->get_day_posts( $day_of_month ); ?>
+				<?php echo $this->get_posts_for_cell( $day_of_month ); ?>
 			</div>
 		</td>
 
@@ -163,7 +163,7 @@ class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 	 *
 	 * @return string
 	 */
-	protected function get_day_posts( $day = 1 ) {
+	protected function get_posts_for_cell( $day = 1 ) {
 
 		// Get posts and bail if none
 		$posts = $this->get_day_queried_posts( $day );
