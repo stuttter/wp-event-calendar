@@ -3,7 +3,7 @@
 /**
  * Plugin Name: WP Event Calendar
  * Plugin URI:  https://wordpress.org/plugins/wp-event-calendar/
- * Description: The best way to keep track of events in WordPress
+ * Description: The best way to manage events in WordPress
  * Author:      John James Jacoby
  * Version:     0.1.8
  * Author URI:  https://profiles.wordpress.org/johnjamesjacoby/
