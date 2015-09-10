@@ -9,13 +9,14 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
 
-WP Event Calendar is the best way to keep track of events in WordPress. It comes with:
+WP Event Calendar is the best way to keep track of events in WordPress!
 
 * Seamlessly integrates into WordPress's dashboard interface
-* Month & week views
-* Organize events by type, category, and tag
+* Month & week list-table views
+* Organize events by type, category, & tag
 * Easily & logically paginate through date ranges
 * Safe, secure, & performant
+* Full of developer hooks for integration with other plugins & themes
 
 = Also checkout =
 
