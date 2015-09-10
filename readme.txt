@@ -3,7 +3,7 @@ Contributors: johnjamesjacoby
 Tags: event, calendar
 Requires at least: 4.2
 Tested up to: 4.3
-Stable tag: 0.1.7
+Stable tag: 0.1.8
 
 == Description ==
 
@@ -52,6 +52,13 @@ The WordPress support forums: https://wordpress.org/tags/wp-event-calendar/
 http://github.com/johnjamesjacoby/wp-event-calendar/
 
 == Changelog ==
+
+= 0.1.8 =
+* Added week view
+* Added persistent pagination for mode, status, & search
+* Added styling for a few event types
+* Added help text
+* Added legend in help text area
 
 = 0.1.7 =
 * Updated datepicker styling
