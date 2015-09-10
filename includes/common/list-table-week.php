@@ -104,18 +104,18 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	protected function setup_item( $post = false, $max = 10 ) {
 
 		// Calculate start day
-		if ( ! empty( $this->_start ) ) {
-			$start_day  = date_i18n( 'j', $this->_start );
-			$start_hour = date_i18n( 'H', $this->_start );
+		if ( ! empty( $this->item_start ) ) {
+			$start_day  = date_i18n( 'j', $this->item_start );
+			$start_hour = date_i18n( 'G', $this->item_start );
 		} else {
 			$start_day  = 0;
 			$start_hour = 0;
 		}
 
 		// Calculate end day
-		if ( ! empty( $this->_end ) ) {
-			$end_day  = date_i18n( 'j', $this->_end );
-			$end_hour = date_i18n( 'H', $this->_end );
+		if ( ! empty( $this->item_end ) ) {
+			$end_day  = date_i18n( 'j', $this->item_end );
+			$end_hour = date_i18n( 'G', $this->item_end );
 		} else {
 			$end_day  = $start_day;
 			$end_hour = $start_hour;
@@ -126,22 +126,27 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 			return;
 		}
 
+		// Calculate the cell offset
+		$offset   = intval( ( $this->item_start - $this->week_start ) / DAY_IN_SECONDS );
+		$interval = 7;
+
 		// Start the days loop with the start day
-		$hour = $start_hour;
+		$cell     = ( $start_hour * $interval ) + $offset;
+		$end_cell = ( $end_hour   * $interval ) + $offset;
 
 		// Loop through days
-		while ( $hour <= $end_hour ) {
+		while ( $cell <= $end_cell ) {
 
 			// Setup the pointer for each day
-			//$this->setup_pointer( $post, $hour );
+			$this->setup_pointer( $post, $cell );
 
 			// Add post to items for each day in it's duration
-			if ( empty( $this->items[ $hour ][ $start_day ] ) || ( $max > count( $this->items[ $hour ][ $start_day ] ) ) ) {
-				$this->items[ $hour ][ $start_day ][ $post->ID ] = $post;
+			if ( empty( $this->items[ $cell ] ) || ( $max > count( $this->items[ $cell ] ) ) ) {
+				$this->items[ $cell ][ $post->ID ] = $post;
 			}
 
 			// Bump the hour
-			++$hour;
+			$cell = intval( $cell + $interval );
 		}
 	}
 
@@ -236,18 +241,23 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	 */
 	protected function get_row_start( $time = 0 ) {
 
+		// Current hour
+		$hour = date_i18n( 'H', $time );
+
 		// No row classes
-		$class = '';
+		$classes = array(
+			"hour-{$hour}"
+		);
 
 		// Is this this hour?
-		if ( date_i18n( 'H' ) === date_i18n( 'H', $time ) ) {
-			$class = 'class="this-hour"';
+		if ( date_i18n( 'H' ) === $hour ) {
+			$classes[] = 'this-hour';
 		}
 
 		// Start an output buffer
 		ob_start(); ?>
 
-		<tr <?php echo $class; ?>><th><?php echo date_i18n( 'g:i a', $time ); ?></th>
+		<tr class="<?php echo implode( ' ', $classes ); ?>"><th><?php echo date_i18n( 'g:i a', $time ); ?></th>
 
 		<?php
 
@@ -276,87 +286,22 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	/**
 	 * Start the week with a table row
 	 *
-	 * @since 0.1.8
+	 * @since 0.1.0
 	 */
-	protected function get_row_contents( $time = 0 ) {
-
-		// Get week start day
-		$week_start = date_i18n( 'j', $this->week_start );
-		$hour       = date_i18n( 'H', $time );
+	protected function get_row_cell( $iterator = 1, $start_day = 1 ) {
 
 		// Start an output buffer
-		ob_start();
+		ob_start(); ?>
 
-		// Calculate the day of the month
-		for ( $dow = 0; $dow <= 6; $dow++ ) :
-			$day = ( $dow + $week_start ); ?>
+		<td class="<?php echo $this->get_day_classes( $iterator, $start_day ); ?>">
+			<div class="events-for-day">
+				<?php echo $this->get_posts_for_cell( $iterator ); ?>
+			</div>
+		</td>
 
-			<td class="<?php echo $this->get_event_classes( $dow, $day ); ?>">
-				<div class="events-for-day">
-					<?php echo $this->get_posts_for_cell( $hour, $day ); ?>
-				</div>
-			</td>
-
-		<?php endfor;
+		<?php
 
 		// Return the output buffer
-		return ob_get_clean();
-	}
-
-	/**
-	 * Get the already queried posts for a given day
-	 *
-	 * @since 0.1.8
-	 *
-	 * @param int $day
-	 *
-	 * @return array
-	 */
-	protected function get_day_queried_posts( $hour = 0, $day = 1 ) {
-		return isset( $this->items[ $hour ][ $day ] )
-			? $this->items[ $hour ][ $day ]
-			: array();
-	}
-
-	/**
-	 * Get posts for the day
-	 *
-	 * @since 0.1.8
-	 *
-	 * @param int $day
-	 *
-	 * @return string
-	 */
-	protected function get_posts_for_cell( $hour = 0, $day = 1 ) {
-
-		// Get posts and bail if none
-		$posts = $this->get_day_queried_posts( $hour, $day );
-		if ( empty( $posts ) ) {
-			return '';
-		}
-
-		// Start an output buffer
-		ob_start();
-
-		// Loop through today's posts
-		foreach ( $posts as $post ) :
-
-			// Setup the pointer ID
-			$ponter_id = "{$post->ID}-{$day}";
-
-			// Get the post link
-			$post_link = get_edit_post_link( $post->ID );
-
-			// Handle empty titles
-			$post_title = get_the_title( $post->ID );
-			if ( empty( $post_title ) ) {
-				$post_title = esc_html__( '(No title)', 'wp-event-calendar' );
-			} ?>
-
-			<a id="event-pointer-<?php echo esc_attr( $ponter_id ); ?>" href="<?php echo esc_url( $post_link ); ?>" class="<?php echo $this->get_day_post_classes( $post->ID ); ?>"><?php echo esc_html( $post_title ); ?></a>
-
-		<?php endforeach;
-
 		return ob_get_clean();
 	}
 
@@ -367,23 +312,32 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	 */
 	protected function display_mode() {
 
+		// Get timestamp
+		$timestamp  = mktime( 0, 0, 0, $this->month, $this->day, $this->year );
+		$this_month = getdate( $timestamp );
+		$start_day  = $this_month['wday'];
+
 		// All day events
 		echo $this->get_all_day_row();
 
 		// Loop through days of the month
-		for ( $i = 0; $i <= 23; $i++ ) {
+		for ( $i = 0; $i <= ( 7 * 24 ) - 1; $i++ ) {
 
 			// Get timestamp & hour
-			$timestamp = mktime( $i, 0, 0, $this->month, $this->day, $this->year );
+			$timestamp = mktime( ( $i / 7 ), 0, 0, $this->month, $this->day, $this->year );
 
 			// New row
-			echo $this->get_row_start( $timestamp );
+			if ( ( $i % 7 ) === 0 ) {
+				echo $this->get_row_start( $timestamp );
+			}
 
-			// Get table cells for all days this week in this hour
-			echo $this->get_row_contents( $timestamp );
+			// Get this table cell
+			echo $this->get_row_cell( $i, $start_day );
 
 			// Close row
-			echo $this->get_row_end();
+			if ( ( $i % 7 ) === 6 ) {
+				echo $this->get_row_end();
+			}
 		}
 	}
 }

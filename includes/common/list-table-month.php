@@ -108,7 +108,7 @@ class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 	 *
 	 * @since 0.1.0
 	 */
-	protected function get_row_pad(  $iterator = 1, $start_day = 1 ) {
+	protected function get_row_pad( $iterator = 1, $start_day = 1 ) {
 		?>
 
 			<th class="padding <?php echo $this->get_day_classes( $iterator, $start_day ); ?>"></th>
@@ -137,63 +137,6 @@ class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 		</td>
 
 		<?php
-	}
-
-	/**
-	 * Get the already queried posts for a given day
-	 *
-	 * @since 0.1.0
-	 *
-	 * @param int $day
-	 *
-	 * @return array
-	 */
-	protected function get_day_queried_posts( $day = 1 ) {
-		return isset( $this->items[ $day ] )
-			? $this->items[ $day ]
-			: array();
-	}
-
-	/**
-	 * Get posts for the day
-	 *
-	 * @since 0.1.0
-	 *
-	 * @param int $day
-	 *
-	 * @return string
-	 */
-	protected function get_posts_for_cell( $day = 1 ) {
-
-		// Get posts and bail if none
-		$posts = $this->get_day_queried_posts( $day );
-		if ( empty( $posts ) ) {
-			return '';
-		}
-
-		// Start an output buffer
-		ob_start();
-
-		// Loop through today's posts
-		foreach ( $posts as $post ) :
-
-			// Setup the pointer ID
-			$ponter_id = "{$post->ID}-{$day}";
-
-			// Get the post link
-			$post_link = get_edit_post_link( $post->ID );
-
-			// Handle empty titles
-			$post_title = get_the_title( $post->ID );
-			if ( empty( $post_title ) ) {
-				$post_title = esc_html__( '(No title)', 'wp-event-calendar' );
-			} ?>
-
-			<a id="event-pointer-<?php echo esc_attr( $ponter_id ); ?>" href="<?php echo esc_url( $post_link ); ?>" class="<?php echo $this->get_event_classes( $post->ID ); ?>"><?php echo esc_html( $post_title ); ?></a>
-
-		<?php endforeach;
-
-		return ob_get_clean();
 	}
 
 	/**

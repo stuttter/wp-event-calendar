@@ -63,6 +63,62 @@ table.calendar tbody td.sunday {
 	background-color: #f1f1f1;
 }
 
+table.calendar a:before {
+	font: normal 15px/20px 'dashicons';
+	vertical-align: top;
+	speak: none;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	width: 20px;
+	height: 20px;
+	margin-right: 4px;
+}
+
+
+.wp-pointer-content h3.type-event:before,
+table.calendar a.type-event:before {
+	content: '\f145';
+}
+
+.wp-pointer-content h3.type-post:before,
+table.calendar a.type-post:before {
+	content: '\f109';
+}
+
+.wp-pointer-content h3.type-page:before,
+table.calendar a.type-page:before {
+	content: '\f105';
+}
+
+.wp-pointer-content h3.status-trash:before,
+table.calendar a.status-trash:before {
+	content: '\f182';
+}
+
+.wp-pointer-content h3.status-private:before,
+table.calendar a.status-private:before {
+	content: '\f530';
+}
+
+.wp-pointer-content h3.post-password-required:before,
+table.calendar a.post-password-required:before {
+	content: '\f315';
+}
+
+.wp-pointer-content h3.has-location:before,
+table.calendar a.has-location:before {
+	content: "\f230";
+}
+
+.wp-pointer-content h3.all-day:before,
+table.calendar a.all-day:before {
+	content: '\f469';
+}
+
+table.calendar a.status-draft {
+	opacity: 0.5;
+}
+
 /** Month *********************************************************************/
 
 table.month tbody td span.day-number {
@@ -107,17 +163,6 @@ table.month div.events-for-day {
 	min-height: 80px
 }
 
-table.month a:before {
-	font: normal 15px/20px 'dashicons';
-	vertical-align: top;
-	speak: none;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	width: 20px;
-	height: 20px;
-	margin-right: 4px;
-}
-
 .wp-pointer-content h3 a {
 	color: #fff;
 	text-decoration: none;
@@ -125,50 +170,6 @@ table.month a:before {
 
 .wp-pointer-content h3 a:hover {
 	color: #eee;
-}
-
-.wp-pointer-content h3.type-event:before,
-table.month a.type-event:before {
-	content: '\f145';
-}
-
-.wp-pointer-content h3.type-post:before,
-table.month a.type-post:before {
-	content: '\f109';
-}
-
-.wp-pointer-content h3.type-page:before,
-table.month a.type-page:before {
-	content: '\f105';
-}
-
-.wp-pointer-content h3.status-trash:before,
-table.month a.status-trash:before {
-	content: '\f182';
-}
-
-.wp-pointer-content h3.status-private:before,
-table.month a.status-private:before {
-	content: '\f530';
-}
-
-.wp-pointer-content h3.post-password-required:before,
-table.month a.post-password-required:before {
-	content: '\f315';
-}
-
-.wp-pointer-content h3.has-location:before,
-table.month a.has-location:before {
-	content: "\f230";
-}
-
-.wp-pointer-content h3.all-day:before,
-table.month a.all-day:before {
-	content: '\f469';
-}
-
-table.month a.status-draft {
-	opacity: 0.5;
 }
 
 input#year {

@@ -55,14 +55,9 @@ function wp_event_calendar_details_metabox() {
 	}
 
 	// Hour
-	$end_hour = date( 'H', $end_date_time );
-	if ( empty( $end_hour ) || '00' === $end_hour ) {
+	$end_hour = date( 'g', $end_date_time );
+	if ( empty( $end_hour ) ) {
 		$end_hour = '';
-	}
-
-	// Adjustment
-	if ( $end_hour > 12 ) {
-		$end_hour = $end_hour - 12;
 	}
 
 	// Minute
@@ -88,14 +83,9 @@ function wp_event_calendar_details_metabox() {
 	}
 
 	// Hour
-	$hour = date( 'H', $date_time );
+	$hour = date( 'g', $date_time );
 	if ( empty( $end_hour ) || '00' === $hour || empty( $hour ) ) {
 		$hour = '';
-	}
-
-	// Adjustment
-	if ( $hour > 12 ) {
-		$hour = $hour - 12;
 	}
 
 	// Minute

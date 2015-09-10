@@ -91,17 +91,17 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 
 			// Get start & end
 			$this->_all_day = get_post_meta( $post->ID, 'wp_event_calendar_all_day',       true );
-			$this->_start   = get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
-			$this->_end     = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
+			$this->item_start   = get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
+			$this->item_end     = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
 
 			// Format start
-			if ( ! empty( $this->_start ) ) {
-				$this->_start = strtotime( $this->_start );
+			if ( ! empty( $this->item_start ) ) {
+				$this->item_start = strtotime( $this->item_start );
 			}
 
 			// Format end
-			if ( ! empty( $this->_end ) ) {
-				$this->_end = strtotime( $this->_end );
+			if ( ! empty( $this->item_end ) ) {
+				$this->item_end = strtotime( $this->item_end );
 			}
 
 			// Prepare pointer & item
