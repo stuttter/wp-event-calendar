@@ -4,12 +4,18 @@ Tags: event, calendar, session, appointment, month, week, category, tag, term, t
 Requires at least: 4.3
 Tested up to: 4.3
 Stable tag: 0.1.8
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
 
-Flexible events, with a calendar view.
+WP Event Calendar is the best way to keep track of events in WordPress. It comes with:
 
-WP Event Calendar introduces a basic event system, a with a calendar view, and accompanying categories, tags, and types taxonomies.
+* Seamlessly integrates into WordPress's dashboard interface
+* Month & week views
+* Organize events by type, category, and tag
+* Easily & logically paginate through date ranges
+* Safe, secure, & performant
 
 = Also checkout =
 
@@ -30,11 +36,9 @@ WP Event Calendar introduces a basic event system, a with a calendar view, and a
 
 == Installation ==
 
-Download and install using the built in WordPress plugin installer.
-
-Activate in the "Plugins" area of your admin by clicking the "Activate" link.
-
-No further setup or configuration is necessary.
+* Download and install using the built in WordPress plugin installer.
+* Activate in the "Plugins" area of your admin by clicking the "Activate" link.
+* No further setup or configuration is necessary.
 
 == Frequently Asked Questions ==
 
@@ -48,7 +52,7 @@ No. All of WordPress's core database tables remain untouched.
 
 = Where can I get support? =
 
-The WordPress support forums: https://wordpress.org/tags/wp-event-calendar/
+The WordPress support forums: https://wordpress.org/support/plugin/wp-event-calendar/
 
 = Where can I find documentation? =
 

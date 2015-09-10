@@ -1,8 +1,12 @@
 # WP Event Calendar
 
-Flexible events, with a calendar view.
+WP Event Calendar is the best way to keep track of events in WordPress. It comes with:
 
-WP Event Calendar introduces a basic event system, a with a calendar view, and accompanying categories, tags, and types taxonomies.
+* Seamlessly integrates into WordPress's dashboard interface
+* Month & week views
+* Organize events by type, category, and tag
+* Easily & logically paginate through date ranges
+* Safe, secure, & performant
 
 # Installation
 
