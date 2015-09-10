@@ -1,7 +1,7 @@
 === WP Event Calendar ===
-Contributors: johnjamesjacoby
-Tags: event, calendar
-Requires at least: 4.2
+Contributors: johnjamesjacoby, stuttter
+Tags: event, calendar, session, appointment, month, week, category, tag, term, type
+Requires at least: 4.3
 Tested up to: 4.3
 Stable tag: 0.1.8
 
