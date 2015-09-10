@@ -364,21 +364,17 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	 * Display a calendar by month and year
 	 *
 	 * @since 0.1.8
-	 *
-	 * @param int $year
-	 * @param int $month
-	 * @param int $day
 	 */
-	protected function display_mode( $year = 2015, $month = 1, $day = 1 ) {
+	protected function display_mode() {
 
 		// All day events
-		echo $this->get_all_day_row( $year, $month, $day );
+		echo $this->get_all_day_row();
 
 		// Loop through days of the month
 		for ( $i = 0; $i <= 23; $i++ ) {
 
 			// Get timestamp & hour
-			$timestamp = mktime( $i, 0, 0, $month, $day, $year );
+			$timestamp = mktime( $i, 0, 0, $this->month, $this->day, $this->year );
 
 			// New row
 			echo $this->get_row_start( $timestamp );

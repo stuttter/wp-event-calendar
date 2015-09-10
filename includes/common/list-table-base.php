@@ -970,7 +970,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 			</thead>
 
 			<tbody id="the-list" data-wp-lists='list:<?php echo $this->_args['singular']; ?>'>
-				<?php $this->display_mode( $this->year, $this->month, $this->day ); ?>
+				<?php $this->display_mode(); ?>
 			</tbody>
 
 			<tfoot>
@@ -1086,12 +1086,8 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 * Display a calendar by month and year
 	 *
 	 * @since 0.1.0
-	 *
-	 * @param int $year
-	 * @param int $month
-	 * @param int $day
 	 */
-	protected function display_mode( $year = 2015, $month = 1, $day = 1 ) {
+	protected function display_mode() {
 		// Performed by subclass
 	}
 

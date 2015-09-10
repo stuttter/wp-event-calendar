@@ -200,15 +200,11 @@ class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 	 * Display a calendar by month and year
 	 *
 	 * @since 0.1.0
-	 *
-	 * @param int $year
-	 * @param int $month
-	 * @param int $day
 	 */
-	protected function display_mode( $year = 2015, $month = 1, $day = 1 ) {
+	protected function display_mode() {
 
 		// Get timestamp
-		$timestamp  = mktime( 0, 0, 0, $month, 1, $year );
+		$timestamp  = mktime( 0, 0, 0, $this->month, 1, $this->year );
 		$max_day    = date_i18n( 't', $timestamp );
 		$this_month = getdate( $timestamp );
 		$start_day  = $this_month['wday'];
