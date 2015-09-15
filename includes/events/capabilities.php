@@ -32,6 +32,7 @@ function wp_event_calendar_meta_caps( $caps = array(), $cap = '', $user_id = 0, 
 			break;
 
 		// Publishing
+		case 'create_events' :
 		case 'publish_events' :
 
 		// Editing

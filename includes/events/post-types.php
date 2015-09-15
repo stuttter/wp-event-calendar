@@ -51,6 +51,7 @@ function wp_event_calendar_register_post_types() {
 
 	// Capabilities
 	$caps = array(
+		'create_posts'        => 'create_events',
 		'edit_posts'          => 'edit_events',
 		'edit_others_posts'   => 'edit_others_events',
 		'publish_posts'       => 'publish_events',
