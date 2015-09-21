@@ -27,6 +27,7 @@ WP Event Calendar is the best way to keep track of events in WordPress!
 * [WP Term Icons](https://wordpress.org/plugins/wp-term-icons/ "Pretty icons for categories, tags, and other taxonomy terms.")
 * [WP Term Visibility](https://wordpress.org/plugins/wp-term-visibility/ "Visibilities for categories, tags, and other taxonomy terms.")
 * [WP User Groups](https://wordpress.org/plugins/wp-user-groups/ "Group users together with taxonomies & terms.")
+* [WP User Activity](https://wordpress.org/plugins/wp-user-activity/ "The best way to log activity in WordPress.")
 
 == Screenshots ==
 
@@ -57,7 +58,7 @@ The WordPress support forums: https://wordpress.org/support/plugin/wp-event-cale
 
 = Where can I find documentation? =
 
-http://github.com/johnjamesjacoby/wp-event-calendar/
+http://github.com/stuttter/wp-event-calendar/
 
 == Changelog ==
 
