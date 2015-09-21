@@ -26,7 +26,7 @@ No. All of WordPress's core database tables remain untouched.
 
 ### Where can I get support?
 
-The WordPress support forums: https://wordpress.org/tags/wp-event-calendar/
+The WordPress support forums: https://wordpress.org/support/plugin/wp-event-calendar/
 
 ### Can I contribute?
 
