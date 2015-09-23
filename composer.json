@@ -1,0 +1,18 @@
+{
+  "name": "stuttter/wp-event-calendar",
+  "description": "The best way to manage events in WordPress",
+  "homepage": "https://github.com/stuttter/wp-event-calendar",
+  "type": "wordpress-plugin",
+  "require": {
+    "php": ">=5.2",
+    "composer/installers": "^1.0"
+  },
+  "license": "GPLv2 or later",
+  "authors": [
+    {
+      "name": "John James Jacoby",
+      "email": "johnjamesjacoby@me.com"
+    }
+  ]
+}
+
