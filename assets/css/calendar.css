@@ -35,6 +35,10 @@
 	content: '\f163';
 }
 
+table.calendar {
+	table-layout: fixed;
+}
+
 table.calendar thead th,
 table.calendar tfoot th {
 	text-align: center;
