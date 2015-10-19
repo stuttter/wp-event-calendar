@@ -445,6 +445,8 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	protected function is_base_request() {
 		if ( empty( $_GET ) ) {
 			return true;
+		} elseif ( empty( $_GET['post_status'] ) ) {
+			return true;
 		} elseif ( 2 === count( $_GET ) && ! empty( $_GET['post_type'] ) ) {
 			return ( $this->screen->post_type === $_GET['post_type'] );
 		}
@@ -496,7 +498,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 			number_format_i18n( $total_posts )
 		);
 
-		$status_links['all'] = '<a href="' . esc_url( $base_url ) . '" class="' . $class . '">' . $all_inner_html . '</a>';
+		$status_links['all'] = '<a href="' . esc_url( remove_query_arg( 'post_status', $base_url ) ) . '" class="' . $class . '">' . $all_inner_html . '</a>';
 
 		// Other links
 		$post_statuses = get_post_stati( array( 'show_in_admin_status_list' => true ), 'objects' );
