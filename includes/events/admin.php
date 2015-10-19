@@ -143,6 +143,11 @@ function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 		? strtoupper( $wp_query->query['order'] )
 		: 'DESC';
 
+	// Bail if no orderby
+	if ( empty( $wp_query->query['orderby'] ) ) {
+		return;
+	}
+
 	// Set by 'orderby'
 	switch ( $wp_query->query['orderby'] ) {
 
