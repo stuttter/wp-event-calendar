@@ -46,7 +46,6 @@ function wp_event_calendar_add_submenus() {
 		// Highlight helper
 		add_action( "admin_head-$hook", 'wp_event_calendar_admin_submenu_highlight'  );
 		add_action( "admin_head-$hook", 'wp_event_calendar_admin_add_screen_options' );
-		add_action( "admin_head-$hook", 'wp_event_calendar_admin_add_help_tabs'      );
 		add_action( "admin_head-$hook", 'wp_event_calendar_admin_pointer_buttons'    );
 	}
 }
@@ -108,6 +107,11 @@ function wp_event_calendar_admin_add_screen_options() {
  * @since 0.1.0
  */
 function wp_event_calendar_admin_add_help_tabs() {
+
+	// Bail if not an Event type screen
+	if ( 'event' !== get_current_screen()->post_type ) {
+		return;
+	}
 
 	// Calendar
 	get_current_screen()->add_help_tab( array(

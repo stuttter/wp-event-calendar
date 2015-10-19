@@ -49,3 +49,6 @@ add_filter( 'pre_get_posts',                      'wp_event_calendar_maybe_sort_
 
 // Cron
 add_action( 'wp_event_calendar_cron_hook', 'wp_event_calendar_cron_exec' );
+
+// Admin Help
+add_action( 'admin_head', 'wp_event_calendar_admin_add_help_tabs' );
