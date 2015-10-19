@@ -49,7 +49,7 @@ function wp_event_calendar_update_post_statuses() {
 	$old_events = new WP_Query( array(
 		'fields'         => 'ids',
 		'post_type'      => 'event',
-		'post_status'    => 'any',
+		'post_status'    => 'publish',
 		'posts_per_page' => -1,
 		'meta_query' => array(
 			'relation' => 'AND',
