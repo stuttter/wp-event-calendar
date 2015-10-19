@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 0.1.9
  */
-function wp_event_calendar_register_post_types() {
+function wp_event_calendar_register_post_statuses() {
 
 	// Register the event type
 	register_post_status( 'passed', array(
