@@ -224,14 +224,14 @@ function wp_get_event_start_date_time( $post = false ) {
 	// Get the post object & start date
 	$post = get_post( $post );
 	$date = get_post_meta( $post->ID, 'wp_event_calendar_date_time', true );
-	$df   = get_option( 'date_format' );
-	$tf   = get_option( 'time_format' );
 
 	// Start an output buffer
 	ob_start();
 
 	if ( ! empty( $date ) ) {
 		$date = strtotime( $date );
+		$df   = get_option( 'date_format' );
+		$tf   = get_option( 'time_format' );
 
 		echo date_i18n( $df, $date );
 
