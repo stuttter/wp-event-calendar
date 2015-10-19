@@ -290,7 +290,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 */
 	protected function get_month() {
 		return (int) isset( $_REQUEST['month'] )
-			? $_REQUEST['month']
+			? (int) $_REQUEST['month']
 			: date_i18n( 'n' );
 	}
 
@@ -305,7 +305,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 */
 	protected function get_day() {
 		return (int) isset( $_REQUEST['day'] )
-			? $_REQUEST['day']
+			? (int) $_REQUEST['day']
 			: date_i18n( 'j' );
 	}
 
@@ -320,7 +320,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 */
 	protected function get_year() {
 		return (int) isset( $_REQUEST['year'] )
-			? $_REQUEST['year']
+			? (int) $_REQUEST['year']
 			: date_i18n( 'Y' );
 	}
 
@@ -335,7 +335,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 */
 	protected function get_post_status() {
 		return isset( $_REQUEST['post_status'] )
-			? $_REQUEST['post_status']
+			? sanitize_key( $_REQUEST['post_status'] )
 			: $this->get_available_post_stati();
 	}
 
@@ -355,7 +355,8 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 			'draft',
 			'pending',
 			'private',
-			'hidden'
+			'hidden',
+			'passed'
 		);
 	}
 
@@ -370,7 +371,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 */
 	protected function get_orderby() {
 		return isset( $_REQUEST['orderby'] )
-			? $_REQUEST['orderby']
+			? sanitize_key( $_REQUEST['orderby'] )
 			: 'date';
 	}
 
