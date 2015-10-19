@@ -509,6 +509,11 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 			// Set variable to trick PHP
 			$status_name = $status->name;
 
+			// "Passed" status is irrelevant in calendar view
+			if ( 'passed' === $status_name ) {
+				continue;
+			}
+
 			// Skip if not available status
 			if ( ! in_array( $status_name, $avail_post_stati ) ) {
 				continue;

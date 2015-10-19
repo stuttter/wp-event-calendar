@@ -34,11 +34,13 @@ function wp_event_calendar() {
 	require $plugin_path . 'includes/common/list-table-day.php';
 
 	// Event files
-	require $plugin_path . 'includes/events/capabilities.php';
-	require $plugin_path . 'includes/events/post-types.php';
-	require $plugin_path . 'includes/events/taxonomies.php';
-	require $plugin_path . 'includes/events/metaboxes.php';
 	require $plugin_path . 'includes/events/admin.php';
+	require $plugin_path . 'includes/events/capabilities.php';
+	require $plugin_path . 'includes/events/cron.php';
+	require $plugin_path . 'includes/events/metaboxes.php';
+	require $plugin_path . 'includes/events/post-types.php';
+	require $plugin_path . 'includes/events/post-statuses.php';
+	require $plugin_path . 'includes/events/taxonomies.php';
 	require $plugin_path . 'includes/events/hooks.php';
 }
 add_action( 'plugins_loaded', 'wp_event_calendar' );
