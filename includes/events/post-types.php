@@ -12,6 +12,9 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Register the User Activity post types
  *
+ * If you want to manipulate these arguments, use the `register_post_type_args`
+ * filter that's built into WordPress since version 4.4.
+ *
  * @since 0.1.0
  */
 function wp_event_calendar_register_post_types() {
