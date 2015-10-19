@@ -27,13 +27,11 @@ function wp_event_calendar() {
 	require $plugin_path . 'includes/common/functions.php';
 
 	// Admin-only common files
-	if ( is_admin() ) {
-		require $plugin_path . 'includes/common/admin.php';
-		require $plugin_path . 'includes/common/list-table-base.php';
-		require $plugin_path . 'includes/common/list-table-month.php';
-		require $plugin_path . 'includes/common/list-table-week.php';
-		require $plugin_path . 'includes/common/list-table-day.php';
-	}
+	require $plugin_path . 'includes/common/admin.php';
+	require $plugin_path . 'includes/common/list-table-base.php';
+	require $plugin_path . 'includes/common/list-table-month.php';
+	require $plugin_path . 'includes/common/list-table-week.php';
+	require $plugin_path . 'includes/common/list-table-day.php';
 
 	// Event files
 	require $plugin_path . 'includes/events/capabilities.php';
@@ -66,3 +64,13 @@ function wp_event_calendar_get_plugin_url() {
 function wp_event_calendar_get_asset_version() {
 	return 201509100001;
 }
+
+/**
+ * Deactivation hook
+ *
+ * @since 0.1.9
+ */
+function wp_event_calendar_deactivation_hook() {
+	wp_event_calendar_cron_unhook();
+}
+register_deactivation_hook( __FILE__, 'wp_event_calendar_deactivation_hook' );
