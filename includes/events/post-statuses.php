@@ -27,6 +27,6 @@ function wp_event_calendar_register_post_statuses() {
 		'private'                   => null,
 		'publicly_queryable'        => false,
 		'show_in_admin_status_list' => true,
-		'show_in_admin_all_list'    => false,
+		'show_in_admin_all_list'    => true,
 	) );
 }
