@@ -10,7 +10,7 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Register the User Activity post types
+ * Register the Event post types
  *
  * If you want to manipulate these arguments, use the `register_post_type_args`
  * filter that's built into WordPress since version 4.4.
