@@ -22,7 +22,7 @@ function wp_event_calendar_cron_hook() {
 	}
 
 	// Setup cron
-	wp_schedule_event( time(), 'twicedaily', 'wp_event_calendar_update_post_statuses' );
+	wp_schedule_event( time(), 'twicedaily', 'wp_event_calendar_update_events' );
 }
 
 /**

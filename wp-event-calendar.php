@@ -18,32 +18,32 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 0.1.0
  */
-function wp_event_calendar() {
+function _wp_event_calendar() {
 
 	// Get the plugin path
 	$plugin_path = plugin_dir_path( __FILE__ );
 
 	// Common files
-	require $plugin_path . 'includes/common/functions.php';
+	require_once $plugin_path . 'includes/common/functions.php';
 
 	// Admin-only common files
-	require $plugin_path . 'includes/common/admin.php';
-	require $plugin_path . 'includes/common/list-table-base.php';
-	require $plugin_path . 'includes/common/list-table-month.php';
-	require $plugin_path . 'includes/common/list-table-week.php';
-	require $plugin_path . 'includes/common/list-table-day.php';
+	require_once $plugin_path . 'includes/common/admin.php';
+	require_once $plugin_path . 'includes/common/list-table-base.php';
+	require_once $plugin_path . 'includes/common/list-table-month.php';
+	require_once $plugin_path . 'includes/common/list-table-week.php';
+	require_once $plugin_path . 'includes/common/list-table-day.php';
 
 	// Event files
-	require $plugin_path . 'includes/events/admin.php';
-	require $plugin_path . 'includes/events/capabilities.php';
-	require $plugin_path . 'includes/events/cron.php';
-	require $plugin_path . 'includes/events/metaboxes.php';
-	require $plugin_path . 'includes/events/post-types.php';
-	require $plugin_path . 'includes/events/post-statuses.php';
-	require $plugin_path . 'includes/events/taxonomies.php';
-	require $plugin_path . 'includes/events/hooks.php';
+	require_once $plugin_path . 'includes/events/admin.php';
+	require_once $plugin_path . 'includes/events/capabilities.php';
+	require_once $plugin_path . 'includes/events/cron.php';
+	require_once $plugin_path . 'includes/events/metaboxes.php';
+	require_once $plugin_path . 'includes/events/post-types.php';
+	require_once $plugin_path . 'includes/events/post-statuses.php';
+	require_once $plugin_path . 'includes/events/taxonomies.php';
+	require_once $plugin_path . 'includes/events/hooks.php';
 }
-add_action( 'plugins_loaded', 'wp_event_calendar' );
+add_action( 'plugins_loaded', '_wp_event_calendar' );
 
 /**
  * Return the plugin's URL
@@ -72,7 +72,19 @@ function wp_event_calendar_get_asset_version() {
  *
  * @since 0.1.9
  */
+function wp_event_calendar_activation_hook() {
+	_wp_event_calendar();
+	wp_event_calendar_cron_hook();
+}
+register_activation_hook( __FILE__, 'wp_event_calendar_activation_hook' );
+
+/**
+ * Deactivation hook
+ *
+ * @since 0.1.9
+ */
 function wp_event_calendar_deactivation_hook() {
+	_wp_event_calendar();
 	wp_event_calendar_cron_unhook();
 }
 register_deactivation_hook( __FILE__, 'wp_event_calendar_deactivation_hook' );
