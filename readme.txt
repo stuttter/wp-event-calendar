@@ -2,8 +2,8 @@
 Contributors: johnjamesjacoby, stuttter
 Tags: event, calendar, session, appointment, month, week, category, tag, term, type
 Requires at least: 4.3
-Tested up to: 4.3
-Stable tag: 0.1.8
+Tested up to: 4.4
+Stable tag: 0.1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,7 @@ WP Event Calendar is the best way to keep track of events in WordPress!
 * [WP Term Visibility](https://wordpress.org/plugins/wp-term-visibility/ "Visibilities for categories, tags, and other taxonomy terms.")
 * [WP User Groups](https://wordpress.org/plugins/wp-user-groups/ "Group users together with taxonomies & terms.")
 * [WP User Activity](https://wordpress.org/plugins/wp-user-activity/ "The best way to log activity in WordPress.")
+* [WP User Profiles](https://wordpress.org/plugins/wp-user-profiles/ "A sophisticated way to edit users in WordPress.")
 
 == Screenshots ==
 
@@ -61,6 +62,9 @@ The WordPress support forums: https://wordpress.org/support/plugin/wp-event-cale
 http://github.com/stuttter/wp-event-calendar/
 
 == Changelog ==
+
+= 0.1.9 =
+* Move events to "Passed" status twice daily
 
 = 0.1.8 =
 * Added week view
