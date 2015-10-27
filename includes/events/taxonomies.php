@@ -28,7 +28,8 @@ function wp_event_calendar_register_type_taxonomy() {
 		'add_new_item'               => __( 'Add New Type',               'wp-event-calendar' ),
 		'new_item_name'              => __( 'New Type Name',              'wp-event-calendar' ),
 		'view_item'                  => __( 'View Type',                  'wp-event-calendar' ),
-		'separate_items_with_commas' => __( 'Separate types with commas', 'wp-event-calendar' )
+		'separate_items_with_commas' => __( 'Separate types with commas', 'wp-event-calendar' ),
+		'not_found'                  => __( 'No types found',             'wp-event-calendar' ),
 	);
 
 	// Rewrite rules
