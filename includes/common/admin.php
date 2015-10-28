@@ -326,5 +326,5 @@ function wp_event_calendar_admin_assets() {
 	wp_enqueue_style( 'wp-pointer' );
 
 	// Date picker CSS (for jQuery UI calendar)
-	wp_enqueue_style( 'wp_event_calendar_admin_calendar', wp_event_calendar_get_plugin_url() . '/assets/css/calendar.css', false, wp_event_calendar_get_asset_version(), false );
+	wp_enqueue_style( 'wp_event_calendar_admin_calendar', wp_event_calendar_get_plugin_url() . 'assets/css/calendar.css', false, wp_event_calendar_get_asset_version(), false );
 }

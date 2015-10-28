@@ -306,8 +306,8 @@ function wp_event_calendar_admin_event_assets() {
 	$ver = wp_event_calendar_get_asset_version();
 
 	// Date picker CSS (for jQuery UI calendar)
-	wp_enqueue_style( 'wp_event_calendar_datepicker', $url . '/assets/css/datepicker.css', false,             $ver, false );
+	wp_enqueue_style( 'wp_event_calendar_datepicker', $url . 'assets/css/datepicker.css', false,             $ver, false );
 
 	// Datepicker & event JS
-	wp_enqueue_script( 'wp_event_calendar_all_event', $url . '/assets/js/event.js',        array( 'jquery' ), $ver, true  );
+	wp_enqueue_script( 'wp_event_calendar_all_event', $url . 'assets/js/event.js',        array( 'jquery' ), $ver, true  );
 }
