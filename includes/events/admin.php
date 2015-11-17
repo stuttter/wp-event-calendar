@@ -261,7 +261,7 @@ function wp_get_event_taxonomy_column_data( $post = false, $taxonomy = '' ) {
 		$out = array();
 		foreach ( $terms as $t ) {
 			$posts_in_term_qv = array();
-			if ( 'post' != $post->post_type ) {
+			if ( 'post' !== $post->post_type ) {
 				$posts_in_term_qv['post_type'] = $post->post_type;
 			}
 			if ( $taxonomy_object->query_var ) {
