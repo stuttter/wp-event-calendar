@@ -134,7 +134,7 @@ function wp_event_calendar_sortable_columns( $columns = array() ) {
 function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 
 	// Bail if not 'event' post type
-	if ( empty( $wp_query->query['post_type'] ) || ! in_array( 'event', (array) $wp_query->query['post_type'] ) ) {
+	if ( empty( $wp_query->query['post_type'] ) || ! in_array( 'event', (array) $wp_query->query['post_type'], true ) ) {
 		return;
 	}
 
