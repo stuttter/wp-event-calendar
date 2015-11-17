@@ -88,14 +88,14 @@ function wp_event_calendar_manage_posts_columns( $old_columns = array() ) {
 
 	// New columns
 	$new_columns = array(
-		'cb'         => '<input type="checkbox" />',
-		'title'      => esc_html__( 'Event',      'wp-event-calendar' ),
-		'start'      => esc_html__( 'Starts',     'wp-event-calendar' ),
-		'end'        => esc_html__( 'Ends',       'wp-event-calendar' ),
-		'duration'   => esc_html__( 'Duration',   'wp-event-calendar' ),
-		'repeat'     => esc_html__( 'Repeat',     'wp-event-calendar' ),
-		'categories' => esc_html__( 'Categories', 'wp-event-calendar' ),
-		'types'      => esc_html__( 'Types',      'wp-event-calendar' ),
+		'cb'               => '<input type="checkbox" />',
+		'title'            => esc_html__( 'Event',      'wp-event-calendar' ),
+		'start'            => esc_html__( 'Starts',     'wp-event-calendar' ),
+		'end'              => esc_html__( 'Ends',       'wp-event-calendar' ),
+		'duration'         => esc_html__( 'Duration',   'wp-event-calendar' ),
+		'repeat'           => esc_html__( 'Repeat',     'wp-event-calendar' ),
+		'event-categories' => esc_html__( 'Categories', 'wp-event-calendar' ),
+		'event-types'      => esc_html__( 'Types',      'wp-event-calendar' ),
 	);
 
 	// Filter & return
@@ -194,12 +194,12 @@ function wp_event_calendar_manage_custom_column_data( $column = '', $post_id = 0
 	switch ( $column ) {
 
 		// Type
-		case 'types' :
+		case 'event-types' :
 			echo wp_get_event_taxonomy_column_data( $post, 'event-type' );
 			break;
 
 		// Category
-		case 'categories' :
+		case 'event-categories' :
 			echo wp_get_event_taxonomy_column_data( $post, 'event-category' );
 			break;
 
