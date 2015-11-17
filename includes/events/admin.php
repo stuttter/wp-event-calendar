@@ -63,17 +63,31 @@ function wp_event_calendar_add_dropdown_filters( $post_type = '' ) {
 		return;
 	}
 
-	// Output lable & dropdown
-	echo '<label class="screen-reader-text" for="cat">' . __( 'Filter by type', 'wp-event-calendar' ) . '</label>';
-	wp_dropdown_categories( array(
-		'show_option_none' => __( 'All types', 'wp-event-calendar' ),
-		'hide_empty'       => false,
-		'hierarchical'     => false,
-		'taxonomy'         => 'event-type',
-		'show_count'       => 0,
-		'orderby'          => 'name',
-		'selected'         => $GLOBALS['cat']
-	) );
+	// Get registered taxonomies
+	$taxonomies = get_object_taxonomies( 'event', 'objects' );
+
+	// Loop through query vars
+	foreach ( $taxonomies as $taxonomy ) {
+
+		// Is this taxonomy being queried?
+		$selected = isset( $_GET[ $taxonomy->query_var ] )
+			? sanitize_key( $_GET[ $taxonomy->query_var ] )
+			: '';
+
+		// Output lable & dropdown
+		echo '<label class="screen-reader-text" for="event-type">' . sprintf( __( 'Filter by %s', 'wp-event-calendar' ), strtolower( $taxonomy->labels->singular_name ) ) . '</label>';
+		wp_dropdown_categories( array(
+			'show_option_none'  => $taxonomy->labels->all_items,
+			'option_none_value' => 0,
+			'hide_empty'        => true,
+			'hierarchical'      => false,
+			'taxonomy'          => $taxonomy->name,
+			'show_count'        => 0,
+			'orderby'           => 'name',
+			'name'              => $taxonomy->query_var,
+			'selected'          => $selected
+		) );
+	}
 }
 
 /**
@@ -199,14 +213,14 @@ function wp_event_calendar_maybe_filter_by_fields( WP_Query $wp_query ) {
 	foreach ( $taxonomies as $taxonomy ) {
 
 		// Skip if not set
-		if ( ! isset( $_GET[ $taxonomy->query_var ] ) ) {
+		if ( empty( $_GET[ $taxonomy->query_var ] ) ) {
 			continue;
 		}
 
 		// Add to taxonomy query
 		$tax_query[] = array(
 			'taxonomy' => $taxonomy->name,
-			'field'    => 'slug',
+			'field'    => 'term_id',
 			'terms'    => sanitize_key( $_GET[ $taxonomy->query_var ] )
 		);
 	}
@@ -305,10 +319,10 @@ function wp_get_event_taxonomy_column_data( $post = false, $taxonomy = '' ) {
 				$posts_in_term_qv['post_type'] = $post->post_type;
 			}
 			if ( $taxonomy_object->query_var ) {
-				$posts_in_term_qv[ $taxonomy_object->query_var ] = $t->slug;
+				$posts_in_term_qv[ $taxonomy_object->query_var ] = $t->term_id;
 			} else {
 				$posts_in_term_qv['taxonomy'] = $taxonomy;
-				$posts_in_term_qv['term']     = $t->slug;
+				$posts_in_term_qv['term']     = $t->term_id;
 			}
 
 			$out[] = sprintf( '<a href="%s">%s</a>',
