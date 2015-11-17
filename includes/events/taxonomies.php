@@ -159,7 +159,7 @@ function wp_event_calendar_register_tag_taxonomy() {
 		'rewrite'               => $rewrite,
 		'capabilities'          => $caps,
 		'update_count_callback' => '_update_post_term_count',
-		'query_var'             => true,
+		'query_var'             => 'event-tag',
 		'show_tagcloud'         => false,
 		'hierarchical'          => false,
 		'show_in_nav_menus'     => false,
