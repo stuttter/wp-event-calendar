@@ -178,6 +178,46 @@ function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 }
 
 /**
+ * Set the relevant query vars for filtering posts by our front-end filters.
+ *
+ * @since 0.1.0
+ *
+ * @param WP_Query $wp_query The current WP_Query object.
+ */
+function wp_event_calendar_maybe_filter_by_fields( WP_Query $wp_query ) {
+
+	// Bail if not 'activty' post type
+	if ( empty( $wp_query->query['post_type'] ) || ! in_array( 'event', (array) $wp_query->query['post_type'], true ) ) {
+		return;
+	}
+
+	// Get taxonomies
+	$taxonomies = get_object_taxonomies( 'event', 'objects' );
+	$tax_query  = array();
+
+	// Loop through query vars
+	foreach ( $taxonomies as $taxonomy ) {
+
+		// Skip if not set
+		if ( ! isset( $_GET[ $taxonomy->query_var ] ) ) {
+			continue;
+		}
+
+		// Add to taxonomy query
+		$tax_query[] = array(
+			'taxonomy' => $taxonomy->name,
+			'field'    => 'slug',
+			'terms'    => sanitize_key( $_GET[ $taxonomy->query_var ] )
+		);
+	}
+
+	// Maybe set tax_query
+	if ( ! empty( $tax_query ) ) {
+		$wp_query->set( 'tax_query', $tax_query );
+	}
+}
+
+/**
  * Output content for each event column
  *
  * @since 0.1.2
