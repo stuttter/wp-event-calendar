@@ -306,7 +306,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	}
 
 	/**
-	 * Display a calendar by month and year
+	 * Display a calendar by mode & range
 	 *
 	 * @since 0.1.8
 	 */
@@ -320,7 +320,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 		// All day events
 		echo $this->get_all_day_row();
 
-		// Loop through days of the month
+		// Loop through hours in days of week
 		for ( $i = 0; $i <= ( 7 * 24 ) - 1; $i++ ) {
 
 			// Get timestamp & hour
