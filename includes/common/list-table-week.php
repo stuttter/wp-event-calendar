@@ -192,7 +192,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	protected function pagination( $args = array() ) {
 
 		// Parse args
-		$args = wp_parse_args( $args, array(
+		$r = wp_parse_args( $args, array(
 			'small'  => '1 week',
 			'large'  => '1 month',
 			'labels' => array(
@@ -204,7 +204,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 		) );
 
 		// Return pagination
-		return parent::pagination( $args );
+		return parent::pagination( $r );
 	}
 
 	/**
