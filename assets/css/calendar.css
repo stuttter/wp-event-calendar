@@ -62,8 +62,8 @@ table.calendar a {
 	padding: 0 5px;
 }
 
-table.calendar tbody td.saturday,
-table.calendar tbody td.sunday {
+table.calendar:not(.day) tbody td.saturday,
+table.calendar:not(.day) tbody td.sunday {
 	background-color: #f1f1f1;
 }
 
@@ -182,7 +182,8 @@ input#year {
 
 /** Week **********************************************************************/
 
-table.week th {
+table.week th,
+table.day th {
 	width: 30px;
 	background-color: #fff;
 	color: #333;
@@ -192,11 +193,36 @@ table.week th {
 	cursor: default;
 }
 
-table.week tbody tr.this-hour td {
+table.week tbody tr.this-hour td,
+table.day tbody tr.this-hour td {
 	background: #fbf9ee;
 }
 
 table.week tr.all-day th,
-table.week tr.all-day td {
+table.week tr.all-day td,
+table.day tr.all-day th,
+table.day tr.all-day td {
 	border-bottom: 2px solid #e1e1e1;
+}
+
+table.week th.column-hour,
+table.day th.column-hour {
+	width: 100px;
+}
+
+table.week th.column-monday,
+table.week th.column-tuesday,
+table.week th.column-wednesday,
+table.week th.column-thursday,
+table.week th.column-friday,
+table.week th.column-saturday,
+table.week th.column-sunday,
+table.day th.column-monday,
+table.day th.column-tuesday,
+table.day th.column-wednesday,
+table.day th.column-thursday,
+table.day th.column-friday,
+table.day th.column-saturday,
+table.day th.column-sunday {
+	width: 100%;
 }
