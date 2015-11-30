@@ -86,7 +86,7 @@ http://github.com/stuttter/wp-event-calendar/
 * Added legend in help text area
 
 = 0.1.7 =
-* Updated datepicker styling
+* Updated date-picker styling
 
 = 0.1.6 =
 * Sort by start, end, and repetition
@@ -95,7 +95,7 @@ http://github.com/stuttter/wp-event-calendar/
 * All-day events
 
 = 0.1.4 =
-* More flexibile mapped capabilities
+* More flexible mapped capabilities
 
 = 0.1.3 =
 * Revert role & capability changes
