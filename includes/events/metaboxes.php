@@ -72,9 +72,13 @@ function wp_event_calendar_details_metabox() {
 	/** Starts ****************************************************************/
 
 	// Get date_time
-	$date_time = ! empty( $meta['wp_event_calendar_date_time'][0] )
-		? strtotime( $meta['wp_event_calendar_date_time'][0] )
-		: null;
+	if ( ! empty( $_GET['start_day'] ) ) {
+		$date_time = (int) $_GET['start_day'];
+	} else {
+		$date_time = ! empty( $meta['wp_event_calendar_date_time'][0] )
+			? strtotime( $meta['wp_event_calendar_date_time'][0] )
+			: null;
+	}
 
 	// Date
 	$date = date( 'm/d/Y', $date_time );
