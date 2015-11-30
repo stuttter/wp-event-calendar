@@ -125,7 +125,7 @@ table.calendar a.status-draft {
 
 /** Month *********************************************************************/
 
-table.month tbody td span.day-number {
+table.month tbody td a.day-number {
 	position: absolute;
 	top: 0px;
 	left: 0px;
@@ -133,10 +133,10 @@ table.month tbody td span.day-number {
 	opacity: 0.5;
 	border-right: 1px solid #e1e1e1;
 	border-bottom: 1px solid #e1e1e1;
-	background-color: #fafafa;
+	background-color: #fff;
 }
 
-table.month tbody td.today span.day-number {
+table.month tbody td.today a.day-number {
 	background: #fbf9ee;
 }
 
@@ -162,7 +162,7 @@ table.month tbody tr td:last-of-type {
 	border-right: none;
 }
 
-table.month div.events-for-day {
+table.month div.events-for-cell {
 	margin: 30px 0 5px;
 	min-height: 80px
 }

@@ -996,7 +996,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 <script type="text/javascript">
 	/* <![CDATA[ */
 	( function( $ ) {
-		$( '.calendar a' ).click( function( event ) {
+		$( 'table.calendar .events-for-cell a' ).click( function( event ) {
 			event.preventDefault();
 		} );
 

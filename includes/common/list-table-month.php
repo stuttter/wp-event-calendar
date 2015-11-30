@@ -124,14 +124,22 @@ class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 	protected function get_row_cell( $iterator = 1, $start_day = 1 ) {
 
 		// Calculate the day of the month
-		$day_of_month = (int) ( $iterator - (int) $start_day + 1 ) ?>
+		$day_of_month = (int) ( $iterator - (int) $start_day + 1 );
+
+		// Calculate link to day view
+		$link_to_day  = add_query_arg( array(
+			'mode'  => 'day',
+			'year'  => $this->year,
+			'month' => $this->month,
+			'day'   => $day_of_month
+		), $this->get_base_url() ); ?>
 
 		<td class="<?php echo $this->get_day_classes( $iterator, $start_day ); ?>">
-			<span class="day-number">
+			<a href="<?php echo esc_url( $link_to_day ); ?>" class="day-number">
 				<?php echo (int) $day_of_month; ?>
-			</span>
+			</a>
 
-			<div class="events-for-day">
+			<div class="events-for-cell">
 				<?php echo $this->get_posts_for_cell( $day_of_month ); ?>
 			</div>
 		</td>
