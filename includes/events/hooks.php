@@ -45,7 +45,7 @@ add_filter( 'manage_event_posts_columns',         'wp_event_calendar_manage_post
 add_action( 'manage_event_posts_custom_column',   'wp_event_calendar_manage_custom_column_data' );
 add_filter( 'manage_edit-event_sortable_columns', 'wp_event_calendar_sortable_columns' );
 add_filter( 'pre_get_posts',                      'wp_event_calendar_maybe_sort_by_fields' );
-//add_filter( 'posts_clauses',                      'wp_event_calendar_maybe_sort_by_taxonomy', 10, 2 );
+add_filter( 'pre_get_posts',                      'wp_event_calendar_maybe_filter_by_fields' );
 
 // Cron
 add_action( 'wp_event_calendar_update_events', 'wp_event_calendar_update_post_statuses' );

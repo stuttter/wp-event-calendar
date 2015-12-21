@@ -163,6 +163,23 @@ function wp_event_calendar_admin_add_help_tabs() {
 			'<li>' . esc_html__( 'Return to today with the double-colon button.',              'wp-event-calendar' ) . '</li></ul>'
 	) );
 
+	// Month View
+	get_current_screen()->add_help_tab( array(
+		'id'		=> 'day',
+		'title'		=> __( '&mdash; Day', 'wp-event-calendar' ),
+		'content'	=>
+			'<p>'  . esc_html__( 'This is a traditional daily calendar view.',     'wp-event-calendar' ) . '</p><ul>' .
+			'<li>' . esc_html__( 'Events are listed chronologically for the day.', 'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Events spanning more than 1 day are shown.',     'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'All-day events appear in the top row.',          'wp-event-calendar' ) . '</li></ul>' .
+
+			'<p><strong>'  . esc_html__( 'Navigation', 'wp-event-calendar' ) . '</strong></p><ul>' .
+			'<li>' . esc_html__( 'View specific months & years via the dropdown on the left.', 'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Paginate through weeks with double-arrow buttons.',          'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Paginate through days with single-arrow buttons.',           'wp-event-calendar' ) . '</li>' .
+			'<li>' . esc_html__( 'Return to today with the double-colon button.',              'wp-event-calendar' ) . '</li></ul>'
+	) );
+
 	// Help Sidebar
 	get_current_screen()->set_help_sidebar(
 		'<p><i class="dashicons dashicons-calendar"></i> ' . esc_html__( 'Regular Event', 'wp-event-calendar' ) . '</p>' .
@@ -326,5 +343,5 @@ function wp_event_calendar_admin_assets() {
 	wp_enqueue_style( 'wp-pointer' );
 
 	// Date picker CSS (for jQuery UI calendar)
-	wp_enqueue_style( 'wp_event_calendar_admin_calendar', wp_event_calendar_get_plugin_url() . '/assets/css/calendar.css', false, wp_event_calendar_get_asset_version(), false );
+	wp_enqueue_style( 'wp_event_calendar_admin_calendar', wp_event_calendar_get_plugin_url() . 'assets/css/calendar.css', false, wp_event_calendar_get_asset_version(), false );
 }

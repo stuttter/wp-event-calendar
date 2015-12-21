@@ -3,10 +3,10 @@
 /**
  * Plugin Name: WP Event Calendar
  * Plugin URI:  https://wordpress.org/plugins/wp-event-calendar/
- * Description: The best way to manage events in WordPress
  * Author:      John James Jacoby
- * Version:     0.1.9
- * Author URI:  https://profiles.wordpress.org/johnjamesjacoby/
+ * Author URI:  https://jjj.me/
+ * Version:     0.2.0
+ * Description: The best way to manage events in WordPress
  * License:     GPL v2 or later
  */
 
@@ -64,7 +64,7 @@ function wp_event_calendar_get_plugin_url() {
  * @return int
  */
 function wp_event_calendar_get_asset_version() {
-	return 201509100001;
+	return 201511300002;
 }
 
 /**

@@ -192,7 +192,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	protected function pagination( $args = array() ) {
 
 		// Parse args
-		$args = wp_parse_args( $args, array(
+		$r = wp_parse_args( $args, array(
 			'small'  => '1 week',
 			'large'  => '1 month',
 			'labels' => array(
@@ -204,7 +204,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 		) );
 
 		// Return pagination
-		return parent::pagination( $args );
+		return parent::pagination( $r );
 	}
 
 	/**
@@ -294,7 +294,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 		ob_start(); ?>
 
 		<td class="<?php echo $this->get_day_classes( $iterator, $start_day ); ?>">
-			<div class="events-for-day">
+			<div class="events-for-cell">
 				<?php echo $this->get_posts_for_cell( $iterator ); ?>
 			</div>
 		</td>
@@ -306,7 +306,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	}
 
 	/**
-	 * Display a calendar by month and year
+	 * Display a calendar by mode & range
 	 *
 	 * @since 0.1.8
 	 */
@@ -320,7 +320,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 		// All day events
 		echo $this->get_all_day_row();
 
-		// Loop through days of the month
+		// Loop through hours in days of week
 		for ( $i = 0; $i <= ( 7 * 24 ) - 1; $i++ ) {
 
 			// Get timestamp & hour

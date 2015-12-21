@@ -63,17 +63,31 @@ function wp_event_calendar_add_dropdown_filters( $post_type = '' ) {
 		return;
 	}
 
-	// Output lable & dropdown
-	echo '<label class="screen-reader-text" for="cat">' . __( 'Filter by type', 'wp-event-calendar' ) . '</label>';
-	wp_dropdown_categories( array(
-		'show_option_none' => __( 'All types', 'wp-event-calendar' ),
-		'hide_empty'       => false,
-		'hierarchical'     => false,
-		'taxonomy'         => 'event-type',
-		'show_count'       => 0,
-		'orderby'          => 'name',
-		'selected'         => $GLOBALS['cat']
-	) );
+	// Get registered taxonomies
+	$taxonomies = get_object_taxonomies( 'event', 'objects' );
+
+	// Loop through query vars
+	foreach ( $taxonomies as $taxonomy ) {
+
+		// Is this taxonomy being queried?
+		$selected = isset( $_GET[ $taxonomy->query_var ] )
+			? sanitize_key( $_GET[ $taxonomy->query_var ] )
+			: '';
+
+		// Output lable & dropdown
+		echo '<label class="screen-reader-text" for="event-type">' . sprintf( __( 'Filter by %s', 'wp-event-calendar' ), strtolower( $taxonomy->labels->singular_name ) ) . '</label>';
+		wp_dropdown_categories( array(
+			'show_option_none'  => $taxonomy->labels->all_items,
+			'option_none_value' => 0,
+			'hide_empty'        => true,
+			'hierarchical'      => false,
+			'taxonomy'          => $taxonomy->name,
+			'show_count'        => 0,
+			'orderby'           => 'name',
+			'name'              => $taxonomy->query_var,
+			'selected'          => $selected
+		) );
+	}
 }
 
 /**
@@ -88,14 +102,14 @@ function wp_event_calendar_manage_posts_columns( $old_columns = array() ) {
 
 	// New columns
 	$new_columns = array(
-		'cb'         => '<input type="checkbox" />',
-		'title'      => esc_html__( 'Event',      'wp-event-calendar' ),
-		'start'      => esc_html__( 'Starts',     'wp-event-calendar' ),
-		'end'        => esc_html__( 'Ends',       'wp-event-calendar' ),
-		'duration'   => esc_html__( 'Duration',   'wp-event-calendar' ),
-		'repeat'     => esc_html__( 'Repeat',     'wp-event-calendar' ),
-		'categories' => esc_html__( 'Categories', 'wp-event-calendar' ),
-		'types'      => esc_html__( 'Types',      'wp-event-calendar' ),
+		'cb'               => '<input type="checkbox" />',
+		'title'            => esc_html__( 'Event',      'wp-event-calendar' ),
+		'start'            => esc_html__( 'Starts',     'wp-event-calendar' ),
+		'end'              => esc_html__( 'Ends',       'wp-event-calendar' ),
+		'duration'         => esc_html__( 'Duration',   'wp-event-calendar' ),
+		'repeat'           => esc_html__( 'Repeat',     'wp-event-calendar' ),
+		'event-categories' => esc_html__( 'Categories', 'wp-event-calendar' ),
+		'event-types'      => esc_html__( 'Types',      'wp-event-calendar' ),
 	);
 
 	// Filter & return
@@ -134,7 +148,7 @@ function wp_event_calendar_sortable_columns( $columns = array() ) {
 function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 
 	// Bail if not 'event' post type
-	if ( empty( $wp_query->query['post_type'] ) || ! in_array( 'event', (array) $wp_query->query['post_type'] ) ) {
+	if ( empty( $wp_query->query['post_type'] ) || ! in_array( 'event', (array) $wp_query->query['post_type'], true ) ) {
 		return;
 	}
 
@@ -178,6 +192,46 @@ function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 }
 
 /**
+ * Set the relevant query vars for filtering posts by our front-end filters.
+ *
+ * @since 0.1.0
+ *
+ * @param WP_Query $wp_query The current WP_Query object.
+ */
+function wp_event_calendar_maybe_filter_by_fields( WP_Query $wp_query ) {
+
+	// Bail if not 'activty' post type
+	if ( empty( $wp_query->query['post_type'] ) || ! in_array( 'event', (array) $wp_query->query['post_type'], true ) ) {
+		return;
+	}
+
+	// Get taxonomies
+	$taxonomies = get_object_taxonomies( 'event', 'objects' );
+	$tax_query  = array();
+
+	// Loop through query vars
+	foreach ( $taxonomies as $taxonomy ) {
+
+		// Skip if not set
+		if ( empty( $_GET[ $taxonomy->query_var ] ) ) {
+			continue;
+		}
+
+		// Add to taxonomy query
+		$tax_query[] = array(
+			'taxonomy' => $taxonomy->name,
+			'field'    => 'term_id',
+			'terms'    => sanitize_key( $_GET[ $taxonomy->query_var ] )
+		);
+	}
+
+	// Maybe set tax_query
+	if ( ! empty( $tax_query ) ) {
+		$wp_query->set( 'tax_query', $tax_query );
+	}
+}
+
+/**
  * Output content for each event column
  *
  * @since 0.1.2
@@ -194,12 +248,12 @@ function wp_event_calendar_manage_custom_column_data( $column = '', $post_id = 0
 	switch ( $column ) {
 
 		// Type
-		case 'types' :
+		case 'event-types' :
 			echo wp_get_event_taxonomy_column_data( $post, 'event-type' );
 			break;
 
 		// Category
-		case 'categories' :
+		case 'event-categories' :
 			echo wp_get_event_taxonomy_column_data( $post, 'event-category' );
 			break;
 
@@ -261,14 +315,14 @@ function wp_get_event_taxonomy_column_data( $post = false, $taxonomy = '' ) {
 		$out = array();
 		foreach ( $terms as $t ) {
 			$posts_in_term_qv = array();
-			if ( 'post' != $post->post_type ) {
+			if ( 'post' !== $post->post_type ) {
 				$posts_in_term_qv['post_type'] = $post->post_type;
 			}
 			if ( $taxonomy_object->query_var ) {
-				$posts_in_term_qv[ $taxonomy_object->query_var ] = $t->slug;
+				$posts_in_term_qv[ $taxonomy_object->query_var ] = $t->term_id;
 			} else {
 				$posts_in_term_qv['taxonomy'] = $taxonomy;
-				$posts_in_term_qv['term']     = $t->slug;
+				$posts_in_term_qv['term']     = $t->term_id;
 			}
 
 			$out[] = sprintf( '<a href="%s">%s</a>',
@@ -306,8 +360,8 @@ function wp_event_calendar_admin_event_assets() {
 	$ver = wp_event_calendar_get_asset_version();
 
 	// Date picker CSS (for jQuery UI calendar)
-	wp_enqueue_style( 'wp_event_calendar_datepicker', $url . '/assets/css/datepicker.css', false,             $ver, false );
+	wp_enqueue_style( 'wp_event_calendar_datepicker', $url . 'assets/css/datepicker.css', false,             $ver, false );
 
 	// Datepicker & event JS
-	wp_enqueue_script( 'wp_event_calendar_all_event', $url . '/assets/js/event.js',        array( 'jquery' ), $ver, true  );
+	wp_enqueue_script( 'wp_event_calendar_all_event', $url . 'assets/js/event.js',        array( 'jquery' ), $ver, true  );
 }

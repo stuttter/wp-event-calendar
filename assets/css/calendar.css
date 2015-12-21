@@ -62,8 +62,8 @@ table.calendar a {
 	padding: 0 5px;
 }
 
-table.calendar tbody td.saturday,
-table.calendar tbody td.sunday {
+table.calendar:not(.day) tbody td.saturday,
+table.calendar:not(.day) tbody td.sunday {
 	background-color: #f1f1f1;
 }
 
@@ -125,19 +125,56 @@ table.calendar a.status-draft {
 
 /** Month *********************************************************************/
 
-table.month tbody td span.day-number {
+table.month tbody td a.day-number {
 	position: absolute;
 	top: 0px;
 	left: 0px;
-	padding: 2px 10px;
-	opacity: 0.5;
+	height: 26px;
+	width: 26px;
+	text-align: center;
+	line-height: 1.9em;
+	padding: 0;
 	border-right: 1px solid #e1e1e1;
 	border-bottom: 1px solid #e1e1e1;
-	background-color: #fafafa;
+	background-color: rgba(255, 255, 255, 1);
+	color: #aaa;
+	font-weight: 600;
 }
 
-table.month tbody td.today span.day-number {
+table.month tbody td.today a.day-number {
 	background: #fbf9ee;
+}
+table.month tbody a.add-event-for-day:hover,
+table.month tbody td a.day-number:hover {
+	background: rgba(235, 235, 235, 1);
+}
+
+table.month tbody a.add-event-for-day {
+	visibility: hidden;
+	position: absolute;
+	right: 0;
+	top: 0;
+	height: 26px;
+	width: 26px;
+	text-align: center;
+	border-left: 1px solid #e1e1e1;
+	border-bottom: 1px solid #e1e1e1;
+	background-color: rgba(255, 255, 255, 1);
+	padding: 0;
+	margin: 0;
+}
+
+table.month tbody a i {
+	line-height: 1.9em;
+	font-size: 15px;	
+}
+
+table.month tbody td:hover a.add-event-for-day {
+	visibility: visible;
+}
+
+table.month tbody td:hover {
+	background-color: #fbf9ee;
 }
 
 table.month tbody td {
@@ -162,7 +199,7 @@ table.month tbody tr td:last-of-type {
 	border-right: none;
 }
 
-table.month div.events-for-day {
+table.month div.events-for-cell {
 	margin: 30px 0 5px;
 	min-height: 80px
 }
@@ -182,7 +219,8 @@ input#year {
 
 /** Week **********************************************************************/
 
-table.week th {
+table.week th,
+table.day th {
 	width: 30px;
 	background-color: #fff;
 	color: #333;
@@ -192,11 +230,36 @@ table.week th {
 	cursor: default;
 }
 
-table.week tbody tr.this-hour td {
+table.week tbody tr.this-hour td,
+table.day tbody tr.this-hour td {
 	background: #fbf9ee;
 }
 
 table.week tr.all-day th,
-table.week tr.all-day td {
+table.week tr.all-day td,
+table.day tr.all-day th,
+table.day tr.all-day td {
 	border-bottom: 2px solid #e1e1e1;
+}
+
+table.week th.column-hour,
+table.day th.column-hour {
+	width: 100px;
+}
+
+table.week th.column-monday,
+table.week th.column-tuesday,
+table.week th.column-wednesday,
+table.week th.column-thursday,
+table.week th.column-friday,
+table.week th.column-saturday,
+table.week th.column-sunday,
+table.day th.column-monday,
+table.day th.column-tuesday,
+table.day th.column-wednesday,
+table.day th.column-thursday,
+table.day th.column-friday,
+table.day th.column-saturday,
+table.day th.column-sunday {
+	width: 100%;
 }

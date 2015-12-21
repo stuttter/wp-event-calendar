@@ -3,9 +3,10 @@ Contributors: johnjamesjacoby, stuttter
 Tags: event, calendar, session, appointment, month, week, category, tag, term, type
 Requires at least: 4.3
 Tested up to: 4.4
-Stable tag: 0.1.9
+Stable tag: 0.2.0
 License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9Q4F4EL5YJ62J
 
 == Description ==
 
@@ -20,6 +21,9 @@ WP Event Calendar is the best way to keep track of events in WordPress!
 
 = Also checkout =
 
+* [WP Chosen](https://wordpress.org/plugins/wp-chosen/ "Make long, unwieldy select boxes much more user-friendly.")
+* [WP Pretty Filters](https://wordpress.org/plugins/wp-pretty-filters/ "Makes post filters better match what's already in Media & Attachments.")
+* [WP Media Categories](https://wordpress.org/plugins/wp-media-categories/ "Add categories to media & attachments.")
 * [WP Term Meta](https://wordpress.org/plugins/wp-term-meta/ "Metadata, for taxonomy terms.")
 * [WP Term Order](https://wordpress.org/plugins/wp-term-order/ "Sort taxonomy terms, your way.")
 * [WP Term Authors](https://wordpress.org/plugins/wp-term-authors/ "Authors for categories, tags, and other taxonomy terms.")
@@ -64,6 +68,13 @@ http://github.com/stuttter/wp-event-calendar/
 
 == Changelog ==
 
+= 0.2.0 =
+* Add "Day" view
+* Improvements to "Month" view
+
+= 0.1.10 =
+* Filter events by registered taxonomy
+
 = 0.1.9 =
 * Move events to "Passed" status twice daily
 
@@ -75,7 +86,7 @@ http://github.com/stuttter/wp-event-calendar/
 * Added legend in help text area
 
 = 0.1.7 =
-* Updated datepicker styling
+* Updated date-picker styling
 
 = 0.1.6 =
 * Sort by start, end, and repetition
@@ -84,7 +95,7 @@ http://github.com/stuttter/wp-event-calendar/
 * All-day events
 
 = 0.1.4 =
-* More flexibile mapped capabilities
+* More flexible mapped capabilities
 
 = 0.1.3 =
 * Revert role & capability changes

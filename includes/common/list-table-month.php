@@ -124,14 +124,32 @@ class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 	protected function get_row_cell( $iterator = 1, $start_day = 1 ) {
 
 		// Calculate the day of the month
-		$day_of_month = (int) ( $iterator - (int) $start_day + 1 ) ?>
+		$day_of_month = (int) ( $iterator - (int) $start_day + 1 );
+
+		// Calculate link to day view
+		$link_to_day  = add_query_arg( array(
+			'mode'  => 'day',
+			'year'  => $this->year,
+			'month' => $this->month,
+			'day'   => $day_of_month
+		), $this->get_base_url() );
+
+		// Link to add new event on this day
+		$add_event_for_day = add_query_arg( array(
+			'post_type' => wp_event_calendar_get_admin_post_type(),
+			'start_day' => strtotime( "{$this->month}/{$day_of_month}/{$this->year}" )
+		), admin_url( 'post-new.php' ) ); ?>
 
 		<td class="<?php echo $this->get_day_classes( $iterator, $start_day ); ?>">
-			<span class="day-number">
+			<a href="<?php echo esc_url( $link_to_day ); ?>" class="day-number">
 				<?php echo (int) $day_of_month; ?>
-			</span>
+			</a>
 
-			<div class="events-for-day">
+			<a href="<?php echo esc_url( $add_event_for_day ); ?>" class="add-event-for-day">
+				<i class="dashicons dashicons-plus"></i>
+			</a>
+
+			<div class="events-for-cell">
 				<?php echo $this->get_posts_for_cell( $day_of_month ); ?>
 			</div>
 		</td>

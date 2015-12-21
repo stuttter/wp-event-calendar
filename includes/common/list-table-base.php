@@ -183,7 +183,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 		return apply_filters( 'wp_event_calendar_list_table_modes', array(
 			'month' => __( 'Month', 'wp-event-calendar' ),
 			'week'  => __( 'Week',  'wp-event-calendar' ),
-			//'day'   => __( 'Day',   'wp-event-calendar' )
+			'day'   => __( 'Day',   'wp-event-calendar' )
 		) );
 	}
 
@@ -996,7 +996,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 <script type="text/javascript">
 	/* <![CDATA[ */
 	( function( $ ) {
-		$( '.calendar a' ).click( function( event ) {
+		$( 'table.calendar .events-for-cell a' ).click( function( event ) {
 			event.preventDefault();
 		} );
 
