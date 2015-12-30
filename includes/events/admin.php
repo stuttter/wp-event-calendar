@@ -220,7 +220,7 @@ function wp_event_calendar_maybe_filter_by_fields( WP_Query $wp_query ) {
 		// Add to taxonomy query
 		$tax_query[] = array(
 			'taxonomy' => $taxonomy->name,
-			'field'    => 'term_id',
+			'field'    => 'slug',
 			'terms'    => sanitize_key( $_GET[ $taxonomy->query_var ] )
 		);
 	}
@@ -319,10 +319,10 @@ function wp_get_event_taxonomy_column_data( $post = false, $taxonomy = '' ) {
 				$posts_in_term_qv['post_type'] = $post->post_type;
 			}
 			if ( $taxonomy_object->query_var ) {
-				$posts_in_term_qv[ $taxonomy_object->query_var ] = $t->term_id;
+				$posts_in_term_qv[ $taxonomy_object->query_var ] = $t->slug;
 			} else {
 				$posts_in_term_qv['taxonomy'] = $taxonomy;
-				$posts_in_term_qv['term']     = $t->term_id;
+				$posts_in_term_qv['term']     = $t->slug;
 			}
 
 			$out[] = sprintf( '<a href="%s">%s</a>',
