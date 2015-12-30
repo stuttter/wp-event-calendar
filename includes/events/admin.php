@@ -208,6 +208,11 @@ function wp_event_calendar_maybe_filter_by_fields( WP_Query $wp_query ) {
 		return;
 	}
 
+	// Event statuses
+	if ( ! empty( $_GET['post_status'] ) ) {
+		$wp_query->post_status = sanitize_key( $_GET['post_status'] );
+	}
+
 	// Get taxonomies
 	$taxonomies = get_object_taxonomies( 'event', 'objects' );
 	$tax_query  = array();
@@ -313,14 +318,27 @@ function wp_get_event_taxonomy_column_data( $post = false, $taxonomy = '' ) {
 	$taxonomy_object = get_taxonomy( $taxonomy );
 	$terms           = get_the_terms( $post->ID, $taxonomy );
 
+	// Event statuses
+	$post_status = ! empty( $_GET['post_status'] )
+		? array( 'post_status' => sanitize_key( $_GET['post_status'] ) )
+		: array( 'post_status' => 'all' );
+
 	// Has terms
 	if ( is_array( $terms ) ) {
 		$out = array();
+
+		// Loop through terms and create links
 		foreach ( $terms as $t ) {
-			$posts_in_term_qv = array();
+
+			// Reset default query variables
+			$posts_in_term_qv = $post_status;
+
+			// Set the post type
 			if ( 'post' !== $post->post_type ) {
 				$posts_in_term_qv['post_type'] = $post->post_type;
 			}
+
+			// Set the query variables
 			if ( $taxonomy_object->query_var ) {
 				$posts_in_term_qv[ $taxonomy_object->query_var ] = $t->slug;
 			} else {
@@ -328,13 +346,15 @@ function wp_get_event_taxonomy_column_data( $post = false, $taxonomy = '' ) {
 				$posts_in_term_qv['term']     = $t->slug;
 			}
 
+			// Add the term to array of links
 			$out[] = sprintf( '<a href="%s">%s</a>',
 				esc_url( add_query_arg( $posts_in_term_qv, 'edit.php' ) ),
 				esc_html( sanitize_term_field( 'name', $t->name, $t->term_id, $taxonomy, 'display' ) )
 			);
 		}
+
 		/* translators: used between list items, there is a space after the comma */
-		$retval = join( __( ', ' ), $out );
+		$retval = join( __( ', ', 'wp-event-calendar' ), $out );
 
 	// No terms
 	} else {
