@@ -79,7 +79,7 @@ function wp_event_calendar_add_dropdown_filters( $post_type = '' ) {
 		wp_dropdown_categories( array(
 			'show_option_none'  => $taxonomy->labels->all_items,
 			'option_none_value' => 0,
-			'hide_empty'        => true,
+			'hide_empty'        => false,
 			'hierarchical'      => false,
 			'taxonomy'          => $taxonomy->name,
 			'show_count'        => 0,
