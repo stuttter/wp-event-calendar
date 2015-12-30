@@ -64,6 +64,11 @@ function wp_event_calendar_register_post_types() {
 		'delete_others_posts' => 'delete_others_events'
 	);
 
+	// Rewrite
+	$rewrite = array(
+		'slug' => 'event'
+	);
+
 	// Post type arguments
 	$args = array(
 		'labels'               => $labels,
@@ -85,7 +90,7 @@ function wp_event_calendar_register_post_types() {
 		'register_meta_box_cb' => null,
 		'taxonomies'           => array(),
 		'has_archive'          => false,
-		'rewrite'              => true,
+		'rewrite'              => $rewrite,
 		'query_var'            => true,
 		'can_export'           => true,
 		'delete_with_user'     => false,
