@@ -74,8 +74,10 @@ function wp_event_calendar_add_dropdown_filters( $post_type = '' ) {
 			? sanitize_key( $_GET[ $taxonomy->query_var ] )
 			: '';
 
-		// Output lable & dropdown
+		// Output label
 		echo '<label class="screen-reader-text" for="event-type">' . sprintf( __( 'Filter by %s', 'wp-event-calendar' ), strtolower( $taxonomy->labels->singular_name ) ) . '</label>';
+
+		// Output dropdown
 		wp_dropdown_categories( array(
 			'show_option_none'  => $taxonomy->labels->all_items,
 			'option_none_value' => 0,
@@ -84,6 +86,7 @@ function wp_event_calendar_add_dropdown_filters( $post_type = '' ) {
 			'taxonomy'          => $taxonomy->name,
 			'show_count'        => 0,
 			'orderby'           => 'name',
+			'value_field'       => 'slug',
 			'name'              => $taxonomy->query_var,
 			'selected'          => $selected
 		) );
