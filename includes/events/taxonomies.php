@@ -28,7 +28,8 @@ function wp_event_calendar_register_type_taxonomy() {
 		'add_new_item'               => __( 'Add New Type',               'wp-event-calendar' ),
 		'new_item_name'              => __( 'New Type Name',              'wp-event-calendar' ),
 		'view_item'                  => __( 'View Type',                  'wp-event-calendar' ),
-		'separate_items_with_commas' => __( 'Separate types with commas', 'wp-event-calendar' )
+		'separate_items_with_commas' => __( 'Separate types with commas', 'wp-event-calendar' ),
+		'not_found'                  => __( 'No types found',             'wp-event-calendar' )
 	);
 
 	// Rewrite rules
@@ -82,7 +83,8 @@ function wp_event_calendar_register_category_taxonomy() {
 		'add_new_item'               => __( 'Add New Category',                'wp-event-calendar' ),
 		'new_item_name'              => __( 'New Category Name',               'wp-event-calendar' ),
 		'view_item'                  => __( 'View Category',                   'wp-event-calendar' ),
-		'separate_items_with_commas' => __( 'Separate categories with commas', 'wp-event-calendar' )
+		'separate_items_with_commas' => __( 'Separate categories with commas', 'wp-event-calendar' ),
+		'not_found'                  => __( 'No categories found',             'wp-event-calendar' )
 	);
 
 	// Rewrite rules
@@ -136,7 +138,8 @@ function wp_event_calendar_register_tag_taxonomy() {
 		'add_new_item'               => __( 'Add New Tag',               'wp-event-calendar' ),
 		'new_item_name'              => __( 'New Tag Name',              'wp-event-calendar' ),
 		'view_item'                  => __( 'View Tag',                  'wp-event-calendar' ),
-		'separate_items_with_commas' => __( 'Separate tags with commas', 'wp-event-calendar' )
+		'separate_items_with_commas' => __( 'Separate tags with commas', 'wp-event-calendar' ),
+		'not_found'                  => __( 'No tags found',             'wp-event-calendar' )
 	);
 
 	// Rewrite rules
