@@ -1,9 +1,9 @@
 === WP Event Calendar ===
 Contributors: johnjamesjacoby, stuttter
 Tags: event, calendar, session, appointment, month, week, category, tag, term, type
-Requires at least: 4.3
+Requires at least: 4.4
 Tested up to: 4.4
-Stable tag: 0.2.0
+Stable tag: 0.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9Q4F4EL5YJ62J
@@ -68,9 +68,12 @@ http://github.com/stuttter/wp-event-calendar/
 
 == Changelog ==
 
+= 0.2.1 =
+* Improve taxonomy & status filtering
+
 = 0.2.0 =
 * Add "Day" view
-* Improvements to "Month" view
+* Improve "Month" view
 
 = 0.1.10 =
 * Filter events by registered taxonomy
