@@ -64,7 +64,7 @@ function wp_event_calendar_get_plugin_url() {
  * @return int
  */
 function wp_event_calendar_get_asset_version() {
-	return 201511300002;
+	return 201601080001;
 }
 
 /**
