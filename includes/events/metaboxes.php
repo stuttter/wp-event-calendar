@@ -15,7 +15,14 @@ defined( 'ABSPATH' ) || exit;
  * @since  0.1.1
 */
 function wp_event_calendar_add_metabox() {
-	add_meta_box( 'wp_event_calendar_details', __( 'Details', 'wp-event-calendar' ), 'wp_event_calendar_details_metabox', 'event', 'normal', 'default' );
+	add_meta_box(
+		'wp_event_calendar_details',
+		__( 'Details', 'wp-event-calendar' ),
+		'wp_event_calendar_details_metabox',
+		'event',
+		'above_event_editor',
+		'default'
+	);
 }
 
 /**
@@ -128,102 +135,93 @@ function wp_event_calendar_details_metabox() {
 
 	<input type="hidden" name="wp_event_calendar_metabox_nonce" value="<?php echo wp_create_nonce( 'wp_event_calendar' ); ?>" />
 	<table class="form-table rowfat">
-		<tr>
-			<td>
-				<label for="wp_event_calendar_date"><?php esc_html_e( 'Start Day', 'wp-event-calendar'); ?></label>
-			</td>
+		<tbody>
+			<tr>
+				<th>
+					<label for="wp_event_calendar_all_day" class="screen-reader-text"><?php esc_html_e( 'All Day', 'wp-event-calendar' ); ?></label>
+				</th>
 
-			<td>
-				<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_date" id="wp_event_calendar_date" value="<?php echo esc_attr( $date ); ?>" placeholder="mm/dd/yyyy" /><br>
-			</td>
+				<td>
+					<label>
+						<input type="checkbox" name="wp_event_calendar_all_day" id="wp_event_calendar_all_day" value="1" <?php checked( $all_day ); ?> />
+						<?php esc_html_e( 'All-day event', 'wp-event-calendar' ); ?>
+					</label>
+				</td>
+			</tr>
 
-			<td>
-				<label for="wp_event_calendar_time_hour"><?php esc_html_e( 'Start Time', 'wp-event-calendar'); ?></label>
-			</td>
+			<tr>
+				<th>
+					<label for="wp_event_calendar_date"><?php esc_html_e( 'Start Time', 'wp-event-calendar'); ?></label>
+				</th>
 
-			<td class="event-time">
-				<input type="text" class="small-text" name="wp_event_calendar_time_hour" id="wp_event_calendar_time_hour" value="<?php echo esc_attr( $hour ); ?>" placeholder="10" <?php echo $disabled; ?> />
-				<span class="wp_event_calendar_time_separator">&nbsp;:&nbsp;</span>
-				<input type="number" min="00" max="59" step="1" class="small-text wp_event_calendar_minutes" name="wp_event_calendar_time_minute" value="<?php echo esc_attr( $minute ); ?>" placeholder="00" <?php echo $disabled; ?> />
-				<select name="wp_event_calendar_time_am_pm" <?php echo $disabled; ?>>
-					<option value="am" <?php selected( $am_pm, 'am' ); ?>><?php esc_html_e( 'AM', 'wp-event-calendar' ); ?></option>
-					<option value="pm" <?php selected( $am_pm, 'pm' ); ?>><?php esc_html_e( 'PM', 'wp-event-calendar' ); ?></option>
-				</select>
-			</td>
-		</tr>
+				<td>
+					<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_date" id="wp_event_calendar_date" value="<?php echo esc_attr( $date ); ?>" placeholder="mm/dd/yyyy" />
+					<div class="event-time">
+						<span class="wp_event_calendar_time_separator"><?php esc_html_e( ' at ', 'wp-event-alendar' ); ?></span>
+						<input type="number" min="01" max="12" step="1" pattern="[0-9]*" maxlength="2" class="small-text" name="wp_event_calendar_time_hour" id="wp_event_calendar_time_hour" value="<?php echo esc_attr( $hour ); ?>" placeholder="10" <?php echo $disabled; ?> />
+						<span class="wp_event_calendar_time_separator">:</span>
+						<input type="number" min="00" max="59" step="1" class="small-text wp_event_calendar_minutes" name="wp_event_calendar_time_minute" value="<?php echo esc_attr( $minute ); ?>" placeholder="00" <?php echo $disabled; ?> />
+						<select name="wp_event_calendar_time_am_pm" <?php echo $disabled; ?>>
+							<option value="am" <?php selected( $am_pm, 'am' ); ?>><?php esc_html_e( 'AM', 'wp-event-calendar' ); ?></option>
+							<option value="pm" <?php selected( $am_pm, 'pm' ); ?>><?php esc_html_e( 'PM', 'wp-event-calendar' ); ?></option>
+						</select>
+					</div>
+				</td>
 
-		<tr>
-			<td>
-				<label for="wp_event_calendar_end_date"><?php esc_html_e( 'End Day', 'wp-event-calendar' ); ?></label>
-			</td>
+			</tr>
 
-			<td>
-				<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_end_date" id="wp_event_calendar_end_date" value="<?php echo esc_attr( $end_date ); ?>" placeholder="mm/dd/yyyy" />
-			</td>
+			<tr>
+				<th>
+					<label for="wp_event_calendar_end_date"><?php esc_html_e( 'End Time', 'wp-event-calendar'); ?></label>
+				</th>
 
-			<td>
-				<label for="wp_event_calendar_end_time_hour"><?php esc_html_e( 'End Time', 'wp-event-calendar'); ?></label>
-			</td>
+				<td>
+					<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_end_date" id="wp_event_calendar_end_date" value="<?php echo esc_attr( $end_date ); ?>" placeholder="mm/dd/yyyy" />
+					<div class="event-time">
+						<span class="wp_event_calendar_time_separator"><?php esc_html_e( ' at ', 'wp-event-alendar' ); ?></span>
+						<input type="number" min="01" max="12" step="1" pattern="[0-9]*" maxlength="2" class="small-text" name="wp_event_calendar_end_time_hour" id="wp_event_calendar_end_time_hour" value="<?php echo esc_attr( $end_hour ); ?>" placeholder="11" <?php echo $disabled; ?> />
+						<span class="wp_event_calendar_time_separator">:</span>
+						<input type="number" min="00" max="59" step="1" pattern="[0-9]*" maxlength="2" class="small-text wp_event_calendar_minutes" name="wp_event_calendar_end_time_minute" value="<?php echo esc_attr( $end_minute ); ?>" placeholder="00" <?php echo $disabled; ?> />
+						<select class="wp_event_calendar_end_time_am_pm" name="wp_event_calendar_end_time_am_pm" <?php echo $disabled; ?>>
+							<option value="am" <?php selected( $end_am_pm, 'am' ); ?>><?php esc_html_e( 'AM', 'wp-event-calendar' ); ?></option>
+							<option value="pm" <?php selected( $end_am_pm, 'pm' ); ?>><?php esc_html_e( 'PM', 'wp-event-calendar' ); ?></option>
+						</select>
+					</div>
+				</td>
+			</tr>
 
-			<td class="event-time">
-				<input type="text" class="small-text" name="wp_event_calendar_end_time_hour" id="wp_event_calendar_end_time_hour" value="<?php echo esc_attr( $end_hour ); ?>" placeholder="11" <?php echo $disabled; ?> />
-				<span class="wp_event_calendar_time_separator">&nbsp;:&nbsp;</span>
-				<input type="number" min="00" max="59" step="1" class="small-text wp_event_calendar_minutes" name="wp_event_calendar_end_time_minute" value="<?php echo esc_attr( $end_minute ); ?>" placeholder="00" <?php echo $disabled; ?> />
-				<select class="wp_event_calendar_end_time_am_pm" name="wp_event_calendar_end_time_am_pm" <?php echo $disabled; ?>>
-					<option value="am" <?php selected( $end_am_pm, 'am' ); ?>><?php esc_html_e( 'AM', 'wp-event-calendar' ); ?></option>
-					<option value="pm" <?php selected( $end_am_pm, 'pm' ); ?>><?php esc_html_e( 'PM', 'wp-event-calendar' ); ?></option>
-				</select>
-			</td>
-		</tr>
+			<tr>
+				<th>
+					<label for="wp_event_calendar_location"><?php esc_html_e( 'Location', 'wp-event-calendar' ); ?></label>
+				</th>
 
-		<tr>
-			<td>
-				<label for="wp_event_calendar_location"><?php esc_html_e( 'Location', 'wp-event-calendar' ); ?></label>
-			</td>
+				<td>
+					<label>
+						<textarea name="wp_event_calendar_location" id="wp_event_calendar_location" placeholder="<?php esc_html_e( '(Optional)', 'wp-event-calendar' ); ?>"><?php echo esc_textarea( $location ); ?></textarea>
+					</label>
+				</td>
+			</tr>
 
-			<td>
-				<label>
-					<textarea name="wp_event_calendar_location" id="wp_event_calendar_location" placeholder="<?php esc_html_e( '(Optional)', 'wp-event-calendar' ); ?>"><?php echo esc_textarea( $location ); ?></textarea>
-				</label>
-			</td>
+			<tr>
+				<th>
+					<label for="wp_event_calendar_repeat"><?php esc_html_e( 'Repeat', 'wp-event-calendar' ); ?></label>
+				</th>
 
-			<td>
-				<label for="wp_event_calendar_all_day" class="screen-reader-text"><?php esc_html_e( 'All Day', 'wp-event-calendar' ); ?></label>
-			</td>
+				<td>
+					<select name="wp_event_calendar_repeat" class="wp_event_calendar_repeat" id="wp_event_calendar_repeat">
 
-			<td>
-				<label>
-					<input type="checkbox" name="wp_event_calendar_all_day" id="wp_event_calendar_all_day" value="1" <?php checked( $all_day ); ?> />
-					<?php esc_html_e( 'All-day event', 'wp-event-calendar' ); ?>
-				</label>
-			</td>
-		</tr>
+						<?php foreach ( $options as $key => $option ) : ?>
 
-		<tr>
-			<td>
-				<label for="wp_event_calendar_repeat"><?php esc_html_e( 'Repeat', 'wp-event-calendar' ); ?></label>
-			</td>
+							<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $interval ); ?>><?php echo esc_html( $option ); ?></option>
 
-			<td>
-				<select name="wp_event_calendar_repeat" class="wp_event_calendar_repeat" id="wp_event_calendar_repeat">
+						<?php endforeach; ?>
 
-					<?php foreach ( $options as $key => $option ) : ?>
+					</select>
 
-						<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $interval ); ?>><?php echo esc_html( $option ); ?></option>
-
-					<?php endforeach; ?>
-
-				</select>
-			</td>
-
-			<td>
-				<label for="wp_event_calendar_expire"><?php esc_html_e( 'Until', 'wp-event-calendar'); ?></label>
-			</td>
-
-			<td>
-				<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_expire" id="wp_event_calendar_expire" value="<?php echo esc_attr( $expire ); ?>" placeholder="mm/dd/yyyy" />
-			</td>
-		</tr>
+					<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_expire" id="wp_event_calendar_expire" value="<?php echo esc_attr( $expire ); ?>" placeholder="mm/dd/yyyy" />
+				</td>
+			</tr>
+		</tbody>
 	</table>
 
 	<?php

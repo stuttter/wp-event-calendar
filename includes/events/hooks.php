@@ -18,6 +18,9 @@ add_action( 'init', 'wp_event_calendar_register_type_taxonomy'     );
 add_action( 'init', 'wp_event_calendar_register_category_taxonomy' );
 add_action( 'init', 'wp_event_calendar_register_tag_taxonomy'      );
 
+add_action( 'edit_form_after_title',  'wp_events_calendar_editor_above' );
+add_action( 'edit_form_after_editor', 'wp_events_calendar_editor_below' );
+
 // Caps
 add_filter( 'map_meta_cap', 'wp_event_calendar_meta_caps',          10, 4 );
 add_filter( 'map_meta_cap', 'wp_event_calendar_type_meta_caps',     10, 4 );

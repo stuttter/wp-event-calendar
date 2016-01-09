@@ -35,6 +35,7 @@ function _wp_event_calendar() {
 
 	// Event files
 	require_once $plugin_path . 'includes/events/admin.php';
+	require_once $plugin_path . 'includes/events/editor.php';
 	require_once $plugin_path . 'includes/events/capabilities.php';
 	require_once $plugin_path . 'includes/events/cron.php';
 	require_once $plugin_path . 'includes/events/metaboxes.php';
