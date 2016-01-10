@@ -353,8 +353,8 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 	if ( false === $all_day ) {
 		if (
 
-			// Start but no end
-			( ! empty( $date ) && empty( $end_date ) ) ||
+			// Start but no end, and no hours or minutes
+			( ( ! empty( $date ) && empty( $end_date ) ) && ( empty( $minutes ) && empty( $hour ) && empty( $end_minutes ) && empty( $end_hour ) ) ) ||
 
 			// Start & end are equal
 			( $date === $end_date ) ||
@@ -430,22 +430,13 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 	}
 
 	// Save the end date & time
-	if ( isset( $final_end_date ) ) {
+	if ( ! empty( $final_end_date ) ) {
 
 		// Calculate date & time
 		$final_end_date_time = gmdate( 'Y-m-d H:i:s', $final_end_date );
 
 		// Ketchup & mayonaise, mixed together
 		update_post_meta( $post_id, 'wp_event_calendar_end_date_time', $final_end_date_time );
-
-	// Nothing to save, so clear anything that's here
-	} elseif ( ! empty( $final_date_time ) ) {
-
-		// Force all-day to true
-		$all_day = true;
-
-		// Use start date & time
-		update_post_meta( $post_id, 'wp_event_calendar_end_date_time', $final_date_time );
 
 	// Nothing, so delete
 	} else {
