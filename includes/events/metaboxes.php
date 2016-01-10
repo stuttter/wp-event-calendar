@@ -163,7 +163,7 @@ function wp_event_calendar_details_metabox() {
 
 			<tr>
 				<th>
-					<label for="wp_event_calendar_date"><?php esc_html_e( 'Start Time', 'wp-event-calendar'); ?></label>
+					<label for="wp_event_calendar_date"><?php esc_html_e( 'Start', 'wp-event-calendar'); ?></label>
 				</th>
 
 				<td>
@@ -184,7 +184,7 @@ function wp_event_calendar_details_metabox() {
 
 			<tr>
 				<th>
-					<label for="wp_event_calendar_end_date"><?php esc_html_e( 'End Time', 'wp-event-calendar'); ?></label>
+					<label for="wp_event_calendar_end_date"><?php esc_html_e( 'End', 'wp-event-calendar'); ?></label>
 				</th>
 
 				<td>
@@ -244,6 +244,33 @@ function wp_event_calendar_details_metabox() {
 	ob_end_flush();
 }
 
+/**
+ * Offset hour based on meridem
+ *
+ * @since 0.2.0
+ *
+ * @param  int     $hour
+ * @param  string  $meridiem
+ *
+ * @return int
+ */
+function wp_event_calendar_adjust_hour_for_meridiem( $hour = 0, $meridiem = 'am' ) {
+
+	// Store new hour
+	$new_hour = $hour;
+
+	// Bump by 12 hours
+	if ( 'pm' === $meridiem && ( $new_hour < 12 ) ) {
+		$new_hour += 12;
+
+	// Decrease by 12 hours
+	} elseif ( 'am' === $meridiem && ( $new_hour >= 12 ) ) {
+		$new_hour -= 12;
+	}
+
+	// Filter & return
+	return (int) apply_filters( 'wp_event_calendar_adjust_hour_for_meridiem', $new_hour, $hour, $meridiem );
+}
 
 /**
  * Metabox save
@@ -279,6 +306,9 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		return $post_id;
 	}
 
+	// Get the current timestamp, just in-case
+	$current_time = current_time( 'timestamp' );
+
 	/** Location **************************************************************/
 
 	// Get event location
@@ -306,7 +336,7 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 	// Day/night
 	$am_pm = ! empty( $_POST['wp_event_calendar_time_am_pm'] )
 		? sanitize_text_field( $_POST['wp_event_calendar_time_am_pm'] )
-		: '';
+		: 'am';
 
 	/** Ends ******************************************************************/
 
@@ -328,7 +358,7 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 	// Day/night
 	$end_am_pm = ! empty( $_POST['wp_event_calendar_end_time_am_pm']  )
 		? sanitize_text_field( $_POST['wp_event_calendar_end_time_am_pm'] )
-		: '';
+		: 'am';
 
 	/** Repeat ****************************************************************/
 
@@ -350,17 +380,14 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		: false;
 
 	// Set all day if no end date
-	if ( false === $all_day ) {
+	if ( ( false === $all_day ) && ( empty( $minutes ) && empty( $hour ) && empty( $end_minutes ) && empty( $end_hour ) ) ) {
 		if (
 
 			// Start but no end, and no hours or minutes
-			( ( ! empty( $date ) && empty( $end_date ) ) && ( empty( $minutes ) && empty( $hour ) && empty( $end_minutes ) && empty( $end_hour ) ) ) ||
+			( ! empty( $date ) && empty( $end_date ) ) ||
 
 			// Start & end are equal
-			( $date === $end_date ) ||
-
-			// No hours or minutes
-			( empty( $minutes ) && empty( $hour ) && empty( $end_minutes ) && empty( $end_hour ) )
+			( $date === $end_date )
 
 		) {
 
@@ -374,12 +401,18 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		}
 	}
 
-	// Times
-	if ( empty( $all_day ) ) {
+	// Make time (or set to now if empty)
+	$date     = ! empty( $date     ) ? strtotime( $date     ) : $current_time;
+	$end_date = ! empty( $end_date ) ? strtotime( $end_date ) : $current_time;
 
-		// Make time (or set to now if empty)
-		$date     = ! empty( $date     ) ? strtotime( $date     ) : current_time( 'timestamp' );
-		$end_date = ! empty( $end_date ) ? strtotime( $end_date ) : current_time( 'timestamp' );
+	// End dates can't be before start dates
+	if ( $end_date < $date ) {
+		$end_date = $date;
+		$all_day  = true;
+	}
+
+	// Not all-day event, so tweak times
+	if ( false === $all_day ) {
 
 		// Year, Month, Day
 		$year      = date( 'Y', $date );
@@ -389,59 +422,31 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		$end_month = date( 'm', $end_date );
 		$end_dom   = date( 'd', $end_date );
 
-		// Adjust
-		if ( 'pm' === $am_pm && ( $hour < 12 ) ) {
-			$hour += 12;
-		} elseif ( 'am' === $am_pm && ( $hour >= 12 ) ) {
-			$hour -= 12;
-		}
-
-		// Adjust
-		if ( ( 'pm' === $end_am_pm ) && ( $end_hour < 12 ) ) {
-			$end_hour += 12;
-		} elseif ( ( 'am' === $end_am_pm ) && ( $end_hour >= 12 ) ) {
-			$end_hour -= 12;
-		}
+		// Tweak hours based on meridiem
+		$hour      = wp_event_calendar_adjust_hour_for_meridiem( $hour,     $am_pm     );
+		$end_hour  = wp_event_calendar_adjust_hour_for_meridiem( $end_hour, $end_am_pm );
 
 		// Join together the final date
-		$final_date     = mktime( intval( $hour     ), intval( $minutes     ), 0, $month,     $dom,     $year     );
-		$final_end_date = mktime( intval( $end_hour ), intval( $end_minutes ), 0, $end_month, $end_dom, $end_year );
+		$final_date     = mktime( $hour,     intval( $minutes     ), 0, $month,     $dom,     $year     );
+		$final_end_date = mktime( $end_hour, intval( $end_minutes ), 0, $end_month, $end_dom, $end_year );
 
 	// Date with no time
-	} elseif ( ! empty( $all_day ) && ( null !== $date ) ) {
-		$final_date     = strtotime( $date );
-		$final_end_date = strtotime( $end_date );
+	} elseif ( ( true === $all_day ) && ( null !== $date ) ) {
+		$final_date     = $date;
+		$final_end_date = $end_date;
 	}
 
 	/** Save ******************************************************************/
 
 	// Save the start date & time
-	if ( isset( $final_date ) ) {
-
-		// Calculate date & time
-		$final_date_time = gmdate( 'Y-m-d H:i:s', $final_date );
-
-		// Ketchup & mayonaise, mixed together
-		update_post_meta( $post_id, 'wp_event_calendar_date_time', $final_date_time );
-
-	// Nothing to save, so clear anything that's here
-	} else {
-		delete_post_meta( $post_id, 'wp_event_calendar_date_time' );
-	}
+	! empty( $final_date )
+		? update_post_meta( $post_id, 'wp_event_calendar_date_time', gmdate( 'Y-m-d H:i:s', $final_date ) )
+		: delete_post_meta( $post_id, 'wp_event_calendar_date_time' );
 
 	// Save the end date & time
-	if ( ! empty( $final_end_date ) ) {
-
-		// Calculate date & time
-		$final_end_date_time = gmdate( 'Y-m-d H:i:s', $final_end_date );
-
-		// Ketchup & mayonaise, mixed together
-		update_post_meta( $post_id, 'wp_event_calendar_end_date_time', $final_end_date_time );
-
-	// Nothing, so delete
-	} else {
-		delete_post_meta( $post_id, 'wp_event_calendar_end_date_time' );
-	}
+	! empty( $final_end_date )
+		? update_post_meta( $post_id, 'wp_event_calendar_end_date_time', gmdate( 'Y-m-d H:i:s', $final_end_date ) )
+		: delete_post_meta( $post_id, 'wp_event_calendar_end_date_time' );
 
 	// Save location
 	! empty( $location )
