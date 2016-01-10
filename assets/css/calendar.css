@@ -255,10 +255,15 @@ table.day tbody tr.this-hour td {
 	background: #fbf9ee;
 }
 
-table.week tr.all-day th,
-table.week tr.all-day td,
-table.day tr.all-day th,
-table.day tr.all-day td {
+table.week tr.multi-day,
+table.week tr.all-day {
+	background-color: #fafafa;
+}
+
+table.week tr.multi-day th,
+table.week tr.multi-day td,
+table.day tr.multi-day th,
+table.day tr.multi-day td {
 	border-bottom: 2px solid #e1e1e1;
 }
 
