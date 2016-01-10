@@ -306,9 +306,6 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		return $post_id;
 	}
 
-	// Get the current timestamp, just in-case
-	$current_time = current_time( 'timestamp' );
-
 	/** Location **************************************************************/
 
 	// Get event location
@@ -320,8 +317,8 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 
 	// Get calendar date
 	$date = ! empty( $_POST['wp_event_calendar_date'] )
-		? sanitize_text_field( $_POST['wp_event_calendar_date'] )
-		: null;
+		? strtotime( sanitize_text_field( $_POST['wp_event_calendar_date'] ) )
+		: current_time( 'timestamp' );
 
 	// Hour
 	$hour = ! empty( $_POST['wp_event_calendar_time_hour'] )
@@ -342,7 +339,7 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 
 	// Calendar date is set
 	$end_date = ! empty( $_POST['wp_event_calendar_end_date'] )
-		? sanitize_text_field( $_POST['wp_event_calendar_end_date'] )
+		? strtotime( sanitize_text_field( $_POST['wp_event_calendar_end_date'] ) )
 		: null;
 
 	// Hour
@@ -381,15 +378,7 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 
 	// Set all day if no end date
 	if ( ( false === $all_day ) && ( empty( $minutes ) && empty( $hour ) && empty( $end_minutes ) && empty( $end_hour ) ) ) {
-		if (
-
-			// Start but no end, and no hours or minutes
-			( ! empty( $date ) && empty( $end_date ) ) ||
-
-			// Start & end are equal
-			( $date === $end_date )
-
-		) {
+		if ( empty( $end_date ) || ( $date === $end_date ) ) {
 
 			// Make all-day event
 			$all_day = true;
@@ -401,57 +390,31 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		}
 	}
 
-	// Make time (or set to now if empty)
-	$date     = ! empty( $date     ) ? strtotime( $date     ) : $current_time;
-	$end_date = ! empty( $end_date ) ? strtotime( $end_date ) : $current_time;
+	/** Combine ***************************************************************/
+
+	// Maybe tweak hours
+	$hour     = wp_event_calendar_adjust_hour_for_meridiem( $hour,     $am_pm     );
+	$end_hour = wp_event_calendar_adjust_hour_for_meridiem( $end_hour, $end_am_pm );
+
+	// Make timestamps from pieces
+	$date     = mktime( intval( $hour     ), intval( $minutes     ), 0, date( 'm', $date     ), date( 'd', $date     ), date( 'Y', $date     ) );
+	$end_date = mktime( intval( $end_hour ), intval( $end_minutes ), 0, date( 'm', $end_date ), date( 'd', $end_date ), date( 'Y', $end_date ) );
 
 	// End dates can't be before start dates
-	if ( $end_date < $date ) {
-		$end_date = $date;
-		$all_day  = true;
-	}
-
-	// Not all-day event, so tweak times
-	if ( false === $all_day ) {
-
-		// Year, Month, Day
-		$year      = date( 'Y', $date );
-		$month     = date( 'm', $date );
-		$dom       = date( 'd', $date );
-		$end_year  = date( 'Y', $end_date );
-		$end_month = date( 'm', $end_date );
-		$end_dom   = date( 'd', $end_date );
-
-		// Offset by 30 minutes if none submitted
-		if ( ( empty( $end_hour ) && empty( $end_minutes ) ) || ( ( $hour * $minutes ) > ( $end_hour * $end_minutes ) ) ) {
-			$end_hour    = $hour;
-			$end_minutes = $minutes + 30;
-		}
-
-		// Tweak hours based on meridiem
-		$hour      = wp_event_calendar_adjust_hour_for_meridiem( $hour,     $am_pm     );
-		$end_hour  = wp_event_calendar_adjust_hour_for_meridiem( $end_hour, $end_am_pm );
-
-		// Join together the final date
-		$final_date     = mktime( $hour,     intval( $minutes     ), 0, $month,     $dom,     $year     );
-		$final_end_date = mktime( $end_hour, intval( $end_minutes ), 0, $end_month, $end_dom, $end_year );
-
-	// Date with no time
-	} elseif ( ( true === $all_day ) && ( null !== $date ) ) {
-		$final_date     = $date;
-		$final_end_date = $end_date;
+	if ( $end_date <= $date ) {
+		$end_date = strtotime( '+30 minutes', $date );
 	}
 
 	/** Save ******************************************************************/
 
 	// Save the start date & time
-	! empty( $final_date )
-		? update_post_meta( $post_id, 'wp_event_calendar_date_time', gmdate( 'Y-m-d H:i:s', $final_date ) )
+	! empty( $date )
+		? update_post_meta( $post_id, 'wp_event_calendar_date_time', gmdate( 'Y-m-d H:i:s', $date ) )
 		: delete_post_meta( $post_id, 'wp_event_calendar_date_time' );
 
 	// Save the end date & time
-	! empty( $final_end_date )
-		? update_post_meta( $post_id, 'wp_event_calendar_end_date_time', gmdate( 'Y-m-d H:i:s', $final_end_date ) )
+	! empty( $end_date )
+		? update_post_meta( $post_id, 'wp_event_calendar_end_date_time', gmdate( 'Y-m-d H:i:s', $end_date ) )
 		: delete_post_meta( $post_id, 'wp_event_calendar_end_date_time' );
 
 	// Save location
