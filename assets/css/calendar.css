@@ -13,6 +13,8 @@
 }
 .wp_event_calendar_datepicker {
 	max-width: 125px;
+	height: 28px;
+	margin: 2px 0 3px;
 }
 .event-time input {
 	max-width: 50px;
