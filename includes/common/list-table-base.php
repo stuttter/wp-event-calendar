@@ -575,9 +575,9 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 		foreach ( $this->query->posts as $post ) {
 
 			// Get start & end
-			$this->item_all_day = get_post_meta( $post->ID, 'wp_event_calendar_all_day',       true );
-			$this->item_start   = get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
-			$this->item_end     = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
+			$this->item_all_day = (bool) get_post_meta( $post->ID, 'wp_event_calendar_all_day',       true );
+			$this->item_start   =        get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
+			$this->item_end     =        get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
 
 			// Format start
 			if ( ! empty( $this->item_start ) ) {
@@ -933,32 +933,47 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 			$end_date = 0;
 		}
 
-		// Date & Time
-		if ( ! empty( $this->item_start ) ) {
-			$pointer_metadata[] = '<strong>' . esc_html__( 'Start', 'wp-event-calendar' ) . '</strong>';
+		// All day event
+		if ( ( true === $this->item_all_day ) || ( $start_date === $end_date ) ) {
+			$pointer_metadata[] = '<strong>' . esc_html__( 'All Day', 'wp-event-calendar' ) . '</strong>';
 
 			if ( $start_date !== $end_date ) {
-				$pointer_metadata[] = sprintf( esc_html__( 'Date: %s', 'wp-event-calendar' ), $start_date );
+				$pointer_metadata[] = sprintf( esc_html__( 'From: %s',  'wp-event-calendar' ), $start_date );
+				$pointer_metadata[] = sprintf( esc_html__( 'Until: %s', 'wp-event-calendar' ), $end_date   );
 			}
+		} else {
 
-			$pointer_metadata[] = sprintf( esc_html__( 'Time: %s', 'wp-event-calendar' ), $this->get_event_time( $post, $this->item_start ) );
-		}
-
-		// Date & Time
-		if ( ! empty( $this->item_end ) ) {
-
-			// Extra padding
+			// Date & Time
 			if ( ! empty( $this->item_start ) ) {
-				$pointer_metadata[] = '';
+				$pointer_metadata[] = '<strong>' . esc_html__( 'Start', 'wp-event-calendar' ) . '</strong>';
+
+				if ( ( true === $this->item_all_day ) || ( $start_date === $end_date ) ) {
+					$pointer_metadata[] = sprintf( esc_html__( 'Date: %s', 'wp-event-calendar' ), $start_date );
+				}
+
+				if ( false === $this->item_all_day ) {
+					$pointer_metadata[] = sprintf( esc_html__( 'Time: %s', 'wp-event-calendar' ), $this->get_event_time( $post, $this->item_start ) );
+				}
 			}
 
-			$pointer_metadata[] = '<strong>' . esc_html__( 'End', 'wp-event-calendar' ) . '</strong>';
+			// Date & Time
+			if ( ! empty( $this->item_end ) ) {
 
-			if ( $start_date !== $end_date ) {
-				$pointer_metadata[] = sprintf( esc_html__( 'Date: %s', 'wp-event-calendar' ), $end_date );
+				// Extra padding
+				if ( ! empty( $this->item_start ) ) {
+					$pointer_metadata[] = '';
+				}
+
+				$pointer_metadata[] = '<strong>' . esc_html__( 'End', 'wp-event-calendar' ) . '</strong>';
+
+				if ( $start_date !== $end_date ) {
+					$pointer_metadata[] = sprintf( esc_html__( 'Date: %s', 'wp-event-calendar' ), $end_date );
+				}
+
+				if ( false === $this->item_all_day ) {
+					$pointer_metadata[] = sprintf( esc_html__( 'Time: %s', 'wp-event-calendar' ), $this->get_event_time( $post, $this->item_end ) );
+				}
 			}
-
-			$pointer_metadata[] = sprintf( esc_html__( 'Time: %s', 'wp-event-calendar' ), $this->get_event_time( $post, $this->item_end ) );
 		}
 
 		// Filter & return the pointer title
