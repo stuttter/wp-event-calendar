@@ -125,6 +125,7 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 		// Start the days loop with the start day
 		$cell     = ( $start_hour * $interval ) + $offset;
 		$end_cell = ( $end_hour   * $interval ) + $offset;
+		$type     = 'items';
 
 		// Loop through days
 		while ( $cell <= $end_cell ) {
@@ -133,8 +134,8 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 			$this->setup_pointer( $post, $cell );
 
 			// Add post to items for each day in it's duration
-			if ( empty( $this->items[ $cell ] ) || ( $max > count( $this->items[ $cell ] ) ) ) {
-				$this->items[ $cell ][ $post->ID ] = $post;
+			if ( empty( $this->{$type}[ $cell ] ) || ( $max > count( $this->{$type}[ $cell ] ) ) ) {
+				$this->{$type}[ $cell ][ $post->ID ] = $post;
 			}
 
 			// Bump the hour
