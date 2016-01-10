@@ -422,6 +422,12 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		$end_month = date( 'm', $end_date );
 		$end_dom   = date( 'd', $end_date );
 
+		// Offset by 30 minutes if none submitted
+		if ( ( empty( $end_hour ) && empty( $end_minutes ) ) || ( ( $hour * $minutes ) > ( $end_hour * $end_minutes ) ) ) {
+			$end_hour    = $hour;
+			$end_minutes = $minutes + 30;
+		}
+
 		// Tweak hours based on meridiem
 		$hour      = wp_event_calendar_adjust_hour_for_meridiem( $hour,     $am_pm     );
 		$end_hour  = wp_event_calendar_adjust_hour_for_meridiem( $end_hour, $end_am_pm );
