@@ -293,12 +293,42 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		? sanitize_text_field( $_POST['wp_event_calendar_date'] )
 		: null;
 
+	// Minutes
+	$minutes = ! empty( $_POST['wp_event_calendar_time_minute'] )
+		? sanitize_text_field( $_POST['wp_event_calendar_time_minute'] )
+		: 0;
+
+	// Hour
+	$hour = ! empty( $_POST['wp_event_calendar_time_hour'] )
+		? sanitize_text_field( $_POST['wp_event_calendar_time_hour'] )
+		: 0;
+
+	// Day/night
+	$am_pm = ! empty( $_POST['wp_event_calendar_time_am_pm'] )
+		? sanitize_text_field( $_POST['wp_event_calendar_time_am_pm'] )
+		: '';
+
 	/** Ends ******************************************************************/
 
 	// Calendar date is set
 	$end_date = ! empty( $_POST['wp_event_calendar_end_date'] )
 		? sanitize_text_field( $_POST['wp_event_calendar_end_date'] )
 		: null;
+
+	// Minutes
+	$end_minutes = ! empty( $_POST['wp_event_calendar_end_time_minute'] )
+		? sanitize_text_field( $_POST['wp_event_calendar_end_time_minute'] )
+		: 0;
+
+	// Hour
+	$end_hour = ! empty( $_POST['wp_event_calendar_end_time_hour'] )
+		? sanitize_text_field( $_POST['wp_event_calendar_end_time_hour'] )
+		: 0;
+
+	// Day/night
+	$end_am_pm = ! empty( $_POST['wp_event_calendar_end_time_am_pm']  )
+		? sanitize_text_field( $_POST['wp_event_calendar_end_time_am_pm'] )
+		: '';
 
 	/** All Day ***************************************************************/
 
@@ -308,9 +338,22 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		: false;
 
 	// Set all day if no end date
-	if ( ( false === $all_day ) && ! empty( $date ) && empty( $end_date ) ) {
-		$all_day  = true;
-		$end_date = $date;
+	if ( false === $all_day ) {
+		if ( ( ! empty( $date ) && empty( $end_date ) )
+		  || ( $date === $end_date )
+		  || (  empty( $minutes     ) && empty( $hour     )
+			 && empty( $end_minutes ) && empty( $end_hour )
+			 )
+		) {
+
+			// Make all-day event
+			$all_day = true;
+
+			// Make single-day event
+			if ( empty( $end_date ) ) {
+				$end_date = $date;
+			}
+		}
 	}
 
 	// Times
@@ -325,21 +368,6 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		$year  = date( 'Y', $date );
 		$month = date( 'm', $date );
 		$dom   = date( 'd', $date );
-
-		// Minutes
-		$minutes = ! empty( $_POST['wp_event_calendar_time_minute'] )
-			? sanitize_text_field( $_POST['wp_event_calendar_time_minute'] )
-			: 0;
-
-		// Hour
-		$hour = ! empty( $_POST['wp_event_calendar_time_hour'] )
-			? sanitize_text_field( $_POST['wp_event_calendar_time_hour'] )
-			: 0;
-
-		// Day/night
-		$am_pm = ! empty( $_POST['wp_event_calendar_time_am_pm'] )
-			? sanitize_text_field( $_POST['wp_event_calendar_time_am_pm'] )
-			: '';
 
 		// Adjust
 		if ( 'pm' === $am_pm && ( $hour < 12 ) ) {
@@ -368,21 +396,6 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		$end_year  = date( 'Y', $end_date );
 		$end_month = date( 'm', $end_date );
 		$end_dom   = date( 'd', $end_date );
-
-		// Minutes
-		$end_minutes = ! empty( $_POST['wp_event_calendar_end_time_minute'] )
-			? sanitize_text_field( $_POST['wp_event_calendar_end_time_minute'] )
-			: 0;
-
-		// Hour
-		$end_hour = ! empty( $_POST['wp_event_calendar_end_time_hour'] )
-			? sanitize_text_field( $_POST['wp_event_calendar_end_time_hour'] )
-			: 0;
-
-		// Day/night
-		$end_am_pm = ! empty( $_POST['wp_event_calendar_end_time_am_pm']  )
-			? sanitize_text_field( $_POST['wp_event_calendar_end_time_am_pm'] )
-			: '';
 
 		// Adjust
 		if ( ( 'pm' === $end_am_pm ) && ( $end_hour < 12 ) ) {
