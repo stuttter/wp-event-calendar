@@ -81,6 +81,24 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	public $items = array();
 
 	/**
+	 * The all-day items in the current query
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var array
+	 */
+	public $all_day_items = array();
+
+	/**
+	 * The multi-day items in the current query
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var array
+	 */
+	public $multi_day_items = array();
+
+	/**
 	 * The items with pointers
 	 *
 	 * @since 0.1.0
@@ -543,12 +561,11 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Prepare the list-table items for display
+	 * Prepare items for list-table display
 	 *
 	 * @since 0.1.0
 	 *
 	 * @uses $this->_column_headers
-	 * @uses $this->items
 	 * @uses $this->get_columns()
 	 * @uses $this->get_orderby()
 	 * @uses $this->get_order()
@@ -666,7 +683,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Add a post to the items array, keyed by day
+	 * Add a post to the item array, keyed by day
 	 *
 	 * @todo Repeat & expire
 	 *
@@ -692,7 +709,8 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 		}
 
 		// Start the days loop with the start day
-		$day = (int) $start_day;
+		$day  = (int) $start_day;
+		$type = 'items';
 
 		// Loop through days
 		while ( $day <= $end_day ) {
@@ -700,9 +718,9 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 			// Setup the pointer for each day
 			$this->setup_pointer( $post, $day );
 
-			// Add post to items for each day in it's duration
-			if ( empty( $this->items[ $day ] ) || ( $max > count( $this->items[ $day ] ) ) ) {
-				$this->items[ $day ][ $post->ID ] = $post;
+			// Add post to item types for each day in it's duration
+			if ( empty( $this->{$type}[ $day ] ) || ( $max > count( $this->{$type}[ $day ] ) ) ) {
+				$this->{$type}[ $day ][ $post->ID ] = $post;
 			}
 
 			// Bump the day
@@ -719,9 +737,9 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	protected function get_queried_items( $iterator = 1 ) {
-		return isset( $this->items[ $iterator ] )
-			? $this->items[ $iterator ]
+	protected function get_queried_items( $iterator = 1, $type = 'items' ) {
+		return isset( $this->{$type}[ $iterator ] )
+			? $this->{$type}[ $iterator ]
 			: array();
 	}
 
@@ -734,10 +752,10 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 *
 	 * @return string
 	 */
-	protected function get_posts_for_cell( $iterator = 1 ) {
+	protected function get_posts_for_cell( $iterator = 1, $type = 'items' ) {
 
 		// Get posts and bail if none
-		$posts = $this->get_queried_items( $iterator );
+		$posts = $this->get_queried_items( $iterator, $type );
 		if ( empty( $posts ) ) {
 			return '';
 		}
