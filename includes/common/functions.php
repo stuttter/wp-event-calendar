@@ -222,8 +222,9 @@ function wp_event_calendar_human_diff_time( $older_date, $newer_date = false ) {
 function wp_get_event_start_date_time( $post = false ) {
 
 	// Get the post object & start date
-	$post = get_post( $post );
-	$date = get_post_meta( $post->ID, 'wp_event_calendar_date_time', true );
+	$post    = get_post( $post );
+	$date    = get_post_meta( $post->ID, 'wp_event_calendar_date_time', true );
+	$all_day = get_post_meta( $post->ID, 'wp_event_calendar_all_day',   true );
 
 	// Start an output buffer
 	ob_start();
@@ -236,8 +237,7 @@ function wp_get_event_start_date_time( $post = false ) {
 		echo date_i18n( $df, $date );
 
 		// Time
-		$time = date_i18n( 'H:i:s', $date );
-		if ( '00:00:00' !== $time  ) {
+		if ( empty( $all_day ) ) {
 			echo '<br>'. date_i18n( $tf, $date );
 		}
 
@@ -265,32 +265,34 @@ function wp_get_event_start_date_time( $post = false ) {
 function wp_get_event_end_date_time( $post = false ) {
 
 	// Get the post object & start date
-	$post       = get_post( $post );
-	$start_date = get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
-	$end_date   = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
+	$post    = get_post( $post );
+	$date    = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
+	$all_day = get_post_meta( $post->ID, 'wp_event_calendar_all_day',       true );
 
 	// Start an output buffer
 	ob_start();
 
-	if ( empty( $end_date ) || ( $start_date === $end_date ) ) {
-		echo '&mdash;';
-	} else {
-		$end_date = strtotime( $end_date );
+	if ( ! empty( $date ) ) {
+		$date = strtotime( $date );
+		$df   = get_option( 'date_format' );
+		$tf   = get_option( 'time_format' );
 
-		echo date_i18n( get_option( 'date_format' ), $end_date );
+		echo date_i18n( $df, $date );
 
 		// Time
-		$end_time = date_i18n( 'H:i:s', $end_date );
-		if ( '00:00:00' !== $end_time  ) {
-			echo '<br>'. date_i18n( get_option( 'time_format' ), $end_date );
+		if ( empty( $all_day ) ) {
+			echo '<br>'. date_i18n( $tf, $date );
 		}
+
+	} else {
+		echo '&mdash;';
 	}
 
 	// Get the output buffer
 	$retval = ob_get_clean();
 
 	// Filter & return
-	return apply_filters( 'wp_get_event_end_date_time', $retval, $post, $start_date, $end_date );
+	return apply_filters( 'wp_get_event_end_date_time', $retval, $post, $date );
 }
 
 /**
@@ -306,37 +308,31 @@ function wp_get_event_duration( $post = false ) {
 
 	// Get the post object & start date
 	$post       = get_post( $post );
-	$all_day    = get_post_meta( $post->ID, 'wp_event_calendar_all_day',       true );
-	$start_date = get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
-	$end_date   = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
-	$human_time = wp_event_calendar_human_diff_time( $start_date, $end_date );
+	$all_day    =     (bool) get_post_meta( $post->ID, 'wp_event_calendar_all_day',       true );
+	$start_date = strtotime( get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true ) );
+	$end_date   = strtotime( get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true ) );
 
 	// Start an output buffer
 	ob_start();
 
 	// All day event
-	if ( ! empty( $all_day ) ) {
+	if ( true === $all_day ) {
 
 		// 1 day
-		if ( $start_date === $end_date ) {
+		if ( date( 'd', $start_date ) === date( 'd', $end_date ) ) {
 			esc_html_e( 'All Day', 'wp-event-calendar' );
 
 		// More than 1 day
 		} else {
-			echo $human_time;
+			echo wp_event_calendar_human_diff_time(
+				strtotime( 'midnight', $start_date ),
+				strtotime( 'midnight', $end_date )
+			);
 		}
 
 	// Specific times
 	} else {
-
-		// No duration to calculate
-		if ( empty( $start_date ) || empty( $end_date ) || ( $start_date === $end_date ) ) {
-			echo '&mdash;';
-
-		// Some odd duration
-		} else {
-			echo $human_time;
-		}
+		echo wp_event_calendar_human_diff_time( $start_date, $end_date );
 	}
 
 	// Get the output buffer
