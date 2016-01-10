@@ -230,9 +230,11 @@ function wp_event_calendar_details_metabox() {
 
 					</select>
 
+					<?php /*
 					<label for="wp_event_calendar_expire"><?php esc_html_e( 'until', 'wp-event-calendar' ); ?></label>
 
 					<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_expire" id="wp_event_calendar_expire" value="<?php echo esc_attr( $expire ); ?>" placeholder="mm/dd/yyyy" />
+					*/ ?>
 				</td>
 			</tr>
 		</tbody>
