@@ -162,6 +162,15 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	protected $item_end = '';
 
 	/**
+	 * Number of days item is for
+	 *
+	 * @since 0.1.5
+	 *
+	 * @var bool
+	 */
+	protected $item_days = '';
+
+	/**
 	 * The main constructor method
 	 */
 	public function __construct( $args = array() ) {
@@ -595,6 +604,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 			$this->item_all_day = (bool) get_post_meta( $post->ID, 'wp_event_calendar_all_day',       true );
 			$this->item_start   =        get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
 			$this->item_end     =        get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
+			$this->item_days    = intval( ( $this->item_end - $this->item_start ) / DAY_IN_SECONDS  );
 
 			// Format start
 			if ( ! empty( $this->item_start ) ) {
