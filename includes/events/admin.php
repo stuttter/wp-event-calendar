@@ -110,7 +110,7 @@ function wp_event_calendar_manage_posts_columns( $old_columns = array() ) {
 		'start'            => esc_html__( 'Starts',     'wp-event-calendar' ),
 		'end'              => esc_html__( 'Ends',       'wp-event-calendar' ),
 		'duration'         => esc_html__( 'Duration',   'wp-event-calendar' ),
-		'repeat'           => esc_html__( 'Repeat',     'wp-event-calendar' ),
+		'repeat'           => esc_html__( 'Repeats',    'wp-event-calendar' ),
 		'event-categories' => esc_html__( 'Categories', 'wp-event-calendar' ),
 		'event-types'      => esc_html__( 'Types',      'wp-event-calendar' ),
 	);
