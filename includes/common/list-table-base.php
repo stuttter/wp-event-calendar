@@ -947,12 +947,8 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 			if ( ! empty( $this->item_start ) ) {
 				$pointer_metadata[] = '<strong>' . esc_html__( 'Start', 'wp-event-calendar' ) . '</strong>';
 
-				if ( ( true === $this->item_all_day ) || ( $start_date === $end_date ) ) {
-					$pointer_metadata[] = sprintf( esc_html__( 'Date: %s', 'wp-event-calendar' ), $start_date );
-				}
-
-				if ( false === $this->item_all_day ) {
-					$pointer_metadata[] = sprintf( esc_html__( 'Time: %s', 'wp-event-calendar' ), $this->get_event_time( $post, $this->item_start ) );
+				if ( $start_date !== $end_date ) {
+					$pointer_metadata[] = sprintf( esc_html__( '%s on %s', 'wp-event-calendar' ), $this->get_event_time( $post, $this->item_start ), $start_date );
 				}
 			}
 
@@ -967,11 +963,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 				$pointer_metadata[] = '<strong>' . esc_html__( 'End', 'wp-event-calendar' ) . '</strong>';
 
 				if ( $start_date !== $end_date ) {
-					$pointer_metadata[] = sprintf( esc_html__( 'Date: %s', 'wp-event-calendar' ), $end_date );
-				}
-
-				if ( false === $this->item_all_day ) {
-					$pointer_metadata[] = sprintf( esc_html__( 'Time: %s', 'wp-event-calendar' ), $this->get_event_time( $post, $this->item_end ) );
+					$pointer_metadata[] = sprintf( esc_html__( '%s on %s', 'wp-event-calendar' ), $this->get_event_time( $post, $this->item_end ), $end_date );
 				}
 			}
 		}
