@@ -84,7 +84,7 @@ function wp_event_calendar_register_post_types() {
 		'archive_in_nav_menus' => false,
 		'show_in_admin_bar'    => true,
 		'menu_position'        => 44,
-		'menu_icon'            => 'dashicons-calendar',
+		'menu_icon'            => 'dashicons-calendar-alt',
 		'capabilities'         => $caps,
 		'capability_type'      => $cap_types,
 		'register_meta_box_cb' => null,
