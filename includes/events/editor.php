@@ -18,12 +18,13 @@ defined( 'ABSPATH' ) || exit;
 function wp_events_calendar_editor_above() {
 	global $post_type, $post;
 
-	do_meta_boxes( $post_type, 'above_event_editor', $post );
-
 	// Description title
 	if ( ! in_array( $post_type, wp_event_calendar_allowed_post_types(), true ) ) {
 		return;
-	} ?>
+	}
+
+	// Above editor
+	do_meta_boxes( $post_type, 'above_event_editor', $post ); ?>
 
 	<div class="meta-box-sortables">
 		<div class="wp-event-calendar-editor postbox">
