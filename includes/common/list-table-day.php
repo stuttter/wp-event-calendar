@@ -176,16 +176,34 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 				'meta_query' => array(
 					'relation' => 'OR',
 					array(
-						'key'     => 'wp_event_calendar_date_time',
-						'value'   => array( $this->view_start, $this->view_end ),
-						'type'    => 'DATETIME',
-						'compare' => 'BETWEEN',
+						'relation' => 'OR',
+						array(
+							'key'     => 'wp_event_calendar_date_time',
+							'value'   => array( $this->view_start, $this->view_end ),
+							'type'    => 'DATETIME',
+							'compare' => 'BETWEEN',
+						),
+						array(
+							'key'     => 'wp_event_calendar_end_date_time',
+							'value'   => array( $this->view_start, $this->view_end ),
+							'type'    => 'DATETIME',
+							'compare' => 'BETWEEN',
+						)
 					),
 					array(
-						'key'     => 'wp_event_calendar_end_date_time',
-						'value'   => array( $this->view_start, $this->view_end ),
-						'type'    => 'DATETIME',
-						'compare' => 'BETWEEN',
+						'relation' => 'AND',
+						array(
+							'key'     => 'wp_event_calendar_date_time',
+							'value'   => $this->view_start,
+							'type'    => 'DATETIME',
+							'compare' => '<=',
+						),
+						array(
+							'key'     => 'wp_event_calendar_end_date_time',
+							'value'   => $this->view_end,
+							'type'    => 'DATETIME',
+							'compare' => '>=',
+						)
 					)
 				)
 			);
