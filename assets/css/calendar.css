@@ -162,7 +162,7 @@ table.month tbody td a.day-number {
 }
 
 table.month tbody td.today a.day-number {
-	background: #fbf9ee;
+	background: #ffe;
 }
 table.month tbody a.add-event-for-day:hover,
 table.month tbody td a.day-number:hover {
@@ -194,7 +194,7 @@ table.month tbody td:hover a.add-event-for-day {
 }
 
 table.month tbody td:hover {
-	background-color: #fbf9ee;
+	background-color: #ffe;
 }
 
 table.month tbody td {
@@ -252,12 +252,14 @@ table.day th {
 
 table.week tbody tr.this-hour td,
 table.day tbody tr.this-hour td {
-	background: #fbf9ee;
+	background: #ffe;
 }
 
+table.day tr.multi-day,
+table.day tr.all-day,
 table.week tr.multi-day,
 table.week tr.all-day {
-	background-color: #fafafa;
+	background-color: #efe;
 }
 
 table.week tr.multi-day th,
