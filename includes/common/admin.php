@@ -25,28 +25,24 @@ function wp_event_calendar_add_submenus() {
 	foreach ( $post_types as $post_type ) {
 
 		// 'post' post type needs special handling
-		if ( 'post' === $post_type ) {
-			$parent = 'edit.php';
-
-		// All other post types
-		} else {
-			$parent = 'edit.php?post_type=' . $post_type;
-		}
+		$parent = ( 'post' === $post_type )
+			? 'edit.php'
+			: "edit.php?post_type={$post_type}";
 
 		// View
 		$hook = add_submenu_page(
 			$parent,
-			__( 'Calendar', 'bbpress' ),
-			__( 'Calendar', 'bbpress' ),
-			'read',
-			$post_type . '-calendar',
+			__( 'Calendar', 'wp-event-calendar' ),
+			__( 'Calendar', 'wp-event-calendar' ),
+			'read_calendar',
+			"{$post_type}-calendar",
 			'wp_event_calendar_show_admin_calendar'
 		);
 
 		// Highlight helper
-		add_action( "admin_head-$hook", 'wp_event_calendar_admin_submenu_highlight'  );
-		add_action( "admin_head-$hook", 'wp_event_calendar_admin_add_screen_options' );
-		add_action( "admin_head-$hook", 'wp_event_calendar_admin_pointer_buttons'    );
+		add_action( "admin_head-{$hook}", 'wp_event_calendar_admin_submenu_highlight'  );
+		add_action( "admin_head-{$hook}", 'wp_event_calendar_admin_add_screen_options' );
+		add_action( "admin_head-{$hook}", 'wp_event_calendar_admin_pointer_buttons'    );
 	}
 }
 
