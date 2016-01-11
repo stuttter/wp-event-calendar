@@ -28,6 +28,7 @@ function wp_event_calendar_meta_caps( $caps = array(), $cap = '', $user_id = 0, 
 
 		// Reading
 		case 'read_event' :
+		case 'read_calendar' :
 			$caps = array( 'read' );
 			break;
 

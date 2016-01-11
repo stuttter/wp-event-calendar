@@ -228,7 +228,7 @@ function wp_event_calendar_change_menu_order( $menu_order = array() ) {
 		// The calendar submenu arrays
 		$calendar_submenus[ $pt ] = array(
 			esc_html__( 'Calendar', 'wp-event-calendar' ),
-			'edit_posts',
+			'read_calendar',
 			$type . '-calendar',
 			esc_html__( 'Calendar', 'wp-event-calendar' ),
 		);
