@@ -52,7 +52,7 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 
 		// Setup the week ranges
 		$this->day_start = strtotime( 'midnight', $this->today );
-		$this->day_end   = strtotime( 'tomorrow', $this->day_start ) - 1;
+		$this->day_end   = strtotime( 'tomorrow', $this->day_start );
 
 		// Setup the day ranges
 		$this->view_start = date_i18n( 'Y-m-d H:i:s', $this->day_start );
@@ -113,19 +113,37 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 
 		// Calculate end day
 		if ( ! empty( $this->item_end ) ) {
+			$end_day  = date_i18n( 'j', $this->item_end );
 			$end_hour = date_i18n( 'G', $this->item_end );
 		} else {
+			$end_day  = $start_day;
 			$end_hour = $start_hour;
 		}
 
-		// Calculate the cell offset
-		$offset   = intval( ( $this->item_start - $this->day_start ) / DAY_IN_SECONDS );
-		$interval = 1; // 7 for week
+		// All day events (and days that overlap multiple days)
+		if ( ( true === $this->item_all_day ) || ( $this->item_days >= 1 ) || ( $start_day !== $end_day ) ) {
 
-		// Start the days loop with the start day
-		$cell     = ( $start_hour * $interval ) + $offset;
-		$end_cell = ( $end_hour   * $interval ) + $offset;
-		$type     = 'items';
+			// What type of item is this?
+			$type = ( true === $this->item_all_day )
+				? 'all_day_items'
+				: 'multi_day_items';
+
+			// Math the heck out of this
+			$interval = 1;
+			$offset   = 0;
+			$cell     = $offset;
+			$end_cell = ( $end_day - $start_day ) + $offset;
+
+		// Regular single-day events
+		} else {
+			$type     = 'items';
+			$interval = 1;
+
+			// Calculate the cell offset
+			$offset   = intval( ( $this->item_start - $this->day_start ) / DAY_IN_SECONDS );
+			$cell     = ( $start_hour * $interval ) + $offset;
+			$end_cell = ( $end_hour   * $interval ) + ( $offset - 1 );
+		}
 
 		// Loop through days
 		while ( $cell <= $end_cell ) {
@@ -156,17 +174,18 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 		if ( 'event' === $this->screen->post_type ) {
 			$args = array(
 				'meta_query' => array(
+					'relation' => 'OR',
 					array(
 						'key'     => 'wp_event_calendar_date_time',
 						'value'   => array( $this->view_start, $this->view_end ),
 						'type'    => 'DATETIME',
 						'compare' => 'BETWEEN',
 					),
-
-					// Skip all day events in this loop
 					array(
-						'key'     => 'wp_event_calendar_all_day',
-						'compare' => 'NOT EXISTS'
+						'key'     => 'wp_event_calendar_end_date_time',
+						'value'   => array( $this->view_start, $this->view_end ),
+						'type'    => 'DATETIME',
+						'compare' => 'BETWEEN',
 					)
 				)
 			);
@@ -212,7 +231,7 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 
 		<tr class="all-day">
 			<th><?php esc_html_e( 'All day', 'wp-event-calendar' ); ?></th>
-			<td></td>
+			<td><?php echo $this->get_day_row_cell( 0, 'all_day_items' ); ?></td>
 		</tr>
 
 		<?php
@@ -223,6 +242,47 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 
 	/**
 	 * Start the week with a table row, and a th to show the hour
+	 *
+	 * @since 0.2.0
+	 */
+	protected function get_multi_day_row() {
+
+		// Start an output buffer
+		ob_start(); ?>
+
+		<tr class="multi-day">
+			<th><?php esc_html_e( 'Multi-day', 'wp-event-calendar' ); ?></th>
+			<td><?php echo $this->get_day_row_cell( 0, 'multi_day_items' ); ?></td>
+		</tr>
+
+		<?php
+
+		// Return the output buffer
+		return ob_get_clean();
+	}
+
+	/**
+	 * Start the week with a table row
+	 *
+	 * @since 0.2.0
+	 */
+	protected function get_day_row_cell( $iterator = 1, $type = 'all_day_items' ) {
+
+		// Start an output buffer
+		ob_start(); ?>
+
+		<div class="events-for-cell">
+			<?php echo $this->get_posts_for_cell( $iterator, $type ); ?>
+		</div>
+
+		<?php
+
+		// Return the output buffer
+		return ob_get_clean();
+	}
+
+	/**
+	 * Start the week with a table row, and a th to show the time
 	 *
 	 * @since 0.1.8
 	 */
@@ -293,7 +353,7 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 	}
 
 	/**
-	 * Display a calendar by month and year
+	 * Display a calendar by mode & range
 	 *
 	 * @since 0.1.8
 	 */
@@ -306,6 +366,9 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 
 		// All day events
 		echo $this->get_all_day_row();
+
+		// Multi day events
+		echo $this->get_multi_day_row();
 
 		// Loop through days of the month
 		for ( $i = 0; $i <= ( 24 - 1 ); $i++ ) {
