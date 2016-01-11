@@ -947,37 +947,16 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	protected function get_pointer_metadata( $post = false ) {
 		$pointer_metadata = array();
 
-		// Date & Time
-		if ( ! empty( $this->item_start ) ) {
-			$start_date = $this->get_event_date( $post, $this->item_start );
-		} else {
-			$start_date = 0;
-		}
-
-		// Date & Time
-		if ( ! empty( $this->item_end ) ) {
-			$end_date = $this->get_event_date( $post, $this->item_end );
-		} else {
-			$end_date = 0;
-		}
-
 		// All day event
-		if ( ( true === $this->item_all_day ) || ( $start_date === $end_date ) ) {
+		if ( ( true === $this->item_all_day ) ) {
 			$pointer_metadata[] = '<strong>' . esc_html__( 'All Day', 'wp-event-calendar' ) . '</strong>';
 
-			if ( $start_date !== $end_date ) {
-				$pointer_metadata[] = sprintf( esc_html__( 'From: %s',  'wp-event-calendar' ), $start_date );
-				$pointer_metadata[] = sprintf( esc_html__( 'Until: %s', 'wp-event-calendar' ), $end_date   );
-			}
 		} else {
 
 			// Date & Time
 			if ( ! empty( $this->item_start ) ) {
 				$pointer_metadata[] = '<strong>' . esc_html__( 'Start', 'wp-event-calendar' ) . '</strong>';
-
-				if ( $start_date !== $end_date ) {
-					$pointer_metadata[] = sprintf( esc_html__( '%s on %s', 'wp-event-calendar' ), $this->get_event_time( $post, $this->item_start ), $start_date );
-				}
+				$pointer_metadata[] = sprintf( esc_html__( '%s on %s', 'wp-event-calendar' ), $this->get_event_time( $post, $this->item_start ), $this->get_event_date( $post, $this->item_start ) );
 			}
 
 			// Date & Time
@@ -989,10 +968,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 				}
 
 				$pointer_metadata[] = '<strong>' . esc_html__( 'End', 'wp-event-calendar' ) . '</strong>';
-
-				if ( $start_date !== $end_date ) {
-					$pointer_metadata[] = sprintf( esc_html__( '%s on %s', 'wp-event-calendar' ), $this->get_event_time( $post, $this->item_end ), $end_date );
-				}
+				$pointer_metadata[] = sprintf( esc_html__( '%s on %s', 'wp-event-calendar' ), $this->get_event_time( $post, $this->item_end ), $this->get_event_date( $post, $this->item_end ) );
 			}
 		}
 
