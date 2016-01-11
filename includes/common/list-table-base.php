@@ -591,14 +591,12 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 			array()
 		);
 
-		// Query for posts for this month only
-		$this->query = new WP_Query( $this->main_query_args() );
-
 		// Max per day
+		$posts   = $this->get_posts_for_view();
 		$max_per = $this->get_max();
 
 		// Rearrange posts into an array keyed by day of the month
-		foreach ( $this->query->posts as $post ) {
+		foreach ( $posts as $post ) {
 
 			// Get start & end
 			$this->item_all_day = (bool) get_post_meta( $post->ID, 'wp_event_calendar_all_day',       true );
@@ -619,6 +617,19 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 			// Prepare pointer & item
 			$this->setup_item( $post, $max_per );
 		}
+	}
+
+	/**
+	 * Return an array of posts for this view
+	 *
+	 * @since 0.2.0
+	 *
+	 * @return array
+	 */
+	protected function get_posts_for_view() {
+		$this->query = new WP_Query( $this->main_query_args() );
+
+		return $this->query->posts;
 	}
 
 	/**
