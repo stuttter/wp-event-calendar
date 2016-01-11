@@ -168,6 +168,10 @@ function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 	// Set by 'orderby'
 	switch ( $wp_query->query['orderby'] ) {
 
+		// Skip if title
+		case 'title' :
+			break;
+
 		// End
 		case 'repeat' :
 			$wp_query->set( 'order',     $order );
@@ -186,6 +190,8 @@ function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 
 		// Start (default)
 		case 'start_date' :
+		default :
+			$_GET['orderby'] = 'start_date';
 			$wp_query->set( 'order',     $order );
 			$wp_query->set( 'orderby',   'meta_value' );
 			$wp_query->set( 'meta_key',  'wp_event_calendar_date_time' );
