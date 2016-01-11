@@ -260,7 +260,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	/**
 	 * Start the week with a table row, and a th to show the time
 	 *
-	 * @since 0.2.0
+	 * @since 0.2.2
 	 */
 	protected function get_multi_day_row() {
 

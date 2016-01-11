@@ -261,7 +261,7 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 	/**
 	 * Start the week with a table row, and a th to show the hour
 	 *
-	 * @since 0.2.0
+	 * @since 0.2.2
 	 */
 	protected function get_multi_day_row() {
 
@@ -282,7 +282,7 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 	/**
 	 * Start the week with a table row
 	 *
-	 * @since 0.2.0
+	 * @since 0.2.2
 	 */
 	protected function get_day_row_cell( $iterator = 1, $type = 'all_day_items' ) {
 

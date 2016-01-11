@@ -249,7 +249,7 @@ function wp_event_calendar_details_metabox() {
 /**
  * Offset hour based on meridem
  *
- * @since 0.2.0
+ * @since 0.2.2
  *
  * @param  int     $hour
  * @param  string  $meridiem
