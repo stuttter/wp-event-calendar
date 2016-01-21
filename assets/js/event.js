@@ -42,7 +42,7 @@ jQuery( document ).ready( function( $ ) {
 		} );
 	}
 
-	$( '#wp_event_calendar_details input[type="number"]' )
+	$( '#wp_event_calendar_duration input[type="number"]' )
 		.on( 'input', wp_event_calendar_leading_zero );
 
 } );
