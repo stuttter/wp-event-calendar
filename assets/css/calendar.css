@@ -1,5 +1,9 @@
 /** Editor ********************************************************************/
 
+body.post-type-event #post-body-content {
+	margin-bottom: 0;
+}
+
 .wp-menu-image.dashicons-before.dashicons-calendar-alt:before {
 	line-height: 0.8;
 }
@@ -186,7 +190,7 @@ table.month tbody a.add-event-for-day {
 
 table.month tbody a i {
 	line-height: 1.9em;
-	font-size: 15px;	
+	font-size: 15px;
 }
 
 table.month tbody td:hover a.add-event-for-day {
