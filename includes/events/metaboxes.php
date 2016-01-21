@@ -16,9 +16,9 @@ defined( 'ABSPATH' ) || exit;
 */
 function wp_event_calendar_add_metabox() {
 	add_meta_box(
-		'wp_event_calendar_details',
-		__( 'Details', 'wp-event-calendar' ),
-		'wp_event_calendar_details_metabox',
+		'wp_event_calendar_duration',
+		__( 'Duration', 'wp-event-calendar' ),
+		'wp_event_calendar_duration_metabox',
 		'event',
 		'above_event_editor',
 		'default'
@@ -26,11 +26,11 @@ function wp_event_calendar_add_metabox() {
 }
 
 /**
- * Output the event details metabox
+ * Output the event duration metabox
  *
  * @since  0.1.0
 */
-function wp_event_calendar_details_metabox() {
+function wp_event_calendar_duration_metabox() {
 	global $post;
 
 	$meta = get_post_custom( $post->ID );
@@ -135,11 +135,6 @@ function wp_event_calendar_details_metabox() {
 		'1000'   => __( 'Yearly',  'wp-event-calendar' )
 	) );
 
-	// When to stop repeating?
-	$expire = ! empty( $meta['wp_event_calendar_expire'][0] )
-		? date( 'm/d/Y', $meta['wp_event_calendar_expire'][0] )
-		: '';
-
 	/** Let's Go! *************************************************************/
 
 	// Start an output buffer
@@ -202,17 +197,21 @@ function wp_event_calendar_details_metabox() {
 				</td>
 			</tr>
 
-			<tr>
-				<th>
-					<label for="wp_event_calendar_location"><?php esc_html_e( 'Location', 'wp-event-calendar' ); ?></label>
-				</th>
+			<?php if ( apply_filters( 'wp_event_calendar_location', true ) ) : ?>
 
-				<td>
-					<label>
-						<textarea name="wp_event_calendar_location" id="wp_event_calendar_location" placeholder="<?php esc_html_e( '(Optional)', 'wp-event-calendar' ); ?>"><?php echo esc_textarea( $location ); ?></textarea>
-					</label>
-				</td>
-			</tr>
+				<tr>
+					<th>
+						<label for="wp_event_calendar_location"><?php esc_html_e( 'Location', 'wp-event-calendar' ); ?></label>
+					</th>
+
+					<td>
+						<label>
+							<textarea name="wp_event_calendar_location" id="wp_event_calendar_location" placeholder="<?php esc_html_e( '(Optional)', 'wp-event-calendar' ); ?>"><?php echo esc_textarea( $location ); ?></textarea>
+						</label>
+					</td>
+				</tr>
+
+			<?php endif; ?>
 
 			<tr>
 				<th>
