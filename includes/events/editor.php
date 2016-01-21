@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  * @global string $post_type
  * @global array $post
  */
-function wp_events_calendar_editor_above() {
+function wp_event_calendar_editor_above() {
 	global $post_type, $post;
 
 	// Description title
@@ -29,7 +29,7 @@ function wp_events_calendar_editor_above() {
 	<div class="meta-box-sortables">
 		<div class="wp-event-calendar-editor postbox">
 			<div class="handlediv" title="<?php esc_html_e( 'Click to toggle', 'wp-event-calendar'); ?>"><br></div>
-			<h3 class="hndle ui-sortable-handle"><span><?php esc_html_e( 'Notes', 'wp-event-calendar'); ?></span></h3>
+			<h3 class="hndle ui-sortable-handle"><span><?php esc_html_e( 'Details', 'wp-event-calendar'); ?></span></h3>
 			<div class="inside" style="padding-top: 12px; margin-top: 0;">
 
 	<?php
@@ -40,7 +40,7 @@ function wp_events_calendar_editor_above() {
  *
  * @global string $post_type
  */
-function wp_events_calendar_editor_below() {
+function wp_event_calendar_editor_below() {
 	global $post_type, $post;
 
 	// Description title
@@ -63,7 +63,7 @@ function wp_events_calendar_editor_below() {
  *
  * @param array $settings
  */
-function wp_events_calendar_editor_settings( $settings = array() ) {
+function wp_event_calendar_editor_settings( $settings = array() ) {
 	$post_type = get_post_type();
 
 	// No buttons on custom post types
@@ -86,7 +86,7 @@ function wp_events_calendar_editor_settings( $settings = array() ) {
  *
  * @return boolean
  */
-function wp_events_calendar_editor_expand( $expand = true, $post_type = '' ) {
+function wp_event_calendar_editor_expand( $expand = true, $post_type = '' ) {
 
 	// No expanding for our post types
 	if ( ( true === $expand ) && in_array( $post_type, ct_get_inventory_post_types() ) ) {
