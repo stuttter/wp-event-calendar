@@ -43,7 +43,8 @@ function wp_event_calendar_register_post_types() {
 	$supports = array(
 		'title',
 		'editor',
-		'thumbnail'
+		'thumbnail',
+		'revisions'
 	);
 
 	// Capability types
