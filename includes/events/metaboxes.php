@@ -28,7 +28,7 @@ function wp_event_calendar_add_metabox() {
 /**
  * Output the event duration metabox
  *
- * @since  0.1.0
+ * @since  0.2.3
 */
 function wp_event_calendar_duration_metabox() {
 	global $post;
