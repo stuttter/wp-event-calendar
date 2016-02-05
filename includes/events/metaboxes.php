@@ -165,9 +165,21 @@ function wp_event_calendar_duration_metabox() {
 					<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_date" id="wp_event_calendar_date" value="<?php echo esc_attr( $date ); ?>" placeholder="mm/dd/yyyy" />
 					<div class="event-time" <?php echo $hidden; ?>>
 						<span class="wp_event_calendar_time_separator"><?php esc_html_e( ' at ', 'wp-event-alendar' ); ?></span>
-						<input type="number" min="01" max="12" step="1" pattern="[0-9]*" maxlength="2" class="small-text" name="wp_event_calendar_time_hour" id="wp_event_calendar_time_hour" value="<?php echo esc_attr( $hour ); ?>" placeholder="10" />
+						<?php wp_event_calendar_time_dropdown( array(
+							'first'    => '',
+							'id'       => 'wp_event_calendar_time_hour',
+							'name'     => 'wp_event_calendar_time_hour',
+							'items'    => wp_event_calendar_get_hours(),
+							'selected' => $hour
+						) ); ?>
 						<span class="wp_event_calendar_time_separator">:</span>
-						<input type="number" min="00" max="59" step="1" class="small-text wp_event_calendar_minutes" name="wp_event_calendar_time_minute" value="<?php echo esc_attr( $minute ); ?>" placeholder="00" />
+						<?php wp_event_calendar_time_dropdown( array(
+							'first'    => '',
+							'id'       => 'wp_event_calendar_time_minute',
+							'name'     => 'wp_event_calendar_time_minute',
+							'items'    => wp_event_calendar_get_minutes(),
+							'selected' => $minute
+						) ); ?>
 						<select name="wp_event_calendar_time_am_pm">
 							<option value="am" <?php selected( $am_pm, 'am' ); ?>><?php esc_html_e( 'AM', 'wp-event-calendar' ); ?></option>
 							<option value="pm" <?php selected( $am_pm, 'pm' ); ?>><?php esc_html_e( 'PM', 'wp-event-calendar' ); ?></option>
@@ -186,9 +198,21 @@ function wp_event_calendar_duration_metabox() {
 					<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_end_date" id="wp_event_calendar_end_date" value="<?php echo esc_attr( $end_date ); ?>" placeholder="mm/dd/yyyy" />
 					<div class="event-time" <?php echo $hidden; ?>>
 						<span class="wp_event_calendar_time_separator"><?php esc_html_e( ' at ', 'wp-event-alendar' ); ?></span>
-						<input type="number" min="01" max="12" step="1" pattern="[0-9]*" maxlength="2" class="small-text" name="wp_event_calendar_end_time_hour" id="wp_event_calendar_end_time_hour" value="<?php echo esc_attr( $end_hour ); ?>" placeholder="11" />
+						<?php wp_event_calendar_time_dropdown( array(
+							'first'    => '',
+							'id'       => 'wp_event_calendar_end_time_hour',
+							'name'     => 'wp_event_calendar_end_time_hour',
+							'items'    => wp_event_calendar_get_hours(),
+							'selected' => $end_hour
+						) ); ?>
 						<span class="wp_event_calendar_time_separator">:</span>
-						<input type="number" min="00" max="59" step="1" pattern="[0-9]*" maxlength="2" class="small-text wp_event_calendar_minutes" name="wp_event_calendar_end_time_minute" value="<?php echo esc_attr( $end_minute ); ?>" placeholder="00" />
+						<?php wp_event_calendar_time_dropdown( array(
+							'first'    => '',
+							'id'       => 'wp_event_calendar_end_time_minute',
+							'name'     => 'wp_event_calendar_end_time_minute',
+							'items'    => wp_event_calendar_get_minutes(),
+							'selected' => $end_minute
+						) ); ?>
 						<select class="wp_event_calendar_end_time_am_pm" name="wp_event_calendar_end_time_am_pm">
 							<option value="am" <?php selected( $end_am_pm, 'am' ); ?>><?php esc_html_e( 'AM', 'wp-event-calendar' ); ?></option>
 							<option value="pm" <?php selected( $end_am_pm, 'pm' ); ?>><?php esc_html_e( 'PM', 'wp-event-calendar' ); ?></option>
