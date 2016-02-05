@@ -402,7 +402,7 @@ function wp_event_calendar_time_dropdown( $args = array() ) {
 	// Parse the arguments
 	$r = wp_parse_args( $args, array(
 		'first'       => esc_html( 'Select One', 'wp-event-calendar' ),
-		'placeholder' => '',
+		'placeholder' => '&nbsp;',
 		'id'          => '',
 		'name'        => '',
 		'class'       => '',
