@@ -401,25 +401,27 @@ function wp_event_calendar_time_dropdown( $args = array() ) {
 
 	// Parse the arguments
 	$r = wp_parse_args( $args, array(
-		'first'    => esc_html( 'Select One', 'wp-event-calendar' ),
-		'id'       => '',
-		'name'     => '',
-		'class'    => '',
-		'items'    => array(),
-		'selected' => '',
-		'echo'     => true
+		'first'       => esc_html( 'Select One', 'wp-event-calendar' ),
+		'placeholder' => '',
+		'id'          => '',
+		'name'        => '',
+		'class'       => '',
+		'items'       => array(),
+		'selected'    => '',
+		'multi'       => false,
+		'echo'        => true
 	) );
 
-	// No items
-	if ( empty( $r['items'] ) ) {
-		return;
-	}
+	// Is multi?
+	$multi = ( true === $r['multi'] )
+		? 'multi'
+		: '';
 
 	// Start an output buffer
 	ob_start();
 
 	// Start the select wrapper
-	?><select name="<?php echo esc_attr( $r['name'] ); ?>" id="<?php echo esc_attr( $r['id'] ); ?>" class="<?php echo esc_attr( $r['class'] ); ?>"><?php
+	?><select data-placeholder="<?php echo esc_html( $r['placeholder'] ); ?>" name="<?php echo esc_attr( $r['name'] ); ?>" id="<?php echo esc_attr( $r['id'] ); ?>" class="<?php echo esc_attr( $r['class'] ); ?>" <?php echo $multi; ?>><?php
 
 		// First item?
 		if ( false !== $r['first'] ) : ?><option value=""><?php echo esc_html( $r['first'] ); ?></option><?php endif;
