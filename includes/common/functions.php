@@ -341,3 +341,51 @@ function wp_get_event_duration( $post = false ) {
 	// Filter & return
 	return apply_filters( 'wp_get_event_end_date_time', $retval, $post, $all_day, $start_date, $end_date );
 }
+
+/**
+ * Return array of hours
+ *
+ * @since 0.2.4
+ *
+ * @return array
+ */
+function wp_event_calendar_get_hours() {
+	return apply_filters( 'wp_event_calendar_get_hours', array(
+		'01',
+		'02',
+		'03',
+		'04',
+		'05',
+		'06',
+		'07',
+		'08',
+		'09',
+		'10',
+		'11',
+		'12'
+	) );
+}
+
+/**
+ * Return array of minutes
+ *
+ * @since 0.2.4
+ *
+ * @return array
+ */
+function wp_event_calendar_get_minutes() {
+	return apply_filters( 'wp_event_calendar_get_minutes', array(
+		'00',
+		'05',
+		'10',
+		'15',
+		'20',
+		'25',
+		'30',
+		'35',
+		'40',
+		'45',
+		'50',
+		'55'
+	) );
+}
