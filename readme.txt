@@ -13,11 +13,12 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 WP Event Calendar is the best way to keep track of events in WordPress!
 
 * Seamlessly integrates into WordPress's dashboard interface
-* Month & week list-table views
+* Month, week, and day list-table views
 * Organize events by type, category, & tag
 * Easily & logically paginate through date ranges
 * Safe, secure, & performant
 * Full of developer hooks for integration with other plugins & themes
+* Integrates with User Groups, Alerts, Activity, and Profiles
 
 = Also checkout =
 
@@ -32,6 +33,7 @@ WP Event Calendar is the best way to keep track of events in WordPress!
 * [WP Term Images](https://wordpress.org/plugins/wp-term-images/ "Pretty images for categories, tags, and other taxonomy terms.")
 * [WP Term Visibility](https://wordpress.org/plugins/wp-term-visibility/ "Visibilities for categories, tags, and other taxonomy terms.")
 * [WP User Activity](https://wordpress.org/plugins/wp-user-activity/ "The best way to log activity in WordPress.")
+* [WP User Alerts](https://wordpress.org/plugins/wp-user-alerts/ "Alert registered users when new content is published.")
 * [WP User Avatars](https://wordpress.org/plugins/wp-user-avatars/ "Allow users to upload avatars or choose them from your media library.")
 * [WP User Groups](https://wordpress.org/plugins/wp-user-groups/ "Group users together with taxonomies & terms.")
 * [WP User Parents](https://wordpress.org/plugins/wp-user-parents/ "Allow parent users to manage their direct decendants.")
