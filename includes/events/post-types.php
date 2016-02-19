@@ -44,7 +44,8 @@ function wp_event_calendar_register_post_types() {
 		'title',
 		'editor',
 		'thumbnail',
-		'revisions'
+		'revisions',
+		'events'
 	);
 
 	// Capability types
