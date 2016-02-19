@@ -42,6 +42,7 @@ function _wp_event_calendar() {
 	require_once $plugin_path . 'includes/events/post-types.php';
 	require_once $plugin_path . 'includes/events/post-statuses.php';
 	require_once $plugin_path . 'includes/events/taxonomies.php';
+	require_once $plugin_path . 'includes/events/user-alerts.php';
 	require_once $plugin_path . 'includes/events/hooks.php';
 }
 add_action( 'plugins_loaded', '_wp_event_calendar' );
