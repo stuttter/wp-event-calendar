@@ -22,9 +22,12 @@ defined( 'ABSPATH' ) || exit;
 function wp_event_calendar_allowed_post_types() {
 	global $_wp_post_type_features;
 
-	$types = wp_filter_object_list( $_wp_post_type_features, array( 'events' => true ) );
+	// Get which post types support events
+	$supports = wp_filter_object_list( $_wp_post_type_features, array( 'events' => true ) );
+	$types    = array_keys( $supports );
 
-	return apply_filters( 'wp_event_calendar_allowed_post_types', $types );
+	// Filter & return
+	return apply_filters( 'wp_event_calendar_allowed_post_types', $types, $supports );
 }
 
 /**
