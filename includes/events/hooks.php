@@ -58,3 +58,6 @@ add_action( 'admin_head', 'wp_event_calendar_admin_add_help_tabs' );
 
 // User Alerts
 add_filter( 'wp_user_alerts_get_alerts', 'wp_event_calendar_alerts_meta_query' );
+
+// User Dashboard
+add_filter( 'wp_user_dashboard_get_sections', 'wp_event_calendar_add_section' );
