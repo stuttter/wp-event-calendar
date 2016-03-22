@@ -109,6 +109,11 @@ function wp_event_calendar_admin_add_help_tabs() {
 		return;
 	}
 
+	// Bail if viewing a taxonomy
+	if ( get_current_screen()->taxonomy ) {
+		return;
+	}
+
 	// Calendar
 	get_current_screen()->add_help_tab( array(
 		'id'		=> 'calendar',

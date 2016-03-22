@@ -54,7 +54,8 @@ add_filter( 'pre_get_posts',                      'wp_event_calendar_maybe_filte
 add_action( 'wp_event_calendar_update_events', 'wp_event_calendar_update_post_statuses' );
 
 // Admin Help
-add_action( 'admin_head', 'wp_event_calendar_admin_add_help_tabs' );
+add_action( 'admin_head-edit.php',     'wp_event_calendar_admin_add_help_tabs' );
+add_action( 'admin_head-post-new.php', 'wp_event_calendar_admin_add_help_tabs' );
 
 // User Alerts
 add_filter( 'wp_user_alerts_get_alerts', 'wp_event_calendar_alerts_meta_query' );
