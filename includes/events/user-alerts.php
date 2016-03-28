@@ -23,6 +23,9 @@ function wp_event_calendar_alerts_meta_query( $r = array() ) {
 	// Post type supports events
 	if ( ! empty( $r['post_type'] ) && post_type_supports( $r['post_type'], 'events' ) ) {
 
+		// Last night at midnight
+		$midnight_yesterday = strtotime( 'Midnight yesterday' );
+
 		// Add to meta_query argument
 		$r['meta_query'][] = array(
 			'relation' => 'OR',
@@ -30,7 +33,7 @@ function wp_event_calendar_alerts_meta_query( $r = array() ) {
 			// Starts after midnight yesterday
 			array(
 				'key'     => 'wp_event_calendar_date_time',
-				'value'   => strtotime( 'Midnight yesterday' ),
+				'value'   => $midnight_yesterday,
 				'type'    => 'DATETIME',
 				'compare' => '>',
 			),
@@ -38,7 +41,7 @@ function wp_event_calendar_alerts_meta_query( $r = array() ) {
 			// Ends after midnight today
 			array(
 				'key'     => 'wp_event_calendar_end_date_time',
-				'value'   => strtotime( 'Midnight today' ),
+				'value'   => $midnight_yesterday,
 				'type'    => 'DATETIME',
 				'compare' => '>',
 			)
