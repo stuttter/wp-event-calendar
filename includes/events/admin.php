@@ -155,6 +155,16 @@ function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 		return;
 	}
 
+	// Bail if any post type
+	if ( 'any' === $wp_query->query['post_type'] ) {
+		return;
+	}
+
+	// Bail in AJAX for now
+	if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+		return;
+	}
+
 	// Some default order values
 	$order = ! empty( $wp_query->query['order'] )
 		? strtoupper( $wp_query->query['order'] )
