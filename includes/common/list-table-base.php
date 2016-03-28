@@ -316,8 +316,8 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 * @return int
 	 */
 	protected function get_month() {
-		return (int) isset( $_REQUEST['month'] )
-			? (int) $_REQUEST['month']
+		return (int) isset( $_REQUEST['cm'] )
+			? (int) $_REQUEST['cm']
 			: date_i18n( 'n' );
 	}
 
@@ -331,8 +331,8 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 * @return int
 	 */
 	protected function get_day() {
-		return (int) isset( $_REQUEST['day'] )
-			? (int) $_REQUEST['day']
+		return (int) isset( $_REQUEST['cd'] )
+			? (int) $_REQUEST['cd']
 			: date_i18n( 'j' );
 	}
 
@@ -346,8 +346,8 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 * @return int
 	 */
 	protected function get_year() {
-		return (int) isset( $_REQUEST['year'] )
-			? (int) $_REQUEST['year']
+		return (int) isset( $_REQUEST['cy'] )
+			? (int) $_REQUEST['cy']
 			: date_i18n( 'Y' );
 	}
 
@@ -1224,8 +1224,8 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 		// Start an output buffer
 		ob_start(); ?>
 
-		<label for="month" class="screen-reader-text"><?php esc_html_e( 'Switch to this month', 'wp-event-calendar' ); ?></label>
-		<select name="month" id="month">
+		<label for="cm" class="screen-reader-text"><?php esc_html_e( 'Switch to this month', 'wp-event-calendar' ); ?></label>
+		<select name="cm" id="cm">
 
 			<?php for ( $month_index = 1; $month_index <= 12; $month_index++ ) : ?>
 
@@ -1235,8 +1235,8 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 
 		</select>
 
-		<label for="year" class="screen-reader-text"><?php esc_html_e( 'Switch to this year', 'wp-event-calendar' ); ?></label>
-		<input type="number" name="year" id="year" value="<?php echo (int) $this->year; ?>" size="5">
+		<label for="cy" class="screen-reader-text"><?php esc_html_e( 'Switch to this year', 'wp-event-calendar' ); ?></label>
+		<input type="number" name="cy" id="cy" value="<?php echo (int) $this->year; ?>" size="5">
 
 		<?php
 
@@ -1304,10 +1304,10 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 		$next_large_y = date_i18n( 'Y', $next_large );
 
 		// Setup month args
-		$prev_small_args = array( 'year' => $prev_small_y, 'month' => $prev_small_m, 'day' => $prev_small_d );
-		$prev_large_args = array( 'year' => $prev_large_y, 'month' => $prev_large_m, 'day' => $prev_large_d );
-		$next_small_args = array( 'year' => $next_small_y, 'month' => $next_small_m, 'day' => $next_small_d );
-		$next_large_args = array( 'year' => $next_large_y, 'month' => $next_large_m, 'day' => $next_large_d );
+		$prev_small_args = array( 'cy' => $prev_small_y, 'cm' => $prev_small_m, 'cd' => $prev_small_d );
+		$prev_large_args = array( 'cy' => $prev_large_y, 'cm' => $prev_large_m, 'cd' => $prev_large_d );
+		$next_small_args = array( 'cy' => $next_small_y, 'cm' => $next_small_m, 'cd' => $next_small_d );
+		$next_large_args = array( 'cy' => $next_large_y, 'cm' => $next_large_m, 'cd' => $next_large_d );
 
 		// Setup links
 		$prev_small_link = add_query_arg( $prev_small_args, $today );
