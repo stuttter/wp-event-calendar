@@ -293,8 +293,8 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 *
 	 * @return array An associative array containing the sortable columns
 	 */
-	public function get_sortable_columns() {
-		return $this->get_columns();
+	protected function get_sortable_columns() {
+		return array();
 	}
 
 	/**
