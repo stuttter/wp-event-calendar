@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
 function _wp_event_calendar() {
 
 	// Get the plugin path
-	$plugin_path = plugin_dir_path( __FILE__ );
+	$plugin_path = wp_event_calendar_get_plugin_path();
 
 	// Common files
 	require_once $plugin_path . 'includes/common/functions.php';
@@ -47,6 +47,17 @@ function _wp_event_calendar() {
 	require_once $plugin_path . 'includes/events/hooks.php';
 }
 add_action( 'plugins_loaded', '_wp_event_calendar' );
+
+/**
+ * Return the plugin's path
+ *
+ * @since 0.2.5
+ *
+ * @return string
+ */
+function wp_event_calendar_get_plugin_path() {
+	return plugin_dir_path( __FILE__ );
+}
 
 /**
  * Return the plugin's URL
