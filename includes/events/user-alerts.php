@@ -23,26 +23,24 @@ function wp_event_calendar_alerts_meta_query( $r = array() ) {
 	// Post type supports events
 	if ( ! empty( $r['post_type'] ) && post_type_supports( $r['post_type'], 'events' ) ) {
 
-		// Calculate a range of days
-		$range = array(
-			strtotime( 'Midnight yesterday' ),
-			strtotime( 'Midnight today' )
-		);
-
 		// Add to meta_query argument
 		$r['meta_query'][] = array(
 			'relation' => 'OR',
+
+			// Starts after midnight yesterday
 			array(
 				'key'     => 'wp_event_calendar_date_time',
-				'value'   => $range,
+				'value'   => strtotime( 'Midnight yesterday' ),
 				'type'    => 'DATETIME',
-				'compare' => 'BETWEEN',
+				'compare' => '>',
 			),
+
+			// Ends after midnight today
 			array(
 				'key'     => 'wp_event_calendar_end_date_time',
-				'value'   => $range,
+				'value'   => strtotime( 'Midnight today' ),
 				'type'    => 'DATETIME',
-				'compare' => 'BETWEEN',
+				'compare' => '>',
 			)
 		);
 	}
