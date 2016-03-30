@@ -2,8 +2,8 @@
 Contributors: johnjamesjacoby, stuttter
 Tags: event, calendar, session, appointment, month, week, category, tag, term, type
 Requires at least: 4.4
-Tested up to: 4.4
-Stable tag: 0.2.4
+Tested up to: 4.5
+Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9Q4F4EL5YJ62J
@@ -71,6 +71,11 @@ The WordPress support forums: https://wordpress.org/support/plugin/wp-event-cale
 http://github.com/stuttter/wp-event-calendar/
 
 == Changelog ==
+
+= 0.3.0
+* Improve capability mapping
+* Improve TinyMCE compatibility
+* Update calendar styling
 
 = 0.2.4 =
 * Dropdown select elements for hours & minutes
