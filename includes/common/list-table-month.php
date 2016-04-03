@@ -32,7 +32,11 @@ class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 
 		// Setup the view ranges
 		$this->view_start = "{$this->year}-{$this->month}-01 00:00:00";
-		$this->view_end   = "{$this->year}-{$this->month}-31 23:59:59";
+
+		$mon = mysql2date( 'U', $this->view_start );
+		$eom = strtotime( '+1 month', $mon );
+
+		$this->view_end = date_i18n( 'Y-m-d H:i:s', $eom );
 	}
 
 	/**
