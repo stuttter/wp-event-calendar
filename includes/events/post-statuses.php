@@ -20,12 +20,9 @@ function wp_event_calendar_register_post_statuses() {
 	register_post_status( 'passed', array(
 		'label'                     => esc_html_x( 'Passed', 'events', 'wp-event-calendar' ),
 		'label_count'               => _nx_noop( 'Passed <span class="count">(%s)</span>', 'Passed <span class="count">(%s)</span>', 'events', 'wp-event-calendar' ),
-		'exclude_from_search'       => true,
-		'public'                    => null,
-		'internal'                  => null,
-		'protected'                 => null,
-		'private'                   => null,
-		'publicly_queryable'        => false,
+		'exclude_from_search'       => get_post_type_object( 'event' )->exclude_from_search,
+		'public'                    => get_post_type_object( 'event' )->public,
+		'publicly_queryable'        => get_post_type_object( 'event' )->publicly_queryable,
 		'show_in_admin_status_list' => true,
 		'show_in_admin_all_list'    => true,
 	) );
