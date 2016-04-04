@@ -150,13 +150,23 @@ function wp_event_calendar_sortable_columns( $columns = array() ) {
  */
 function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 
-	// Bail if not 'event' post type
-	if ( empty( $wp_query->query['post_type'] ) || ! in_array( 'event', (array) $wp_query->query['post_type'], true ) ) {
+	// Bail if no post_type
+	if ( empty( $wp_query->query['post_type'] ) ) {
+		return;
+	}
+
+	// Bail if several post_type's
+	if ( is_array( $wp_query->query['post_type'] ) ) {
 		return;
 	}
 
 	// Bail if any post type
 	if ( 'any' === $wp_query->query['post_type'] ) {
+		return;
+	}
+
+	// Bail if single post type does not support events
+	if ( ! post_type_supports( $wp_query->query['post_type'], 'events' ) ) {
 		return;
 	}
 
