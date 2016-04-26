@@ -127,7 +127,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 		}
 
 		// All day events (and days that overlap multiple days)
-		if ( ( true === $this->item_all_day ) || ( $this->item_days >= 1 ) || ( $start_day !== $end_day ) ) {
+		if ( ( true === $this->item_all_day ) || ( $this->item_days > 1 ) || ( $start_day !== $end_day ) ) {
 
 			// What type of item is this?
 			$type = ( true === $this->item_all_day )
