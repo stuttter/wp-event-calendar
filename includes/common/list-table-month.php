@@ -71,6 +71,53 @@ class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 	}
 
 	/**
+	 * Add a post to the item array, keyed by day
+	 *
+	 * @todo Repeat & expire
+	 *
+	 * @since 0.1.1
+	 *
+	 * @param  object  $post
+	 * @param  int     $max
+	 */
+	protected function setup_item( $post = false, $max = 10 ) {
+
+		// Bail if there is no post
+		if ( empty( $post ) ) {
+			return;
+		}
+
+		// Start day
+		$time = $this->item_start;
+		$type = 'items';
+
+		// Loop through days and setup the item
+		for ( $i = 0, $j = $this->item_days; $i < $j; ++$i ) {
+			$day   = (int) date_i18n( 'j', $time );
+			$month = (int) date_i18n( 'n', $time );
+			$year  = (int) date_i18n( 'Y', $time );
+
+			// Skip if not this month
+			if ( ( $month === (int) $this->month ) && ( $year === (int) $this->year ) ) {
+
+				// Setup the pointer for each day
+				$this->setup_pointer( $post, $day );
+
+				// Get count for day
+				$count = count( $this->{$type}[ $day ] );
+
+				// Add post to item types for each day in it's duration
+				if ( empty( $this->{$type}[ $day ] ) || ( $max > $count ) ) {
+					$this->{$type}[ $day ][ $post->ID ] = $post;
+				}
+			}
+
+			// Bump the time 1 day
+			$time += DAY_IN_SECONDS;
+		}
+	}
+
+	/**
 	 * Return filtered query arguments
 	 *
 	 * @since 0.1.1
