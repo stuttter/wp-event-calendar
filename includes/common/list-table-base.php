@@ -604,7 +604,6 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 			$this->item_all_day = (bool) get_post_meta( $post->ID, 'wp_event_calendar_all_day',       true );
 			$this->item_start   =        get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
 			$this->item_end     =        get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
-			$this->item_days    = intval( ( $this->item_end - $this->item_start ) / DAY_IN_SECONDS  );
 
 			// Format start
 			if ( ! empty( $this->item_start ) ) {
@@ -615,6 +614,16 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 			if ( ! empty( $this->item_end ) ) {
 				$this->item_end = strtotime( $this->item_end );
 			}
+
+			// Convert dates to timestamps that exclude the timestamp
+			$start_date_timestamp = strtotime( date( 'F j, Y', $this->item_start ) );
+			$end_date_timestamp   = strtotime( date( 'F j, Y', $this->item_end   ) );
+
+			// Get the number of seconds between each timestamp's date
+			$diff = abs( $end_date_timestamp - $start_date_timestamp );
+
+			// Calculate full days spanned
+			$this->item_days = ceil( $diff / DAY_IN_SECONDS ) + 1;
 
 			// Prepare pointer & item
 			$this->setup_item( $post, $max_per );
@@ -639,8 +648,15 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 				'ignore_sticky_posts' => true,
 				's'                   => $this->get_search(),
 				'meta_query'          => array(
+					'relation' => 'OR',
 					array(
 						'key'     => 'wp_event_calendar_date_time',
+						'value'   => array( $this->view_start, $this->view_end ),
+						'type'    => 'DATETIME',
+						'compare' => 'BETWEEN',
+					),
+					array(
+						'key'     => 'wp_event_calendar_end_date_time',
 						'value'   => array( $this->view_start, $this->view_end ),
 						'type'    => 'DATETIME',
 						'compare' => 'BETWEEN',
