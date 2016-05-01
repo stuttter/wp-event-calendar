@@ -615,6 +615,10 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 				$this->item_end = strtotime( $this->item_end );
 			}
 
+			if ( empty( $this->item_start ) ) {
+				continue;
+			}
+
 			// Convert dates to timestamps that exclude the timestamp
 			$start_date_timestamp = strtotime( date( 'F j, Y', $this->item_start ) );
 			$end_date_timestamp   = strtotime( date( 'F j, Y', $this->item_end   ) );
