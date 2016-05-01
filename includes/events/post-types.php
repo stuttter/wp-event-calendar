@@ -56,14 +56,14 @@ function wp_event_calendar_register_post_types() {
 
 	// Capabilities
 	$caps = array(
-		'create_pages'        => 'create_events',
-		'edit_pages'          => 'edit_events',
-		'edit_others_pages'   => 'edit_others_events',
-		'publish_pages'       => 'publish_events',
-		'read_private_pages'  => 'read_private_events',
-		'read_hidden_pages'   => 'read_hidden_events',
-		'delete_pages'        => 'delete_events',
-		'delete_others_pages' => 'delete_others_events'
+		'create_posts'        => 'create_events',
+		'edit_posts'          => 'edit_events',
+		'edit_others_posts'   => 'edit_others_events',
+		'publish_posts'       => 'publish_events',
+		'read_private_posts'  => 'read_private_events',
+		'read_hidden_posts'   => 'read_hidden_events',
+		'delete_posts'        => 'delete_events',
+		'delete_others_posts' => 'delete_others_events'
 	);
 
 	// Rewrite
@@ -87,7 +87,7 @@ function wp_event_calendar_register_post_types() {
 		'show_in_admin_bar'    => true,
 		'menu_position'        => 44,
 		'menu_icon'            => 'dashicons-calendar-alt',
-		'map_meta_cap'         => true,
+		//'map_meta_cap'         => true,
 		'capabilities'         => $caps,
 		'capability_type'      => $cap_types,
 		'register_meta_box_cb' => null,
