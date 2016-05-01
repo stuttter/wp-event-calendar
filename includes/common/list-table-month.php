@@ -88,8 +88,9 @@ class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 		}
 
 		// Start day
-		$time = $this->item_start;
-		$type = 'items';
+		$time    = $this->item_start;
+		$type    = 'items';
+		$max_int = absint( $max );
 
 		// Loop through days and setup the item
 		for ( $i = 0, $j = $this->item_days; $i < $j; ++$i ) {
@@ -104,10 +105,12 @@ class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 				$this->setup_pointer( $post, $day );
 
 				// Get count for day
-				$count = count( $this->{$type}[ $day ] );
+				$count = empty( $this->{$type}[ $day ] )
+					? 0
+					: count( $this->{$type}[ $day ] );
 
 				// Add post to item types for each day in it's duration
-				if ( empty( $this->{$type}[ $day ] ) || ( $max > $count ) ) {
+				if ( $count < $max_int ) {
 					$this->{$type}[ $day ][ $post->ID ] = $post;
 				}
 			}
