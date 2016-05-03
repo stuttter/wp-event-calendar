@@ -56,14 +56,29 @@ function wp_event_calendar_register_post_types() {
 
 	// Capabilities
 	$caps = array(
-		'create_posts'        => 'create_events',
-		'edit_posts'          => 'edit_events',
-		'edit_others_posts'   => 'edit_others_events',
-		'publish_posts'       => 'publish_events',
-		'read_private_posts'  => 'read_private_events',
-		'read_hidden_posts'   => 'read_hidden_events',
-		'delete_posts'        => 'delete_events',
-		'delete_others_posts' => 'delete_others_events'
+
+		// Meta caps
+		'edit_post'              => 'edit_event',
+		'read_post'              => 'read_event',
+		'delete_post'            => 'delete_event',
+
+		// Primitive/meta caps
+		'read'                   => 'read',
+		'create_posts'           => 'create_events',
+
+		// Primitive caps (used outside of map_meta_cap)
+		'edit_posts'             => 'edit_events',
+		'edit_others_posts'      => 'edit_others_events',
+		'publish_posts'          => 'publish_events',
+		'read_private_posts'     => 'read_private_events',
+
+		// Primitive caps (used inside of map_meta_cap)
+		'delete_posts'           => 'delete_events',
+		'delete_private_posts'   => 'delete_private_events',
+		'delete_published_posts' => 'delete_published_events',
+		'delete_others_posts'    => 'delete_others_events',
+		'edit_private_posts'     => 'edit_private_events',
+		'edit_published_posts'   => 'edit_published_events'
 	);
 
 	// Rewrite
