@@ -43,6 +43,7 @@ function wp_event_calendar_add_submenus() {
 		add_action( "admin_head-{$hook}", 'wp_event_calendar_admin_submenu_highlight'  );
 		add_action( "admin_head-{$hook}", 'wp_event_calendar_admin_add_screen_options' );
 		add_action( "admin_head-{$hook}", 'wp_event_calendar_admin_pointer_buttons'    );
+		add_action( "admin_head-{$hook}", 'wp_event_calendar_admin_add_help_tabs'      );
 	}
 }
 
