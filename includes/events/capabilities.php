@@ -171,6 +171,7 @@ function wp_event_calendar_meta_caps( $caps = array(), $cap = '', $user_id = 0, 
 
 		case 'create_events' :
 		case 'edit_events' :
+		case 'read_calendar' :
 			$caps = array( 'edit_posts' );
 			break;
 
@@ -180,10 +181,6 @@ function wp_event_calendar_meta_caps( $caps = array(), $cap = '', $user_id = 0, 
 
 		case 'publish_events' :
 			$caps = array( 'publish_posts' );
-			break;
-
-		case 'read_calendar' :
-			$caps = array( 'read' );
 			break;
 	}
 
