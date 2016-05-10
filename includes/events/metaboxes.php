@@ -326,8 +326,11 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		return $post_id;
 	}
 
+	// Get post type object
+	$post_type_object = get_post_type_object( get_post_type( $post_id ) );
+
 	// Bail if user cannot edit this event
-	if ( ! current_user_can( 'edit_event', $post_id ) ) {
+	if ( ! current_user_can( $post_type_object->cap->edit_post, $post_id ) ) {
 		return $post_id;
 	}
 

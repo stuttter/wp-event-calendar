@@ -893,13 +893,16 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 */
 	protected function get_pointer_title( $post = false ) {
 
+		// Get post type object
+		$post_type_object = get_post_type_object( $post->post_type );
+
 		// Handle empty titles
 		$title = ! empty( $post->post_title )
 			? $post->post_title
 			: esc_html__( '(No title)', 'wp-event-calendar' );
 
 		// Title links to edit
-		if ( current_user_can( 'edit_event', $post->ID ) ) {
+		if ( current_user_can( $post_type_object->cap->edit_post, $post->ID ) ) {
 			$retval = '<a href="' . esc_url( get_edit_post_link( $post->ID ) ) . '">'  . esc_js( $title ) . '</a>';
 
 		// No title link
