@@ -190,13 +190,13 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 		$this->modes = $this->get_modes();
 
 		// Setup arguments
-		$args = array(
+		$r = wp_parse_args( $args, array(
 			'singular' => esc_html__( 'Event',  'wp-event-calendar' ),
 			'plural'   => esc_html__( 'Events', 'wp-event-calendar' )
-		);
+		) );
 
 		// Pass arguments into parent
-		parent::__construct( $args );
+		parent::__construct( $r );
 	}
 
 	/**
