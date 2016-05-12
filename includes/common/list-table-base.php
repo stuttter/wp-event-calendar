@@ -1286,8 +1286,8 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 		// Parse args
 		$r = wp_parse_args( $args, array(
 			'which'  => 'top',
-			'small' => '1 week',
-			'large' => '1 year',
+			'small'  => '1 month',
+			'large'  => '1 year',
 			'labels' => array(
 				'today'      => esc_html__( 'Today',    'wp-event-calendar' ),
 				'next_small' => esc_html__( 'Next',     'wp-event-calendar' ),
