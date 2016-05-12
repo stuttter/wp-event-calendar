@@ -447,3 +447,164 @@ function wp_event_calendar_time_dropdown( $args = array() ) {
 		? ob_end_flush()
 		: ob_end_clean();
 }
+
+/**
+ * Query for events
+ *
+ * @since 0.4.0
+ *
+ * @param array $args See WP_Query
+ *
+ * @return array Array of post objects
+ */
+function wp_get_events( $args = array() ) {
+
+	// Parse arguments
+	$r = wp_parse_args( $args, array(
+		'post_type'           => wp_event_calendar_allowed_post_types(),
+		'post_status'         => array( 'publish', 'future' ),
+		'posts_per_page'      => -1,
+		'orderby'             => 'meta_value',
+		'order'               => 'ASC',
+		'hierarchical'        => false,
+		'ignore_sticky_posts' => true,
+		'suppress_filters'    => true,
+		'no_found_rows'       => true,
+		'meta_query'          => wp_event_calendar_get_meta_query()
+	) );
+
+	// Query for events
+	$query = new WP_Query;
+
+	// Return posts
+	return $query->get_posts( $r );
+}
+
+/**
+ * Get meta_query argument for a WP_Query
+ *
+ * @since 0.4.0
+ *
+ * @param array $args {
+ *     @type string $mode  month|week|day
+ *     @type string $start Start time in mysql format
+ *     @type string $end   End time in mysql format
+ * }
+ *
+ * @return array 'meta_query' used for WP_Query
+ */
+function wp_event_calendar_get_meta_query( $args = array() ) {
+
+	// Parse arguments
+	$r = wp_parse_args( $args, array(
+		'mode'  => 'month',
+		'start' => '',
+		'end'   => ''
+	) );
+
+	// Which mode
+	switch ( $r['mode'] ) {
+
+		// Single day
+		case 'day' :
+			$retval = array(
+				'relation' => 'OR',
+				array(
+					'relation' => 'OR',
+					array(
+						'key'     => 'wp_event_calendar_date_time',
+						'value'   => array( $r['start'], $r['end'] ),
+						'type'    => 'DATETIME',
+						'compare' => 'BETWEEN'
+					),
+					array(
+						'key'     => 'wp_event_calendar_end_date_time',
+						'value'   => array( $r['start'], $r['end'] ),
+						'type'    => 'DATETIME',
+						'compare' => 'BETWEEN'
+					)
+				),
+				array(
+					'relation' => 'AND',
+					array(
+						'key'     => 'wp_event_calendar_date_time',
+						'value'   => $r['start'],
+						'type'    => 'DATETIME',
+						'compare' => '<='
+					),
+					array(
+						'key'     => 'wp_event_calendar_end_date_time',
+						'value'   => $r['end'],
+						'type'    => 'DATETIME',
+						'compare' => '>='
+					)
+				)
+			);
+			break;
+
+		// Month, Week, Default
+		case 'week' :
+		case 'month' :
+		default :
+			$retval = array(
+				'relation' => 'OR',
+				array(
+					'key'     => 'wp_event_calendar_date_time',
+					'value'   => array( $r['start'], $r['end'] ),
+					'type'    => 'DATETIME',
+					'compare' => 'BETWEEN'
+				),
+				array(
+					'key'     => 'wp_event_calendar_end_date_time',
+					'value'   => array( $r['start'], $r['end'] ),
+					'type'    => 'DATETIME',
+					'compare' => 'BETWEEN'
+				)
+			);
+
+			break;
+	}
+
+	return apply_filters( 'wp_event_calendar_get_meta_query', $retval, $r, $args );
+}
+
+/**
+ * Get an array of WP_Event_Calendar_Event objects
+ *
+ * @since 0.4.0
+ *
+ * @param array $args
+ */
+function wp_event_calendar_get_events( $args = array() ) {
+
+	// Get posts & define default
+	$posts  = wp_get_events( $args );
+	$events = array();
+
+	// Loop through events and create the object
+	foreach ( $posts as $post ) {
+		$events[] = wp_event_calendar_post_to_event( $post );
+	}
+
+	return apply_filters( 'wp_event_calendar_get_events', $events, $posts, $args );
+}
+
+/**
+ * Convert a WP_Post object to a WP_Event_Calendar_Event object
+ *
+ * @since 0.4.0
+ *
+ * @param WP_Post $post
+ *
+ * @return \WP_Event_Calendar_Event
+ */
+function wp_event_calendar_post_to_event( WP_Post $post ) {
+	return new WP_Event_Calendar_Event(
+		get_post_meta( $post->ID, 'wp_event_calendar_start_date_time', true ),
+		get_post_meta( $post->ID, 'wp_event_calendar_end_date_time',   true ),
+		$post->post_title,
+		$post->post_content,
+		get_post_meta( $post->ID, 'wp_event_calendar_location',        true ),
+		get_post_meta( $post->ID, 'wp_event_calendar_repeat',          true )
+	);
+}
