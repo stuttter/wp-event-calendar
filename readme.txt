@@ -20,7 +20,7 @@ WP Event Calendar is the best way to manage events in WordPress!
 * Full of developer hooks for integration with other plugins & themes
 * Integrates with User Groups, Alerts, Activity, and Profiles
 
-= Also checkout =
+= Works great with =
 
 * [WP Chosen](https://wordpress.org/plugins/wp-chosen/ "Make long, unwieldy select boxes much more user-friendly.")
 * [WP Pretty Filters](https://wordpress.org/plugins/wp-pretty-filters/ "Makes post filters better match what's already in Media & Attachments.")
