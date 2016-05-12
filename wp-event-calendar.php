@@ -24,6 +24,7 @@ function _wp_event_calendar() {
 	$plugin_path = wp_event_calendar_get_plugin_path();
 
 	// Common files
+	require_once $plugin_path . 'includes/common/event.php';
 	require_once $plugin_path . 'includes/common/functions.php';
 
 	// Admin-only common files
