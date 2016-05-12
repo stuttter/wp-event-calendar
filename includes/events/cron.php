@@ -48,7 +48,7 @@ function wp_event_calendar_update_post_statuses() {
 	// Get old events
 	$old_events = new WP_Query( array(
 		'fields'         => 'ids',
-		'post_type'      => 'event',
+		'post_type'      => wp_event_calendar_allowed_post_types(),
 		'post_status'    => 'publish',
 		'posts_per_page' => -1,
 		'meta_query' => array(

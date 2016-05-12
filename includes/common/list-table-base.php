@@ -656,7 +656,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	protected function main_query_args( $args = array() ) {
 
 		// Events
-		if ( 'event' === $this->screen->post_type ) {
+		if ( post_type_supports( $this->screen->post_type, 'events' ) ) {
 			$defaults = array(
 				'post_type'           => $this->screen->post_type,
 				'post_status'         => $this->get_post_status(),
@@ -1069,6 +1069,9 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 */
 	public function display() {
 
+		// Start an output buffer
+		ob_start();
+
 		// Top
 		$this->display_tablenav( 'top' ); ?>
 
@@ -1094,6 +1097,9 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 
 		// Bottom
 		$this->display_tablenav( 'bottom' );
+
+		// End and flush the buffer
+		ob_end_flush();
 	}
 
 	/**
@@ -1268,7 +1274,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 		do_action( 'wp_event_calendar_before_tablenav_view' );
 
 		// Output the "View" button
-		submit_button( esc_html__( 'View', 'wp-event-calendar' ), 'action', '', false, array( 'id' => "doaction" ) );
+		submit_button( esc_html__( 'View', 'wp-event-calendar' ), 'action', '', false, array( 'id' => 'doaction' ) );
 
 		// Filter & return
 		return apply_filters( 'wp_event_calendar_get_extra_tablenav', ob_get_clean() );
@@ -1370,11 +1376,8 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 
 		<?php
 
-		// Get the output buffer
-		$retval = ob_get_clean();
-
 		// Filter & return
-		return apply_filters( 'wp_event_calendar_get_pagination', $retval, $r, $args );
+		return apply_filters( 'wp_event_calendar_get_pagination', ob_get_clean(), $r, $args );
 	}
 
 	/**
@@ -1422,7 +1425,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 		<?php
 
 		// Return the output buffer
-		return ob_get_clean();
+		return apply_filters( 'wp_event_calendar_get_view_switcher', ob_get_clean(), $which );
 	}
 }
 endif;

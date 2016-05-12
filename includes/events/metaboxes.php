@@ -19,7 +19,7 @@ function wp_event_calendar_add_metabox() {
 		'wp_event_calendar_duration',
 		__( 'Duration', 'wp-event-calendar' ),
 		'wp_event_calendar_duration_metabox',
-		'event',
+		wp_event_calendar_allowed_post_types(),
 		'above_event_editor',
 		'default'
 	);
@@ -31,8 +31,7 @@ function wp_event_calendar_add_metabox() {
  * @since  0.2.3
 */
 function wp_event_calendar_duration_metabox() {
-	global $post;
-
+	$post = get_post();
 	$meta = get_post_custom( $post->ID );
 	$date = $hour = $minute = $am_pm = '';
 	$end_date = $end_hour = $end_minute = $end_am_pm = '';

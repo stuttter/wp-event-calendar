@@ -229,7 +229,7 @@ function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
  */
 function wp_event_calendar_maybe_filter_by_fields( WP_Query $wp_query ) {
 
-	// Bail if not 'activty' post type
+	// Bail if not 'event' post type
 	if ( empty( $wp_query->query['post_type'] ) || ! in_array( 'event', (array) $wp_query->query['post_type'], true ) ) {
 		return;
 	}
@@ -398,7 +398,7 @@ function wp_get_event_taxonomy_column_data( $post = false, $taxonomy = '' ) {
 function wp_event_calendar_admin_event_assets() {
 
 	// Bail if not an event post type
-	if ( 'event' !== get_post_type() ) {
+	if ( ! post_type_supports( get_post_type(), 'events' ) ) {
 		return;
 	}
 
