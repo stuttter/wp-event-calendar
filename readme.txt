@@ -16,7 +16,7 @@ WP Event Calendar is the best way to manage events in WordPress!
 * Month, week, and day list-table views
 * Organize events by type, category, & tag
 * Easily & logically paginate through date ranges
-* Safe, secure, & performant
+* Safe, secure, & efficient
 * Full of developer hooks for integration with other plugins & themes
 * Integrates with User Groups, Alerts, Activity, and Profiles
 
