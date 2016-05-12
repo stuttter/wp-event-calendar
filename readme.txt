@@ -12,6 +12,10 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 
 WP Event Calendar is the best way to manage events in WordPress!
 
+> We know you have your choice of calendar & events plugins. We appreciate you giving this one a try, and we hope you really love it!
+
+= Details =
+
 * Seamlessly integrates into WordPress's dashboard interface
 * Month, week, and day list-table views
 * Organize events by type, category, & tag
@@ -20,30 +24,31 @@ WP Event Calendar is the best way to manage events in WordPress!
 * Full of developer hooks for integration with other plugins & themes
 * Integrates with User Groups, Alerts, Activity, and Profiles
 
-> = Works great with =
-> * [WP Chosen](https://wordpress.org/plugins/wp-chosen/ "Make long, unwieldy select boxes much more user-friendly.")
-> * [WP Pretty Filters](https://wordpress.org/plugins/wp-pretty-filters/ "Makes post filters better match what's already in Media & Attachments.")
-> * [WP Media Categories](https://wordpress.org/plugins/wp-media-categories/ "Add categories to media & attachments.")
-> * [WP Term Order](https://wordpress.org/plugins/wp-term-order/ "Sort taxonomy terms, your way.")
-> * [WP Term Authors](https://wordpress.org/plugins/wp-term-authors/ "Authors for categories, tags, and other taxonomy terms.")
-> * [WP Term Colors](https://wordpress.org/plugins/wp-term-colors/ "Pretty colors for categories, tags, and other taxonomy terms.")
-> * [WP Term Families](https://wordpress.org/plugins/wp-term-families/ "Families of taxonomies for taxonomy terms.")
-> * [WP Term Icons](https://wordpress.org/plugins/wp-term-icons/ "Pretty icons for categories, tags, and other taxonomy terms.")
-> * [WP Term Images](https://wordpress.org/plugins/wp-term-images/ "Pretty images for categories, tags, and other taxonomy terms.")
-> * [WP Term Visibility](https://wordpress.org/plugins/wp-term-visibility/ "Visibilities for categories, tags, and other taxonomy terms.")
-> * [WP User Activity](https://wordpress.org/plugins/wp-user-activity/ "The best way to log activity in WordPress.")
-> * [WP User Alerts](https://wordpress.org/plugins/wp-user-alerts/ "Alert registered users when new content is published.")
-> * [WP User Avatars](https://wordpress.org/plugins/wp-user-avatars/ "Allow users to upload avatars or choose them from your media library.")
-> * [WP User Groups](https://wordpress.org/plugins/wp-user-groups/ "Group users together with taxonomies & terms.")
-> * [WP User Parents](https://wordpress.org/plugins/wp-user-parents/ "Allow parent users to manage their direct decendants.")
-> * [WP User Profiles](https://wordpress.org/plugins/wp-user-profiles/ "A sophisticated way to edit users in WordPress.")
+= Works great with =
+
+* [WP Chosen](https://wordpress.org/plugins/wp-chosen/ "Make long, unwieldy select boxes much more user-friendly.")
+* [WP Pretty Filters](https://wordpress.org/plugins/wp-pretty-filters/ "Makes post filters better match what's already in Media & Attachments.")
+* [WP Media Categories](https://wordpress.org/plugins/wp-media-categories/ "Add categories to media & attachments.")
+* [WP Term Order](https://wordpress.org/plugins/wp-term-order/ "Sort taxonomy terms, your way.")
+* [WP Term Authors](https://wordpress.org/plugins/wp-term-authors/ "Authors for categories, tags, and other taxonomy terms.")
+* [WP Term Colors](https://wordpress.org/plugins/wp-term-colors/ "Pretty colors for categories, tags, and other taxonomy terms.")
+* [WP Term Families](https://wordpress.org/plugins/wp-term-families/ "Families of taxonomies for taxonomy terms.")
+* [WP Term Icons](https://wordpress.org/plugins/wp-term-icons/ "Pretty icons for categories, tags, and other taxonomy terms.")
+* [WP Term Images](https://wordpress.org/plugins/wp-term-images/ "Pretty images for categories, tags, and other taxonomy terms.")
+* [WP Term Visibility](https://wordpress.org/plugins/wp-term-visibility/ "Visibilities for categories, tags, and other taxonomy terms.")
+* [WP User Activity](https://wordpress.org/plugins/wp-user-activity/ "The best way to log activity in WordPress.")
+* [WP User Alerts](https://wordpress.org/plugins/wp-user-alerts/ "Alert registered users when new content is published.")
+* [WP User Avatars](https://wordpress.org/plugins/wp-user-avatars/ "Allow users to upload avatars or choose them from your media library.")
+* [WP User Groups](https://wordpress.org/plugins/wp-user-groups/ "Group users together with taxonomies & terms.")
+* [WP User Parents](https://wordpress.org/plugins/wp-user-parents/ "Allow parent users to manage their direct decendants.")
+* [WP User Profiles](https://wordpress.org/plugins/wp-user-profiles/ "A sophisticated way to edit users in WordPress.")
 
 == Screenshots ==
 
 1. Month View
 2. Week View
 3. Metabox
-4. Datepicker
+4. Date Picker
 
 == Installation ==
 
