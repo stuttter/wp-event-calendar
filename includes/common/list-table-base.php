@@ -1028,7 +1028,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 		?>
 
 <!-- Start Event Pointers -->
-<script type="text/javascript">
+<script type="text/javascript" id="wp-event-calendar-pointers">
 	/* <![CDATA[ */
 	( function( $ ) {
 		$( 'table.calendar .events-for-cell a' ).click( function( event ) {
