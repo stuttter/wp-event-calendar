@@ -1,16 +1,16 @@
 === WP Event Calendar ===
 Contributors: johnjamesjacoby, stuttter
-Tags: event, calendar, session, appointment, month, week, category, tag, term, type
+Tags: event, calendar, session, appointment, month, week, day, category, tag, term, type
 Requires at least: 4.4
 Tested up to: 4.6
-Stable tag: 0.3.1
+Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9Q4F4EL5YJ62J
 
 == Description ==
 
-WP Event Calendar is the best way to keep track of events in WordPress!
+WP Event Calendar is the best way to manage events in WordPress!
 
 * Seamlessly integrates into WordPress's dashboard interface
 * Month, week, and day list-table views
@@ -72,76 +72,82 @@ http://github.com/stuttter/wp-event-calendar/
 
 == Changelog ==
 
-= 0.3.1 =
+= [0.4.0] - 2016-05-12 =
+* More improvements to capability mappings
+* Support for additional post types
+* Helper functions for iCal integration
+* Query functions
+
+= [0.3.1] - 2016-05-03 =
 * Fix capability regression in 0.3.1
 * Add contextual help to Calendar page
 
-= 0.3.0 =
+= [0.3.0] - 2016-03-30 =
 * Improve capability mapping
 * Improve TinyMCE compatibility
 * Update calendar styling
 
-= 0.2.4 =
+= [0.2.4] - 2016-02-05 =
 * Dropdown select elements for hours & minutes
 
-= 0.2.3 =
+= [0.2.3] - 2016-02-01 =
 * Rename metabox titles
 * Make "Location" optional
 * Add revision support to events
 * General code & styling clean-up
 
-= 0.2.2 =
+= [0.2.2] - 2016-01-10 =
 * Improve support for all-day & multi-day events
 * Improve month, week, and day views
 * Improve contrast of current & active items
 
-= 0.2.1 =
+= [0.2.1] - 2015-12-30 =
 * Improve taxonomy & status filtering
 
-= 0.2.0 =
+= [0.2.0] - 2015-11-30 =
 * Add "Day" view
 * Improve "Month" view
 
-= 0.1.10 =
+= [0.1.10] - 2015-11-30 =
 * Filter events by registered taxonomy
 
-= 0.1.9 =
+= [0.1.9] - 2015-11-16 =
 * Move events to "Passed" status twice daily
 
-= 0.1.8 =
+= [0.1.8] - 2015-9-10 =
 * Added week view
 * Added persistent pagination for mode, status, & search
 * Added styling for a few event types
 * Added help text
 * Added legend in help text area
 
-= 0.1.7 =
+= [0.1.7] - 2015-9-8 =
 * Updated date-picker styling
 
-= 0.1.6 =
+= [0.1.6] - 2015-9-7 =
 * Sort by start, end, and repetition
 
-= 0.1.5 =
+= [0.1.5] - 2015-9-6 =
 * All-day events
 
-= 0.1.4 =
+= [0.1.4] - 2015-9-5 =
 * More flexible mapped capabilities
 
-= 0.1.3 =
+= [0.1.3] - 2015-9-4 =
 * Revert role & capability changes
 
-= 0.1.2 =
+= [0.1.2] - 2015-9-3 =
 * Remove dependency
 * Start, end, repeat, & expiring events
 * Date picker
 * Cleanup
 
-= 0.1.1 =
+= [0.1.1] - 2015-9-2 =
 * Show pointers on event clicks
 * Add flexible methods for pointers output
 * Add actions & filters
 * Rename main class to be for month-only view
 * Use new icon for private posts
 
-= 0.1.0 =
+= [0.1.0] - 2015-9-1 =
 * Initial release
