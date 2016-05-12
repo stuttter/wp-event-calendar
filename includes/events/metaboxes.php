@@ -315,8 +315,11 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		return $post_id;
 	}
 
-	// Only save event metadata to event post type
-	if ( 'event' !== get_post_type( $post_id ) ) {
+	// Get the post type
+	$post_type = get_post_type( $post_id );
+
+	// Only save event metadata to supported post types
+	if ( ! post_type_supports( $post_type, 'events' ) ) {
 		return $post_id;
 	}
 
@@ -326,7 +329,7 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 	}
 
 	// Get post type object
-	$post_type_object = get_post_type_object( get_post_type( $post_id ) );
+	$post_type_object = get_post_type_object( $post_type );
 
 	// Bail if user cannot edit this event
 	if ( ! current_user_can( $post_type_object->cap->edit_post, $post_id ) ) {
