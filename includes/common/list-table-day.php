@@ -314,7 +314,7 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 		ob_start(); ?>
 
 		<td class="<?php echo $this->get_day_classes( $iterator, $start_day ); ?>">
-			<div class="events-for-hour">
+			<div class="events-for-cell">
 				<?php echo $this->get_posts_for_cell( $iterator ); ?>
 			</div>
 		</td>
