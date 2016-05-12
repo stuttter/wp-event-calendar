@@ -24,6 +24,15 @@ defined( 'ABSPATH' ) || exit;
 class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 
 	/**
+	 * The mode of the current view
+	 *
+	 * @since 0.1.8
+	 *
+	 * @var string
+	 */
+	public $mode = 'week';
+
+	/**
 	 * Unix time week start
 	 *
 	 * @since 0.1.8
@@ -46,9 +55,6 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	 */
 	public function __construct( $args = array() ) {
 		parent::__construct( $args );
-
-		// Set the mode
-		$this->mode  = 'week';
 
 		// Reset the week
 		$where_is_thumbkin = ( 0 === date( 'w' ) )
@@ -169,39 +175,6 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 			// Bump the hour
 			$cell = intval( $cell + $interval );
 		}
-	}
-
-	/**
-	 * Return filtered query arguments
-	 *
-	 * @since 0.1.8
-	 *
-	 * @return array
-	 */
-	protected function main_query_args( $args = array() ) {
-
-		// Events
-		if ( 'event' === $this->screen->post_type ) {
-			$args = array(
-				'meta_query' => array(
-					'relation' => 'OR',
-					array(
-						'key'     => 'wp_event_calendar_date_time',
-						'value'   => array( $this->view_start, $this->view_end ),
-						'type'    => 'DATETIME',
-						'compare' => 'BETWEEN',
-					),
-					array(
-						'key'     => 'wp_event_calendar_end_date_time',
-						'value'   => array( $this->view_start, $this->view_end ),
-						'type'    => 'DATETIME',
-						'compare' => 'BETWEEN',
-					)
-				)
-			);
-		}
-
-		return parent::main_query_args( $args );
 	}
 
 	/**

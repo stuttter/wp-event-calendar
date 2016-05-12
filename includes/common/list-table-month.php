@@ -22,13 +22,19 @@ defined( 'ABSPATH' ) || exit;
 class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 
 	/**
+	 * The mode of the current view
+	 *
+	 * @since 0.1.8
+	 *
+	 * @var string
+	 */
+	public $mode = 'month';
+
+	/**
 	 * The main constructor method
 	 */
 	public function __construct( $args = array() ) {
 		parent::__construct( $args );
-
-		// Set the mode
-		$this->mode = 'month';
 
 		// Setup the view ranges
 		$this->view_start = "{$this->year}-{$this->month}-01 00:00:00";
@@ -118,17 +124,6 @@ class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 			// Bump the time 1 day
 			$time += DAY_IN_SECONDS;
 		}
-	}
-
-	/**
-	 * Return filtered query arguments
-	 *
-	 * @since 0.1.1
-	 *
-	 * @return array
-	 */
-	protected function main_query_args( $args = array() ) {
-		return parent::main_query_args( $args );
 	}
 
 	/**

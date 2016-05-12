@@ -112,7 +112,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 *
 	 * @since 0.1.8
 	 *
-	 * @var array
+	 * @var string
 	 */
 	public $mode = 'month';
 
@@ -433,6 +433,21 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Get the meta_query for the current mode
+	 *
+	 * @since 0.3.2
+	 *
+	 * @return array
+	 */
+	protected function get_meta_query() {
+		return wp_event_calendar_get_meta_query( array(
+			'mode'  => $this->mode,
+			'start' => $this->view_start,
+			'end'   => $this->view_end
+		) );
+	}
+
+	/**
 	 * Get the current page number
 	 *
 	 * @since 0.1.0
@@ -651,21 +666,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 				'hierarchical'        => false,
 				'ignore_sticky_posts' => true,
 				's'                   => $this->get_search(),
-				'meta_query'          => array(
-					'relation' => 'OR',
-					array(
-						'key'     => 'wp_event_calendar_date_time',
-						'value'   => array( $this->view_start, $this->view_end ),
-						'type'    => 'DATETIME',
-						'compare' => 'BETWEEN',
-					),
-					array(
-						'key'     => 'wp_event_calendar_end_date_time',
-						'value'   => array( $this->view_start, $this->view_end ),
-						'type'    => 'DATETIME',
-						'compare' => 'BETWEEN',
-					)
-				)
+				'meta_query'          => $this->get_meta_query()
 			);
 
 		// All others
