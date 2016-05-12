@@ -157,8 +157,8 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 			// Start the days loop with the start day
 			$cell     = ( $start_hour * $interval ) + $offset;
 
-			// Don't include the end hour
-			$end_cell = ( $end_hour   * $interval ) + ( $offset - 1 );
+			// Maybe don't include the end hour
+			$end_cell = ( $end_hour   * $interval ) + $offset;
 		}
 
 		// Loop through days

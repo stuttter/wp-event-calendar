@@ -148,7 +148,7 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 			// Calculate the cell offset
 			$offset   = intval( ( $this->item_start - $this->day_start ) / DAY_IN_SECONDS );
 			$cell     = ( $start_hour * $interval ) + $offset;
-			$end_cell = ( $end_hour   * $interval ) + ( $offset - 1 );
+			$end_cell = ( $end_hour   * $interval ) + $offset;
 		}
 
 		// Loop through days
