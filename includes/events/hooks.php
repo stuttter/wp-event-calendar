@@ -28,8 +28,10 @@ add_filter( 'map_meta_cap', 'wp_event_calendar_category_meta_caps', 10, 4 );
 add_filter( 'map_meta_cap', 'wp_event_calendar_tag_meta_caps',      10, 4 );
 
 // Metaboxes
-add_action( 'add_meta_boxes', 'wp_event_calendar_add_metabox'  );
-add_action( 'save_post',      'wp_event_calendar_metabox_save' );
+add_action( 'add_meta_boxes',          'wp_event_calendar_add_metabox'             );
+add_action( 'save_post',               'wp_event_calendar_metabox_save'            );
+add_filter( 'register_taxonomy_args',  'wp_event_calendar_types_metabox_cb', 10, 2 );
+add_filter( 'wp_terms_checklist_args', 'wp_event_calendar_radio_walker',     10, 1 );
 
 // Admin Menu
 add_action( 'admin_menu', 'wp_event_calendar_add_submenus' );
