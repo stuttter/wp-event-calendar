@@ -13,17 +13,18 @@ defined( 'ABSPATH' ) || exit;
 require_once( ABSPATH . 'wp-admin/includes/class-walker-category-checklist.php' );
 
 /**
- * Class Walker_Category_Radio
- * 
  * Extends Walker_Category_Checklist and uses radio input instead of checklist
+ *
+ * @since 0.4.1
  */
-class Walker_Category_Radio extends Walker_Category_Checklist {
+class WP_Event_Calendar_Walker_Category_Radio extends Walker_Category_Checklist {
+
 	/**
 	 * Start the element output.
 	 *
 	 * @see Walker::start_el()
 	 *
-	 * @since 2.5.1
+	 * @since 0.4.1
 	 *
 	 * @param string $output   Passed by reference. Used to append additional content.
 	 * @param object $category The current term object.
@@ -32,21 +33,33 @@ class Walker_Category_Radio extends Walker_Category_Checklist {
 	 * @param int    $id       ID of the current term.
 	 */
 	public function start_el( &$output, $category, $depth = 0, $args = array(), $id = 0 ) {
+
+		// Note that Walker classes are trusting with their previously
+		// validated object properties.
 		$taxonomy = $args['taxonomy'];
-		$name = 'tax_input[' . $taxonomy . ']';
+		$name     = 'tax_input[' . $taxonomy . ']';
 
-		$args['popular_cats'] = empty( $args['popular_cats'] ) ? array() : $args['popular_cats'];
-		$class = in_array( $category->term_id, $args['popular_cats'] ) ? ' class="popular-category"' : '';
+		// Maybe show popular categories tab
+		$args['popular_cats'] = empty( $args['popular_cats'] )
+			? array()
+			: $args['popular_cats'];
 
-		$args['selected_cats'] = empty( $args['selected_cats'] ) ? array() : $args['selected_cats'];
+		// Maybe add popular category class
+		$class = in_array( $category->term_id, $args['popular_cats'] )
+			? ' class="popular-category"'
+			: '';
+
+		// Maybe use already selected categories
+		$args['selected_cats'] = empty( $args['selected_cats'] )
+			? array()
+			: $args['selected_cats'];
 
 		/** This filter is documented in wp-includes/category-template.php */
 		$output .= "\n<li id='{$taxonomy}-{$category->term_id}'$class>" .
-			'<label class="selectit"><input value="' . $category->name . '" type="radio" name="'.$name.'[]" id="in-'.$taxonomy.'-' . $category->term_id . '"' .
+			'<label class="selectit"><input value="' . $category->name . '" type="radio" name="' . $name . '[]" id="in-' . $taxonomy . '-' . $category->term_id . '"' .
 			checked( in_array( $category->term_id, $args['selected_cats'] ), true, false ) .
 			disabled( empty( $args['disabled'] ), false, false ) . ' /> ' .
 			esc_html( apply_filters( 'the_category', $category->name ) ) . '</label>';
-
 	}
 }
 
@@ -55,14 +68,20 @@ class Walker_Category_Radio extends Walker_Category_Checklist {
  * Output radio buttons instead of the default WordPress mechanism
  *
  * @since 0.4.1
- * @param array $args
- * @param $taxonomy
+ *
+ * @param array  $args
+ * @param string $taxonomy
  *
  * @return array
  */
-function wp_event_calendar_types_metabox_cb( array $args, $taxonomy ) {
+function wp_event_calendar_taxonomy_args( $args = array(), $taxonomy = '' ) {
 	if ( 'event-type' === $taxonomy ) {
-		$args['meta_box_cb'] = 'post_categories_meta_box';
+
+		$r = apply_filters( 'wp_event_calendar_taxonomy_args', array(
+			'meta_box_cb' => 'post_categories_meta_box'
+		), $args );
+
+		$args = wp_parse_args( $args, $r );
 	}
 
 	return $args;
@@ -72,13 +91,19 @@ function wp_event_calendar_types_metabox_cb( array $args, $taxonomy ) {
  * Use the custom walker for radio buttons
  *
  * @since 0.4.1
+ *
  * @param array $args
  *
  * @return array
  */
-function wp_event_calendar_radio_walker(array $args) {
+function wp_event_calendar_checklist_args( $args = array() ) {
 	if ( 'event-type' === $args['taxonomy'] ) {
-		$args['walker'] = new Walker_Category_Radio();
+
+		$r = apply_filters( 'wp_event_calendar_checklist_args', array(
+			'walker' => new WP_Event_Calendar_Walker_Category_Radio(),
+		), $args );
+
+		$args = wp_parse_args( $args, $r );
 	}
 
 	return $args;
