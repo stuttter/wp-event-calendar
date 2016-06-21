@@ -18,18 +18,25 @@ function wp_event_calendar_register_type_taxonomy() {
 
 	// Labels
 	$labels = array(
-		'name'                       => __( 'Types',                      'wp-event-calendar' ),
-		'singular_name'              => __( 'Type',                       'wp-event-calendar' ),
-		'search_items'               => __( 'Search Types',               'wp-event-calendar' ),
-		'popular_items'              => __( 'Popular Types',              'wp-event-calendar' ),
-		'all_items'                  => __( 'All Types',                  'wp-event-calendar' ),
-		'edit_item'                  => __( 'Edit Type',                  'wp-event-calendar' ),
-		'update_item'                => __( 'Update Type',                'wp-event-calendar' ),
-		'add_new_item'               => __( 'Add New Type',               'wp-event-calendar' ),
-		'new_item_name'              => __( 'New Type Name',              'wp-event-calendar' ),
-		'view_item'                  => __( 'View Type',                  'wp-event-calendar' ),
-		'separate_items_with_commas' => __( 'Separate types with commas', 'wp-event-calendar' ),
-		'not_found'                  => __( 'No types found',             'wp-event-calendar' )
+		'name'                       => __( 'Types',                           'wp-event-calendar' ),
+		'singular_name'              => __( 'Type',                            'wp-event-calendar' ),
+		'search_items'               => __( 'Search Types',                    'wp-event-calendar' ),
+		'popular_items'              => __( 'Popular Types',                   'wp-event-calendar' ),
+		'all_items'                  => __( 'All Types',                       'wp-event-calendar' ),
+		'parent_item'                => __( 'Parent Type',                     'wp-event-calendar' ),
+		'parent_item_colon'          => __( 'Parent Type:',                    'wp-event-calendar' ),
+		'edit_item'                  => __( 'Edit Type',                       'wp-event-calendar' ),
+		'view_item'                  => __( 'View Type',                       'wp-event-calendar' ),
+		'update_item'                => __( 'Update Type',                     'wp-event-calendar' ),
+		'add_new_item'               => __( 'Add New Type',                    'wp-event-calendar' ),
+		'new_item_name'              => __( 'New Type Name',                   'wp-event-calendar' ),
+		'separate_items_with_commas' => __( 'Separate types with commas',      'wp-event-calendar' ),
+		'add_or_remove_items'        => __( 'Add or remove types',             'wp-event-calendar' ),
+		'choose_from_most_used'      => __( 'Choose from the most used types', 'wp-event-calendar' ),
+		'no_terms'                   => __( 'No types',                        'wp-event-calendar' ),
+		'not_found'                  => __( 'No types found',                  'wp-event-calendar' ),
+		'items_list_navigation'      => __( 'Types list navigation',           'wp-event-calendar' ),
+		'items_list'                 => __( 'Types list',                      'wp-event-calendar' )
 	);
 
 	// Rewrite rules
@@ -73,18 +80,25 @@ function wp_event_calendar_register_category_taxonomy() {
 
 	// Labels
 	$labels = array(
-		'name'                       => __( 'Categories',                      'wp-event-calendar' ),
-		'singular_name'              => __( 'Category',                        'wp-event-calendar' ),
-		'search_items'               => __( 'Search Categories',               'wp-event-calendar' ),
-		'popular_items'              => __( 'Popular Categories',              'wp-event-calendar' ),
-		'all_items'                  => __( 'All Categories',                  'wp-event-calendar' ),
-		'edit_item'                  => __( 'Edit Category',                   'wp-event-calendar' ),
-		'update_item'                => __( 'Update Category',                 'wp-event-calendar' ),
-		'add_new_item'               => __( 'Add New Category',                'wp-event-calendar' ),
-		'new_item_name'              => __( 'New Category Name',               'wp-event-calendar' ),
-		'view_item'                  => __( 'View Category',                   'wp-event-calendar' ),
-		'separate_items_with_commas' => __( 'Separate categories with commas', 'wp-event-calendar' ),
-		'not_found'                  => __( 'No categories found',             'wp-event-calendar' )
+		'name'                       => __( 'Categories',                           'wp-event-calendar' ),
+		'singular_name'              => __( 'Category',                             'wp-event-calendar' ),
+		'search_items'               => __( 'Search Categories',                    'wp-event-calendar' ),
+		'popular_items'              => __( 'Popular Categories',                   'wp-event-calendar' ),
+		'all_items'                  => __( 'All Categories',                       'wp-event-calendar' ),
+		'parent_item'                => __( 'Parent Category',                      'wp-event-calendar' ),
+		'parent_item_colon'          => __( 'Parent Category:',                     'wp-event-calendar' ),
+		'edit_item'                  => __( 'Edit Category',                        'wp-event-calendar' ),
+		'view_item'                  => __( 'View Category',                        'wp-event-calendar' ),
+		'update_item'                => __( 'Update Category',                      'wp-event-calendar' ),
+		'add_new_item'               => __( 'Add New Category',                     'wp-event-calendar' ),
+		'new_item_name'              => __( 'New Category Name',                    'wp-event-calendar' ),
+		'separate_items_with_commas' => __( 'Separate categories with commas',      'wp-event-calendar' ),
+		'add_or_remove_items'        => __( 'Add or remove categories',             'wp-event-calendar' ),
+		'choose_from_most_used'      => __( 'Choose from the most used categories', 'wp-event-calendar' ),
+		'no_terms'                   => __( 'No categories',                        'wp-event-calendar' ),
+		'not_found'                  => __( 'No categories found',                  'wp-event-calendar' ),
+		'items_list_navigation'      => __( 'Categories list navigation',           'wp-event-calendar' ),
+		'items_list'                 => __( 'Categories list',                      'wp-event-calendar' )
 	);
 
 	// Rewrite rules
@@ -128,18 +142,25 @@ function wp_event_calendar_register_tag_taxonomy() {
 
 	// Labels
 	$labels = array(
-		'name'                       => __( 'Tags',                      'wp-event-calendar' ),
-		'singular_name'              => __( 'Tag',                       'wp-event-calendar' ),
-		'search_items'               => __( 'Search Tags',               'wp-event-calendar' ),
-		'popular_items'              => __( 'Popular Tags',              'wp-event-calendar' ),
-		'all_items'                  => __( 'All Tags',                  'wp-event-calendar' ),
-		'edit_item'                  => __( 'Edit Tag',                  'wp-event-calendar' ),
-		'update_item'                => __( 'Update Tag',                'wp-event-calendar' ),
-		'add_new_item'               => __( 'Add New Tag',               'wp-event-calendar' ),
-		'new_item_name'              => __( 'New Tag Name',              'wp-event-calendar' ),
-		'view_item'                  => __( 'View Tag',                  'wp-event-calendar' ),
-		'separate_items_with_commas' => __( 'Separate tags with commas', 'wp-event-calendar' ),
-		'not_found'                  => __( 'No tags found',             'wp-event-calendar' )
+		'name'                       => __( 'Tags',                           'wp-event-calendar' ),
+		'singular_name'              => __( 'Tag',                            'wp-event-calendar' ),
+		'search_items'               => __( 'Search Tags',                    'wp-event-calendar' ),
+		'popular_items'              => __( 'Popular Tags',                   'wp-event-calendar' ),
+		'all_items'                  => __( 'All Tags',                       'wp-event-calendar' ),
+		'parent_item'                => __( 'Parent Tag',                     'wp-event-calendar' ),
+		'parent_item_colon'          => __( 'Parent Tag:',                    'wp-event-calendar' ),
+		'edit_item'                  => __( 'Edit Tag',                       'wp-event-calendar' ),
+		'view_item'                  => __( 'View Tag',                       'wp-event-calendar' ),
+		'update_item'                => __( 'Update Tag',                     'wp-event-calendar' ),
+		'add_new_item'               => __( 'Add New Tag',                    'wp-event-calendar' ),
+		'new_item_name'              => __( 'New Tag Name',                   'wp-event-calendar' ),
+		'separate_items_with_commas' => __( 'Separate tags with commas',      'wp-event-calendar' ),
+		'add_or_remove_items'        => __( 'Add or remove tags',             'wp-event-calendar' ),
+		'choose_from_most_used'      => __( 'Choose from the most used tags', 'wp-event-calendar' ),
+		'no_terms'                   => __( 'No tags',                        'wp-event-calendar' ),
+		'not_found'                  => __( 'No tags found',                  'wp-event-calendar' ),
+		'items_list_navigation'      => __( 'Tags list navigation',           'wp-event-calendar' ),
+		'items_list'                 => __( 'Tags list',                      'wp-event-calendar' )
 	);
 
 	// Rewrite rules
