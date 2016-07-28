@@ -947,11 +947,13 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 			} else {
 
 				// Strip new lines & reduce to allowed tags
-				$no_new_lines = preg_replace( '#\r|\n#', '', $post->post_content );
-				$the_content  = wp_kses( $no_new_lines, $this->get_allowed_pointer_tags() );
+				$the_content = wptexturize( $post->post_content );
+				$the_content = wpautop( $the_content, true );
+				$the_content = wp_kses( $the_content, $this->get_allowed_pointer_tags() );
+				$the_content = preg_replace( '#\r|\n#', '<br>', $the_content );
 
 				// Texturize
-				$pointer_text[] = $new_line . wptexturize( $the_content );
+				$pointer_text[] = $new_line . $the_content;
 			}
 		}
 
