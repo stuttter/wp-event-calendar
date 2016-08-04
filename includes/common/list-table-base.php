@@ -1134,7 +1134,7 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 			: '';
 
 		// Get event terms
-		$terms = wp_get_object_terms( $post_id, array( 'event-type', 'event-category', 'event-tag' ) );
+		$terms = wp_get_object_terms( $post_id, get_object_taxonomies( 'event' ) );
 		foreach ( $terms as $term ) {
 			$classes[] = "tax-{$term->taxonomy}";
 			$classes[] = "term-{$term->slug}";
