@@ -64,3 +64,6 @@ add_filter( 'wp_user_alerts_get_alerts', 'wp_event_calendar_alerts_meta_query' )
 
 // User Dashboard
 add_filter( 'wp_user_dashboard_get_sections', 'wp_event_calendar_add_section' );
+
+// Remove password and private from quick/bulk edit admin screen
+add_action( 'admin_print_footer_scripts', 'wp_event_calendar_hide_quick_bulk_edit' );

@@ -414,3 +414,26 @@ function wp_event_calendar_admin_event_assets() {
 	// Datepicker & event JS
 	wp_enqueue_script( 'wp_event_calendar_all_event', $url . 'assets/js/event.js',        array( 'jquery' ), $ver, true  );
 }
+
+/**
+ * Hides the inline-edit-group from the admin form
+ *
+ * @since 0.4.1
+ */
+function wp_event_calendar_hide_quick_bulk_edit() {
+
+	// Bail if not an event post type
+	if ( ! post_type_supports( get_post_type(), 'events' ) ) {
+		return;
+	}
+
+	?>
+	<script>
+		jQuery( document ).ready( function( $ ) {
+			$("#the-list").on("click", "a.editinline", function () {
+				jQuery(".inline-edit-group").hide();
+			} );
+		});
+	</script>
+	<?php
+}
