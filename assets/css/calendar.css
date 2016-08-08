@@ -191,6 +191,7 @@ table.month tbody a.add-event-for-day {
 table.month tbody a i {
 	line-height: 1.9em;
 	font-size: 15px;
+	overflow: hidden;
 }
 
 table.month tbody td:hover a.add-event-for-day {
