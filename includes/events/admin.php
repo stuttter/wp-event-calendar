@@ -432,6 +432,7 @@ function wp_event_calendar_hide_quick_bulk_edit() {
 		jQuery( document ).ready( function( $ ) {
 			$("#the-list").on("click", "a.editinline", function () {
 				jQuery(".inline-edit-group").hide();
+				jQuery(".inline-edit-date").hide();
 			} );
 		});
 	</script>
