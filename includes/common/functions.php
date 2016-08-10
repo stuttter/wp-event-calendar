@@ -507,7 +507,7 @@ function wp_event_calendar_get_meta_query( $args = array() ) {
 
 		// Single day
 		case 'day' :
-			$retval = array(
+			$retval = array( array(
 				'relation' => 'OR',
 				array(
 					'relation' => 'OR',
@@ -539,14 +539,14 @@ function wp_event_calendar_get_meta_query( $args = array() ) {
 						'compare' => '>='
 					)
 				)
-			);
+			) );
 			break;
 
 		// Month, Week, Default
 		case 'week' :
 		case 'month' :
 		default :
-			$retval = array(
+			$retval = array( array(
 				'relation' => 'OR',
 				array(
 					'key'     => 'wp_event_calendar_date_time',
@@ -560,7 +560,7 @@ function wp_event_calendar_get_meta_query( $args = array() ) {
 					'type'    => 'DATETIME',
 					'compare' => 'BETWEEN'
 				)
-			);
+			) );
 
 			break;
 	}

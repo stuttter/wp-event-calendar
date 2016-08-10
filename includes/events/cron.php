@@ -51,7 +51,7 @@ function wp_event_calendar_update_post_statuses() {
 		'post_type'      => wp_event_calendar_allowed_post_types(),
 		'post_status'    => 'publish',
 		'posts_per_page' => -1,
-		'meta_query' => array(
+		'meta_query' => array( array(
 			'relation' => 'AND',
 			array(
 				'key'     => 'wp_event_calendar_date_time',
@@ -65,7 +65,7 @@ function wp_event_calendar_update_post_statuses() {
 				'type'    => 'DATETIME',
 				'compare' => '<',
 			)
-		)
+		) )
 	) );
 
 	// Bail if no posts
