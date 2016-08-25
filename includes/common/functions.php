@@ -509,30 +509,30 @@ function wp_event_calendar_get_meta_query( $args = array() ) {
 		case 'day' :
 			$retval = array( array(
 				'relation' => 'OR',
-				array(
+				'within_range_clause' => array(
 					'relation' => 'OR',
-					array(
+					'start_between_clause' => array(
 						'key'     => 'wp_event_calendar_date_time',
 						'value'   => array( $r['start'], $r['end'] ),
 						'type'    => 'DATETIME',
 						'compare' => 'BETWEEN'
 					),
-					array(
+					'end_between_clause' => array(
 						'key'     => 'wp_event_calendar_end_date_time',
 						'value'   => array( $r['start'], $r['end'] ),
 						'type'    => 'DATETIME',
 						'compare' => 'BETWEEN'
 					)
 				),
-				array(
+				'out_of_range_clause' => array(
 					'relation' => 'AND',
-					array(
+					'start_before_clause' => array(
 						'key'     => 'wp_event_calendar_date_time',
 						'value'   => $r['start'],
 						'type'    => 'DATETIME',
 						'compare' => '<='
 					),
-					array(
+					'end_after_clause' => array(
 						'key'     => 'wp_event_calendar_end_date_time',
 						'value'   => $r['end'],
 						'type'    => 'DATETIME',
@@ -548,13 +548,13 @@ function wp_event_calendar_get_meta_query( $args = array() ) {
 		default :
 			$retval = array( array(
 				'relation' => 'OR',
-				array(
+				'start_between_clause' => array(
 					'key'     => 'wp_event_calendar_date_time',
 					'value'   => array( $r['start'], $r['end'] ),
 					'type'    => 'DATETIME',
 					'compare' => 'BETWEEN'
 				),
-				array(
+				'end_between_clause' => array(
 					'key'     => 'wp_event_calendar_end_date_time',
 					'value'   => array( $r['start'], $r['end'] ),
 					'type'    => 'DATETIME',
