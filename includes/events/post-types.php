@@ -83,7 +83,8 @@ function wp_event_calendar_register_post_types() {
 
 	// Rewrite
 	$rewrite = array(
-		'slug' => 'event'
+		'slug'       => 'event',
+		'with_front' => false
 	);
 
 	// Post type arguments
