@@ -414,7 +414,8 @@ function wp_event_calendar_time_dropdown( $args = array() ) {
 		'items'       => array(),
 		'selected'    => '',
 		'multi'       => false,
-		'echo'        => true
+		'echo'        => true,
+		'width'       => 55
 	) );
 
 	// Is multi?
@@ -426,7 +427,7 @@ function wp_event_calendar_time_dropdown( $args = array() ) {
 	ob_start();
 
 	// Start the select wrapper
-	?><select data-placeholder="<?php echo esc_html( $r['placeholder'] ); ?>" name="<?php echo esc_attr( $r['name'] ); ?>" id="<?php echo esc_attr( $r['id'] ); ?>" class="<?php echo esc_attr( $r['class'] ); ?>" <?php echo $multi; ?> style="width: 55px;" ><?php
+	?><select data-placeholder="<?php echo esc_html( $r['placeholder'] ); ?>" name="<?php echo esc_attr( $r['name'] ); ?>" id="<?php echo esc_attr( $r['id'] ); ?>" class="<?php echo esc_attr( $r['class'] ); ?>" <?php echo $multi; ?> style="width: <?php echo esc_attr( $r['width'] ); ?>px;" ><?php
 
 		// First item?
 		if ( false !== $r['first'] ) : ?><option value=""><?php echo esc_html( $r['first'] ); ?></option><?php endif;
