@@ -474,10 +474,10 @@ function wp_get_events( $args = array() ) {
 	) );
 
 	// Query for events
-	$query = new WP_Query;
+	$query = new WP_Query( $r );
 
 	// Return posts
-	return $query->get_posts( $r );
+	return $query->get_posts();
 }
 
 /**
