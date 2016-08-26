@@ -177,10 +177,10 @@ class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 
 		// Calculate link to day view
 		$link_to_day  = add_query_arg( array(
-			'mode'  => 'day',
-			'year'  => $this->year,
-			'month' => $this->month,
-			'day'   => $day_of_month
+			'mode' => 'day',
+			'cy'   => $this->year,
+			'cm'   => $this->month,
+			'cd'   => $day_of_month
 		), $this->get_base_url() );
 
 		// Link to add new event on this day
