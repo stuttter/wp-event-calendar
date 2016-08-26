@@ -144,7 +144,7 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 			$interval = 1;
 			$offset   = - ceil( ( $this->week_start - $this->item_start ) / DAY_IN_SECONDS );
 			$cell     = $offset;
-			$end_cell = ( $end_day - $start_day ) + $offset;
+			$end_cell = ( $end_day * $start_day ) + $offset;
 
 		// Regular single-day events
 		} else {

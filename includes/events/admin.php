@@ -204,8 +204,8 @@ function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 		case 'end_date' :
 			$wp_query->set( 'order',     $order );
 			$wp_query->set( 'orderby',   'meta_value' );
-			$wp_query->set( 'meta_key',  'wp_event_calendar_end_date_time' );
-			$wp_query->set( 'meta_type', 'DATETIME' );
+			//$wp_query->set( 'meta_key',  'wp_event_calendar_end_date_time' );
+			//$wp_query->set( 'meta_type', 'DATETIME' );
 			break;
 
 		// Start (default)
@@ -214,8 +214,8 @@ function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 			$_GET['orderby'] = 'start_date';
 			$wp_query->set( 'order',     $order );
 			$wp_query->set( 'orderby',   'meta_value' );
-			$wp_query->set( 'meta_key',  'wp_event_calendar_date_time' );
-			$wp_query->set( 'meta_type', 'DATETIME' );
+			//$wp_query->set( 'meta_key',  'wp_event_calendar_date_time' );
+			//$wp_query->set( 'meta_type', 'DATETIME' );
 			break;
 	}
 }

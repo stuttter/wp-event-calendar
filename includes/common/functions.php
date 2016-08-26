@@ -484,6 +484,16 @@ function wp_get_events( $args = array() ) {
 /**
  * Get meta_query argument for a WP_Query
  *
+ * Okay; let's talk this out here in regular English, because otherwise it
+ * barely makes any sense at all and you just get lost trying to remember:
+ *
+ * - Ranges are: day, week, month, custom
+ * - Look for:
+ *     - Events starting & ending within the current range
+ *     - Events starting before and ending anytime after current range
+ *     - Events starting before and ending within the current range
+ *     - Events starting within and ending anytime after the current range
+ *
  * @since 0.4.0
  *
  * @param array $args {
@@ -503,71 +513,84 @@ function wp_event_calendar_get_meta_query( $args = array() ) {
 		'end'   => ''
 	) );
 
-	// Which mode
-	switch ( $r['mode'] ) {
+	// They're all the same now!
+	$retval = array(
 
-		// Single day
-		case 'day' :
-			$retval = array(
-				'wp_event_calendar_clause' => array(
-					'relation' => 'OR',
-					'within_range_clause' => array(
-						'relation' => 'OR',
-						'start_between_clause' => array(
-							'key'     => 'wp_event_calendar_date_time',
-							'value'   => array( $r['start'], $r['end'] ),
-							'type'    => 'DATETIME',
-							'compare' => 'BETWEEN'
-						),
-						'end_between_clause' => array(
-							'key'     => 'wp_event_calendar_end_date_time',
-							'value'   => array( $r['start'], $r['end'] ),
-							'type'    => 'DATETIME',
-							'compare' => 'BETWEEN'
-						)
-					),
-					'out_of_range_clause' => array(
-						'relation' => 'AND',
-						'start_before_clause' => array(
-							'key'     => 'wp_event_calendar_date_time',
-							'value'   => $r['start'],
-							'type'    => 'DATETIME',
-							'compare' => '<='
-						),
-						'end_after_clause' => array(
-							'key'     => 'wp_event_calendar_end_date_time',
-							'value'   => $r['end'],
-							'type'    => 'DATETIME',
-							'compare' => '>='
-						)
-					)
-				)
-			);
-			break;
+		// Wrapper clause
+		'wp_event_calendar_clause' => array(
 
-		// Month, Week, Default
-		case 'week' :
-		case 'month' :
-		default :
-			$retval = array(
-				'wp_event_calendar_clause' => array(
-					'relation' => 'OR',
-					'start_between_clause' => array(
-						'key'     => 'wp_event_calendar_date_time',
-						'value'   => array( $r['start'], $r['end'] ),
-						'type'    => 'DATETIME',
-						'compare' => 'BETWEEN'
-					),
-					'end_between_clause' => array(
-						'key'     => 'wp_event_calendar_end_date_time',
-						'value'   => array( $r['start'], $r['end'] ),
-						'type'    => 'DATETIME',
-						'compare' => 'BETWEEN'
-					)
+			// Match any of the following clauses:
+			'relation' => 'OR',
+
+			// 1. Events starting & ending within the current range
+			'within_range_clause' => array(
+				'relation' => 'AND',
+				'start_between_clause' => array(
+					'key'     => 'wp_event_calendar_date_time',
+					'value'   => array( $r['start'], $r['end'] ),
+					'type'    => 'DATETIME',
+					'compare' => 'BETWEEN'
+				),
+				'end_between_clause' => array(
+					'key'     => 'wp_event_calendar_end_date_time',
+					'value'   => array( $r['start'], $r['end'] ),
+					'type'    => 'DATETIME',
+					'compare' => 'BETWEEN'
 				)
-			);
-			break;
-	}
+			),
+
+			// 2. Events starting before and ending anytime after current range
+			'both_out_of_range_clause' => array(
+				'relation' => 'AND',
+				'start_before_clause' => array(
+					'key'     => 'wp_event_calendar_date_time',
+					'value'   => $r['start'],
+					'type'    => 'DATETIME',
+					'compare' => '<='
+				),
+				'end_after_clause' => array(
+					'key'     => 'wp_event_calendar_end_date_time',
+					'value'   => $r['end'],
+					'type'    => 'DATETIME',
+					'compare' => '>='
+				)
+			),
+
+			// 3. Events starting before and ending within the current range
+			'start_out_of_range_clause' => array(
+				'relation' => 'AND',
+				'start_before_clause' => array(
+					'key'     => 'wp_event_calendar_date_time',
+					'value'   => $r['start'],
+					'type'    => 'DATETIME',
+					'compare' => '<='
+				),
+				'end_between_clause' => array(
+					'key'     => 'wp_event_calendar_end_date_time',
+					'value'   => array( $r['start'], $r['end'] ),
+					'type'    => 'DATETIME',
+					'compare' => 'BETWEEN'
+				)
+			),
+
+			// 4. Events starting within and ending anytime after the current range
+			'end_out_of_range_clause' => array(
+				'relation' => 'AND',
+				'start_between_clause' => array(
+					'key'     => 'wp_event_calendar_date_time',
+					'value'   => array( $r['start'], $r['end'] ),
+					'type'    => 'DATETIME',
+					'compare' => 'BETWEEN'
+				),
+				'end_after_clause' => array(
+					'key'     => 'wp_event_calendar_end_date_time',
+					'value'   => $r['end'],
+					'type'    => 'DATETIME',
+					'compare' => '>='
+				)
+			),
+		)
+	);
 
 	return apply_filters( 'wp_event_calendar_get_meta_query', $retval, $r, $args );
 }
@@ -603,12 +626,17 @@ function wp_event_calendar_get_events( $args = array() ) {
  * @return \WP_Event_Calendar_Event
  */
 function wp_event_calendar_post_to_event( WP_Post $post ) {
-	return new WP_Event_Calendar_Event(
-		get_post_meta( $post->ID, 'wp_event_calendar_start_date_time', true ),
-		get_post_meta( $post->ID, 'wp_event_calendar_end_date_time',   true ),
-		$post->post_title,
-		$post->post_content,
-		get_post_meta( $post->ID, 'wp_event_calendar_location',        true ),
-		get_post_meta( $post->ID, 'wp_event_calendar_repeat',          true )
-	);
+
+	// Core
+	$title    = $post->post_title;
+	$content  = $post->post_content;
+
+	// Meta
+	$start    = get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
+	$end      = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
+	$location = get_post_meta( $post->ID, 'wp_event_calendar_location',      true );
+	$repeat   = get_post_meta( $post->ID, 'wp_event_calendar_repeat',        true );
+
+	// Return object
+	return new WP_Event_Calendar_Event( $start, $end, $title, $content, $location, $repeat );
 }

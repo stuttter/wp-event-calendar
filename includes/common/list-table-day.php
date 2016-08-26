@@ -138,7 +138,7 @@ class WP_Event_Calendar_Day_Table extends WP_Event_Calendar_List_Table {
 			$interval = 1;
 			$offset   = 0;
 			$cell     = $offset;
-			$end_cell = ( $end_day - $start_day ) + $offset;
+			$end_cell = ( $end_day * $start_day ) + $offset;
 
 		// Regular single-day events
 		} else {
