@@ -508,9 +508,49 @@ function wp_event_calendar_get_meta_query( $args = array() ) {
 
 		// Single day
 		case 'day' :
-			$retval = array( array(
-				'relation' => 'OR',
-				'within_range_clause' => array(
+			$retval = array(
+				'wp_event_calendar_clause' => array(
+					'relation' => 'OR',
+					'within_range_clause' => array(
+						'relation' => 'OR',
+						'start_between_clause' => array(
+							'key'     => 'wp_event_calendar_date_time',
+							'value'   => array( $r['start'], $r['end'] ),
+							'type'    => 'DATETIME',
+							'compare' => 'BETWEEN'
+						),
+						'end_between_clause' => array(
+							'key'     => 'wp_event_calendar_end_date_time',
+							'value'   => array( $r['start'], $r['end'] ),
+							'type'    => 'DATETIME',
+							'compare' => 'BETWEEN'
+						)
+					),
+					'out_of_range_clause' => array(
+						'relation' => 'AND',
+						'start_before_clause' => array(
+							'key'     => 'wp_event_calendar_date_time',
+							'value'   => $r['start'],
+							'type'    => 'DATETIME',
+							'compare' => '<='
+						),
+						'end_after_clause' => array(
+							'key'     => 'wp_event_calendar_end_date_time',
+							'value'   => $r['end'],
+							'type'    => 'DATETIME',
+							'compare' => '>='
+						)
+					)
+				)
+			);
+			break;
+
+		// Month, Week, Default
+		case 'week' :
+		case 'month' :
+		default :
+			$retval = array(
+				'wp_event_calendar_clause' => array(
 					'relation' => 'OR',
 					'start_between_clause' => array(
 						'key'     => 'wp_event_calendar_date_time',
@@ -524,45 +564,8 @@ function wp_event_calendar_get_meta_query( $args = array() ) {
 						'type'    => 'DATETIME',
 						'compare' => 'BETWEEN'
 					)
-				),
-				'out_of_range_clause' => array(
-					'relation' => 'AND',
-					'start_before_clause' => array(
-						'key'     => 'wp_event_calendar_date_time',
-						'value'   => $r['start'],
-						'type'    => 'DATETIME',
-						'compare' => '<='
-					),
-					'end_after_clause' => array(
-						'key'     => 'wp_event_calendar_end_date_time',
-						'value'   => $r['end'],
-						'type'    => 'DATETIME',
-						'compare' => '>='
-					)
 				)
-			) );
-			break;
-
-		// Month, Week, Default
-		case 'week' :
-		case 'month' :
-		default :
-			$retval = array( array(
-				'relation' => 'OR',
-				'start_between_clause' => array(
-					'key'     => 'wp_event_calendar_date_time',
-					'value'   => array( $r['start'], $r['end'] ),
-					'type'    => 'DATETIME',
-					'compare' => 'BETWEEN'
-				),
-				'end_between_clause' => array(
-					'key'     => 'wp_event_calendar_end_date_time',
-					'value'   => array( $r['start'], $r['end'] ),
-					'type'    => 'DATETIME',
-					'compare' => 'BETWEEN'
-				)
-			) );
-
+			);
 			break;
 	}
 
