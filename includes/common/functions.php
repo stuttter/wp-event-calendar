@@ -516,7 +516,7 @@ function wp_event_calendar_get_meta_query( $args = array() ) {
 	// They're all the same now!
 	$retval = array(
 		'wp_event_calendar_clause' => array(
-			'relation' => 'OR',
+			'relation' => 'AND',
 			'within_range_clause' => array(
 				'relation' => 'AND',
 				'start_between_clause' => array(
