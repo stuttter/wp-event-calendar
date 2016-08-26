@@ -515,80 +515,23 @@ function wp_event_calendar_get_meta_query( $args = array() ) {
 
 	// They're all the same now!
 	$retval = array(
-
-		// Wrapper clause
 		'wp_event_calendar_clause' => array(
-
-			// Match any of the following clauses:
 			'relation' => 'OR',
-
-			// 1. Events starting & ending within the current range
 			'within_range_clause' => array(
 				'relation' => 'AND',
 				'start_between_clause' => array(
 					'key'     => 'wp_event_calendar_date_time',
-					'value'   => array( $r['start'], $r['end'] ),
+					'value'   => $r['end'],
 					'type'    => 'DATETIME',
-					'compare' => 'BETWEEN'
+					'compare' => '<'
 				),
 				'end_between_clause' => array(
 					'key'     => 'wp_event_calendar_end_date_time',
-					'value'   => array( $r['start'], $r['end'] ),
-					'type'    => 'DATETIME',
-					'compare' => 'BETWEEN'
-				)
-			),
-
-			// 2. Events starting before and ending anytime after current range
-			'both_out_of_range_clause' => array(
-				'relation' => 'AND',
-				'start_before_clause' => array(
-					'key'     => 'wp_event_calendar_date_time',
 					'value'   => $r['start'],
 					'type'    => 'DATETIME',
-					'compare' => '<='
-				),
-				'end_after_clause' => array(
-					'key'     => 'wp_event_calendar_end_date_time',
-					'value'   => $r['end'],
-					'type'    => 'DATETIME',
-					'compare' => '>='
+					'compare' => '>'
 				)
-			),
-
-			// 3. Events starting before and ending within the current range
-			'start_out_of_range_clause' => array(
-				'relation' => 'AND',
-				'start_before_clause' => array(
-					'key'     => 'wp_event_calendar_date_time',
-					'value'   => $r['start'],
-					'type'    => 'DATETIME',
-					'compare' => '<='
-				),
-				'end_between_clause' => array(
-					'key'     => 'wp_event_calendar_end_date_time',
-					'value'   => array( $r['start'], $r['end'] ),
-					'type'    => 'DATETIME',
-					'compare' => 'BETWEEN'
-				)
-			),
-
-			// 4. Events starting within and ending anytime after the current range
-			'end_out_of_range_clause' => array(
-				'relation' => 'AND',
-				'start_between_clause' => array(
-					'key'     => 'wp_event_calendar_date_time',
-					'value'   => array( $r['start'], $r['end'] ),
-					'type'    => 'DATETIME',
-					'compare' => 'BETWEEN'
-				),
-				'end_after_clause' => array(
-					'key'     => 'wp_event_calendar_end_date_time',
-					'value'   => $r['end'],
-					'type'    => 'DATETIME',
-					'compare' => '>='
-				)
-			),
+			)
 		)
 	);
 
