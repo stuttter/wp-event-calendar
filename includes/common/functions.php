@@ -478,7 +478,7 @@ function wp_get_events( $args = array() ) {
 	$query = new WP_Query( $r );
 
 	// Return posts
-	return $query->get_posts();
+	return $query->posts;
 }
 
 /**
