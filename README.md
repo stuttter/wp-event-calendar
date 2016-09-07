@@ -1,12 +1,14 @@
 # WP Event Calendar
 
-WP Event Calendar is the best way to keep track of events in WordPress. It comes with:
+WP Event Calendar is the best way to keep track of events in WordPress.
 
 * Seamlessly integrates into WordPress's dashboard interface
-* Month & week views
-* Organize events by type, category, and tag
+* Month, week, and day list-table views
+* Organize events by type, category, & tag
 * Easily & logically paginate through date ranges
-* Safe, secure, & performant
+* Safe, secure, & efficient
+* Full of developer hooks for integration with other plugins & themes
+* Integrates with User Groups, Alerts, Activity, and Profiles
 
 # Installation
 
@@ -26,7 +28,8 @@ No. All of WordPress's core database tables remain untouched.
 
 ### Where can I get support?
 
-The WordPress support forums: https://wordpress.org/support/plugin/wp-event-calendar/
+* Basic: https://wordpress.org/support/plugin/wp-event-calendar/
+* Priority: https://chat.flox.io/support/channels/wp-event-calendar/
 
 ### Can I contribute?
 

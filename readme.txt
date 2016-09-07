@@ -1,8 +1,8 @@
 === WP Event Calendar ===
 Contributors: johnjamesjacoby, stuttter
 Tags: event, calendar, session, appointment, month, week, day, category, tag, term, type
-Requires at least: 4.5
-Tested up to: 4.6
+Requires at least: 4.6
+Tested up to: 4.7
 Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -68,7 +68,8 @@ No. All of WordPress's core database tables remain untouched.
 
 = Where can I get support? =
 
-The WordPress support forums: https://wordpress.org/support/plugin/wp-event-calendar/
+* Basic: https://wordpress.org/support/plugin/wp-event-calendar/
+* Priority: https://chat.flox.io/support/channels/wp-event-calendar/
 
 = Where can I find documentation? =
 
