@@ -62,7 +62,7 @@ add_action( 'plugins_loaded', '_wp_event_calendar' );
  * @return string
  */
 function wp_event_calendar_get_plugin_path() {
-	return plugin_dir_path( __FILE__ );
+	return plugin_dir_path( __FILE__ ) . 'wp-event-calendar/';
 }
 
 /**
@@ -73,7 +73,7 @@ function wp_event_calendar_get_plugin_path() {
  * @return string
  */
 function wp_event_calendar_get_plugin_url() {
-	return plugin_dir_url( __FILE__ );
+	return plugin_dir_url( __FILE__ ) . 'wp-event-calendar/';
 }
 
 /**
@@ -84,7 +84,7 @@ function wp_event_calendar_get_plugin_url() {
  * @return int
  */
 function wp_event_calendar_get_asset_version() {
-	return 201608250001;
+	return 201609070001;
 }
 
 /**

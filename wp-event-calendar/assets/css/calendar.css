@@ -4,9 +4,6 @@ body.post-type-event #post-body-content {
 	margin-bottom: 0;
 }
 
-.wp-menu-image.dashicons-before.dashicons-calendar-alt:before {
-	line-height: 0.8;
-}
 .wp-event-calendar-editor #wp-content-editor-tools {
 	background-color: #fff;
 	padding-top: 0;
