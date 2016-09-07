@@ -5,9 +5,11 @@
  * Plugin URI:  https://wordpress.org/plugins/wp-event-calendar/
  * Author:      John James Jacoby
  * Author URI:  https://jjj.me/
+ * License:     GPL v2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: wp-event-calendar
  * Version:     0.4.0
  * Description: The best way to manage events in WordPress
- * License:     GPL v2 or later
  */
 
 // Exit if accessed directly
