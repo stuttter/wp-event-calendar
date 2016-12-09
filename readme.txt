@@ -1,9 +1,9 @@
 === WP Event Calendar ===
 Contributors: johnjamesjacoby, stuttter
 Tags: event, calendar, session, appointment, month, week, day, category, tag, term, type
-Requires at least: 4.6
-Tested up to: 4.7
-Stable tag: 1.0.0
+Requires at least: 4.7
+Tested up to: 4.8
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9Q4F4EL5YJ62J
@@ -76,6 +76,10 @@ No. All of WordPress's core database tables remain untouched.
 http://github.com/stuttter/wp-event-calendar/
 
 == Changelog ==
+
+= [1.1.0] - 2016-12-09 =
+* Improved editor metabox experience
+* Fix bug caused when relocating the "Details" metabox
 
 = [1.0.0] - 2016-09-07 =
 * Improved support for mu-plugins location

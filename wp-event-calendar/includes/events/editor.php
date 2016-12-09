@@ -24,15 +24,7 @@ function wp_event_calendar_editor_above() {
 	}
 
 	// Above editor
-	do_meta_boxes( $post_type, 'above_event_editor', $post ); ?>
-
-	<div class="meta-box-sortables">
-		<div class="wp-event-calendar-editor postbox">
-			<div class="handlediv" title="<?php esc_html_e( 'Click to toggle', 'wp-event-calendar'); ?>"><br></div>
-			<h3 class="hndle ui-sortable-handle"><span><?php esc_html_e( 'Details', 'wp-event-calendar'); ?></span></h3>
-			<div class="inside" style="padding-top: 12px; margin-top: 0;">
-
-	<?php
+	do_meta_boxes( $post_type, 'above_event_editor', $post );
 }
 
 /**
@@ -46,13 +38,7 @@ function wp_event_calendar_editor_below() {
 	// Description title
 	if ( ! in_array( $post_type, wp_event_calendar_allowed_post_types() ) ) {
 		return;
-	} ?>
-
-			</div>
-		</div>
-	</div>
-
-	<?php
+	}
 
 	// Below editor
 	do_meta_boxes( $post_type, 'below_event_editor', $post );

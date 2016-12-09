@@ -42,7 +42,6 @@ function wp_event_calendar_register_post_types() {
 	// Supports
 	$supports = array(
 		'title',
-		'editor',
 		'thumbnail',
 		'revisions',
 		'events'

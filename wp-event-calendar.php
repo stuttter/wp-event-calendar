@@ -8,7 +8,7 @@
  * License:     GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: wp-event-calendar
- * Version:     1.0.0
+ * Version:     1.1.0
  * Description: The best way to manage events in WordPress
  */
 
@@ -84,7 +84,7 @@ function wp_event_calendar_get_plugin_url() {
  * @return int
  */
 function wp_event_calendar_get_asset_version() {
-	return 201609070001;
+	return 201612090001;
 }
 
 /**

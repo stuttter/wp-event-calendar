@@ -123,15 +123,25 @@ function wp_event_calendar_add_metabox() {
 		'above_event_editor',
 		'default'
 	);
+
+	add_meta_box(
+		'wp_event_calendar_details',
+		__( 'Details', 'wp-event-calendar' ),
+		'wp_event_calendar_details_metabox',
+		wp_event_calendar_allowed_post_types(),
+		'above_event_editor',
+		'default'
+	);
 }
 
 /**
  * Output the event duration metabox
  *
  * @since  0.2.3
+ *
+ * @param WP_Post $post The post
 */
-function wp_event_calendar_duration_metabox() {
-	$post = get_post();
+function wp_event_calendar_duration_metabox( $post = null ) {
 	$meta = get_post_custom( $post->ID );
 	$date = $hour = $minute = $am_pm = '';
 	$end_date = $end_hour = $end_minute = $end_am_pm = '';
@@ -366,6 +376,17 @@ function wp_event_calendar_duration_metabox() {
 
 	// End & flush the output buffer
 	ob_end_flush();
+}
+
+/**
+ * Output the event duration metabox
+ *
+ * @since  1.1.0
+ *
+ * @param WP_Post $post The post
+*/
+function wp_event_calendar_details_metabox( $post = null ) {
+	wp_editor( $post->post_content, 'post_content' );
 }
 
 /**
