@@ -306,7 +306,7 @@ function wp_event_calendar_duration_metabox( $post = null ) {
 				<td>
 					<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_end_date" id="wp_event_calendar_end_date" value="<?php echo esc_attr( $end_date ); ?>" placeholder="mm/dd/yyyy" />
 					<div class="event-time" <?php echo $hidden; ?>>
-						<span class="wp_event_calendar_time_separator"><?php esc_html_e( ' at ', 'wp-event-alendar' ); ?></span>
+						<span class="wp_event_calendar_time_separator"><?php esc_html_e( ' at ', 'wp-event-calendar' ); ?></span>
 						<?php wp_event_calendar_time_dropdown( array(
 							'first'    => '',
 							'id'       => 'wp_event_calendar_end_time_hour',
