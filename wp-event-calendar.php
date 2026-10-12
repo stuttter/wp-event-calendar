@@ -7,6 +7,7 @@
  * Author URI:  https://jjj.blog/
  * License:     GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Requires PHP: 7.0
  * Text Domain: wp-event-calendar
  * Version:     1.1.0
  * Description: The best way to manage events in WordPress
