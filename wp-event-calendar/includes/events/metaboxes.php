@@ -145,6 +145,11 @@ function wp_event_calendar_duration_metabox( $post = null ) {
 	$meta = get_post_custom( $post->ID );
 	$date = $hour = $minute = $am_pm = '';
 	$end_date = $end_hour = $end_minute = $end_am_pm = '';
+	$date_iso          = $end_date_iso = '';
+	$date_format       = wp_event_calendar_get_date_format();
+	$datepicker_format = wp_event_calendar_get_datepicker_format();
+	$uses_24_hour_time = wp_event_calendar_uses_24_hour_time();
+	$date_placeholder  = date_i18n( $date_format, mktime( 0, 0, 0, 12, 31, 2000 ), true );
 
 	/** All Day ***************************************************************/
 
@@ -172,20 +177,21 @@ function wp_event_calendar_duration_metabox( $post = null ) {
 	if ( ! empty( $end_date_time ) ) {
 
 		// Date
-		$end_date = date( 'm/d/Y', $end_date_time );
+		$end_date     = date_i18n( $date_format, $end_date_time, true );
+		$end_date_iso = date( 'Y-m-d', $end_date_time );
 
 		// Only if not all-day
 		if ( empty( $all_day ) ) {
 
 			// Hour
-			$end_hour = date( 'h', $end_date_time );
-			if ( empty( $end_hour ) ) {
+			$end_hour = date( $uses_24_hour_time ? 'H' : 'h', $end_date_time );
+			if ( '' === $end_hour ) {
 				$end_hour = '';
 			}
 
 			// Minute
 			$end_minute = date( 'i', $end_date_time );
-			if ( empty( $end_hour ) ) {
+			if ( '' === $end_hour ) {
 				$end_minute = '';
 			}
 
@@ -207,20 +213,21 @@ function wp_event_calendar_duration_metabox( $post = null ) {
 
 	// Date
 	if ( ! empty( $date_time ) ) {
-		$date = date( 'm/d/Y', $date_time );
+		$date     = date_i18n( $date_format, $date_time, true );
+		$date_iso = date( 'Y-m-d', $date_time );
 
 		// Only if not all-day
 		if ( empty( $all_day ) ) {
 
 			// Hour
-			$hour = date( 'h', $date_time );
-			if ( empty( $end_hour ) || empty( $hour ) ) {
+			$hour = date( $uses_24_hour_time ? 'H' : 'h', $date_time );
+			if ( '' === $end_hour || '' === $hour ) {
 				$hour = '';
 			}
 
 			// Minute
 			$minute = date( 'i', $date_time );
-			if ( empty( $hour ) && empty( $end_minute ) ) {
+			if ( '' === $hour && '' === $end_minute ) {
 				$minute = '';
 			}
 
@@ -271,9 +278,10 @@ function wp_event_calendar_duration_metabox( $post = null ) {
 				</th>
 
 				<td>
-					<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_date" id="wp_event_calendar_date" value="<?php echo esc_attr( $date ); ?>" placeholder="mm/dd/yyyy" />
+					<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_date" id="wp_event_calendar_date" value="<?php echo esc_attr( $date ); ?>" placeholder="<?php echo esc_attr( $date_placeholder ); ?>" data-date-format="<?php echo esc_attr( $datepicker_format ); ?>" data-alt-field="#wp_event_calendar_date_iso" />
+					<input type="hidden" name="wp_event_calendar_date_iso" id="wp_event_calendar_date_iso" value="<?php echo esc_attr( $date_iso ); ?>" />
 					<div class="event-time" <?php echo $hidden; ?>>
-						<span class="wp_event_calendar_time_separator"><?php esc_html_e( ' at ', 'wp-event-alendar' ); ?></span>
+						<span class="wp_event_calendar_time_separator"><?php esc_html_e( ' at ', 'wp-event-calendar' ); ?></span>
 						<?php wp_event_calendar_time_dropdown( array(
 							'first'    => '',
 							'id'       => 'wp_event_calendar_time_hour',
@@ -289,10 +297,12 @@ function wp_event_calendar_duration_metabox( $post = null ) {
 							'items'    => wp_event_calendar_get_minutes(),
 							'selected' => $minute
 						) ); ?>
+						<?php if ( ! $uses_24_hour_time ) : ?>
 						<select name="wp_event_calendar_time_am_pm">
 							<option value="am" <?php selected( $am_pm, 'am' ); ?>><?php esc_html_e( 'AM', 'wp-event-calendar' ); ?></option>
 							<option value="pm" <?php selected( $am_pm, 'pm' ); ?>><?php esc_html_e( 'PM', 'wp-event-calendar' ); ?></option>
 						</select>
+						<?php endif; ?>
 					</div>
 				</td>
 
@@ -304,7 +314,8 @@ function wp_event_calendar_duration_metabox( $post = null ) {
 				</th>
 
 				<td>
-					<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_end_date" id="wp_event_calendar_end_date" value="<?php echo esc_attr( $end_date ); ?>" placeholder="mm/dd/yyyy" />
+					<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_end_date" id="wp_event_calendar_end_date" value="<?php echo esc_attr( $end_date ); ?>" placeholder="<?php echo esc_attr( $date_placeholder ); ?>" data-date-format="<?php echo esc_attr( $datepicker_format ); ?>" data-alt-field="#wp_event_calendar_end_date_iso" />
+					<input type="hidden" name="wp_event_calendar_end_date_iso" id="wp_event_calendar_end_date_iso" value="<?php echo esc_attr( $end_date_iso ); ?>" />
 					<div class="event-time" <?php echo $hidden; ?>>
 						<span class="wp_event_calendar_time_separator"><?php esc_html_e( ' at ', 'wp-event-calendar' ); ?></span>
 						<?php wp_event_calendar_time_dropdown( array(
@@ -322,10 +333,12 @@ function wp_event_calendar_duration_metabox( $post = null ) {
 							'items'    => wp_event_calendar_get_minutes(),
 							'selected' => $end_minute
 						) ); ?>
+						<?php if ( ! $uses_24_hour_time ) : ?>
 						<select class="wp_event_calendar_end_time_am_pm" name="wp_event_calendar_end_time_am_pm">
 							<option value="am" <?php selected( $end_am_pm, 'am' ); ?>><?php esc_html_e( 'AM', 'wp-event-calendar' ); ?></option>
 							<option value="pm" <?php selected( $end_am_pm, 'pm' ); ?>><?php esc_html_e( 'PM', 'wp-event-calendar' ); ?></option>
 						</select>
+						<?php endif; ?>
 					</div>
 				</td>
 			</tr>
@@ -468,7 +481,10 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 
 	// Get calendar date
 	$date = ! empty( $_POST['wp_event_calendar_date'] )
-		? strtotime( sanitize_text_field( $_POST['wp_event_calendar_date'] ) )
+		? wp_event_calendar_parse_date(
+			sanitize_text_field( $_POST['wp_event_calendar_date'] ),
+			! empty( $_POST['wp_event_calendar_date_iso'] ) ? sanitize_text_field( $_POST['wp_event_calendar_date_iso'] ) : ''
+		)
 		: current_time( 'timestamp' );
 
 	// Hour
@@ -480,6 +496,8 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 	$minutes = ! empty( $_POST['wp_event_calendar_time_minute'] )
 		? sanitize_text_field( $_POST['wp_event_calendar_time_minute'] )
 		: 0;
+	$has_start_time = ( isset( $_POST['wp_event_calendar_time_hour'] ) && '' !== $_POST['wp_event_calendar_time_hour'] )
+		|| ( isset( $_POST['wp_event_calendar_time_minute'] ) && '' !== $_POST['wp_event_calendar_time_minute'] );
 
 	// Day/night
 	$am_pm = ! empty( $_POST['wp_event_calendar_time_am_pm'] )
@@ -490,7 +508,10 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 
 	// Calendar date is set
 	$end_date = ! empty( $_POST['wp_event_calendar_end_date'] )
-		? strtotime( sanitize_text_field( $_POST['wp_event_calendar_end_date'] ) )
+		? wp_event_calendar_parse_date(
+			sanitize_text_field( $_POST['wp_event_calendar_end_date'] ),
+			! empty( $_POST['wp_event_calendar_end_date_iso'] ) ? sanitize_text_field( $_POST['wp_event_calendar_end_date_iso'] ) : ''
+		)
 		: null;
 
 	// Hour
@@ -502,6 +523,8 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 	$end_minutes = ! empty( $_POST['wp_event_calendar_end_time_minute'] )
 		? sanitize_text_field( $_POST['wp_event_calendar_end_time_minute'] )
 		: 0;
+	$has_end_time = ( isset( $_POST['wp_event_calendar_end_time_hour'] ) && '' !== $_POST['wp_event_calendar_end_time_hour'] )
+		|| ( isset( $_POST['wp_event_calendar_end_time_minute'] ) && '' !== $_POST['wp_event_calendar_end_time_minute'] );
 
 	// Day/night
 	$end_am_pm = ! empty( $_POST['wp_event_calendar_end_time_am_pm']  )
@@ -528,7 +551,7 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		: false;
 
 	// Set all day if no end date
-	if ( ( false === $all_day ) && ( empty( $minutes ) && empty( $hour ) && empty( $end_minutes ) && empty( $end_hour ) ) ) {
+	if ( ( false === $all_day ) && ! $has_start_time && ! $has_end_time ) {
 		if ( empty( $end_date ) || ( $date === $end_date ) ) {
 
 			// Make all-day event
@@ -544,8 +567,10 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 	/** Combine ***************************************************************/
 
 	// Maybe tweak hours
-	$hour     = wp_event_calendar_adjust_hour_for_meridiem( $hour,     $am_pm     );
-	$end_hour = wp_event_calendar_adjust_hour_for_meridiem( $end_hour, $end_am_pm );
+	if ( ! wp_event_calendar_uses_24_hour_time() ) {
+		$hour     = wp_event_calendar_adjust_hour_for_meridiem( $hour,     $am_pm     );
+		$end_hour = wp_event_calendar_adjust_hour_for_meridiem( $end_hour, $end_am_pm );
+	}
 
 	// Make timestamps from pieces
 	$date     = mktime( intval( $hour     ), intval( $minutes     ), 0, date( 'm', $date     ), date( 'd', $date     ), date( 'Y', $date     ) );

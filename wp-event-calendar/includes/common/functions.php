@@ -355,20 +355,181 @@ function wp_get_event_duration( $post = false ) {
  * @return array
  */
 function wp_event_calendar_get_hours() {
-	return apply_filters( 'wp_event_calendar_get_hours', array(
-		'01',
-		'02',
-		'03',
-		'04',
-		'05',
-		'06',
-		'07',
-		'08',
-		'09',
-		'10',
-		'11',
-		'12'
-	) );
+	$hours = wp_event_calendar_uses_24_hour_time()
+		? range( 0, 23 )
+		: range( 1, 12 );
+
+	foreach ( $hours as $key => $hour ) {
+		$hours[ $key ] = sprintf( '%02d', $hour );
+	}
+
+	return apply_filters( 'wp_event_calendar_get_hours', $hours );
+}
+
+/**
+ * Return the date format used by the event metabox.
+ *
+ * @since 1.2.0
+ *
+ * @return string
+ */
+function wp_event_calendar_get_date_format() {
+	return apply_filters( 'wp_event_calendar_date_format', get_option( 'date_format' ) );
+}
+
+/**
+ * Convert the event date format from PHP to jQuery UI datepicker syntax.
+ *
+ * @since 1.2.0
+ *
+ * @return string
+ */
+function wp_event_calendar_get_datepicker_format() {
+	$php_format = wp_event_calendar_get_date_format();
+	$tokens     = array(
+		'd' => 'dd',
+		'j' => 'd',
+		'D' => 'D',
+		'l' => 'DD',
+		'm' => 'mm',
+		'n' => 'm',
+		'M' => 'M',
+		'F' => 'MM',
+		'y' => 'y',
+		'Y' => 'yy',
+		'o' => 'yy',
+	);
+	$format     = '';
+	$escaped    = false;
+	$literal    = '';
+
+	foreach ( str_split( $php_format ) as $character ) {
+		if ( $escaped ) {
+			$literal .= $character;
+			$escaped = false;
+			continue;
+		}
+
+		if ( '\\' === $character ) {
+			$escaped = true;
+			continue;
+		}
+
+		if ( isset( $tokens[ $character ] ) ) {
+			if ( '' !== $literal ) {
+				$format .= "'" . str_replace( "'", "''", $literal ) . "'";
+				$literal = '';
+			}
+			$format .= $tokens[ $character ];
+		} elseif ( preg_match( '/[A-Za-z]/', $character ) ) {
+			$literal .= $character;
+		} else {
+			if ( '' !== $literal ) {
+				$format .= "'" . str_replace( "'", "''", $literal ) . "'";
+				$literal = '';
+			}
+			$format .= $character;
+		}
+	}
+
+	if ( '' !== $literal ) {
+		$format .= "'" . str_replace( "'", "''", $literal ) . "'";
+	}
+
+	return apply_filters( 'wp_event_calendar_datepicker_format', $format, $php_format );
+}
+
+/**
+ * Determine whether the configured time format uses a 24-hour clock.
+ *
+ * @since 1.2.0
+ *
+ * @return bool
+ */
+function wp_event_calendar_uses_24_hour_time() {
+	$uses_24_hour_time = (bool) preg_match( '/(?<!\\\\)[GH]/', get_option( 'time_format' ) );
+
+	return (bool) apply_filters( 'wp_event_calendar_uses_24_hour_time', $uses_24_hour_time );
+}
+
+/**
+ * Parse a numeric date using the configured component order.
+ *
+ * @since 1.2.0
+ *
+ * @param string $date   Date to parse.
+ * @param string $format PHP date format.
+ * @return int|false
+ */
+function wp_event_calendar_parse_numeric_date( $date = '', $format = '' ) {
+	preg_match_all( '/(?<!\\\\)[djmnYy]/', $format, $format_matches );
+	preg_match_all( '/\\d+/', $date, $date_matches );
+
+	if ( 3 !== count( $format_matches[0] ) || 3 !== count( $date_matches[0] ) ) {
+		return false;
+	}
+
+	$parts = array();
+
+	foreach ( $format_matches[0] as $key => $token ) {
+		switch ( $token ) {
+			case 'd':
+			case 'j':
+				$part = 'day';
+				break;
+
+			case 'm':
+			case 'n':
+				$part = 'month';
+				break;
+
+			case 'y':
+				$part = 'year';
+				$year = (int) $date_matches[0][ $key ];
+				$parts[ $part ] = ( $year < 70 ) ? $year + 2000 : $year + 1900;
+				continue 2;
+
+			case 'Y':
+			default:
+				$part = 'year';
+				break;
+		}
+
+		if ( isset( $parts[ $part ] ) ) {
+			return false;
+		}
+
+		$parts[ $part ] = (int) $date_matches[0][ $key ];
+	}
+
+	if ( 3 !== count( $parts ) || ! checkdate( $parts['month'], $parts['day'], $parts['year'] ) ) {
+		return false;
+	}
+
+	return mktime( 0, 0, 0, $parts['month'], $parts['day'], $parts['year'] );
+}
+
+/**
+ * Parse a date submitted by the event metabox.
+ *
+ * @since 1.2.0
+ *
+ * @param string $date     Date in the configured display format.
+ * @param string $iso_date Date in the datepicker's machine-readable format.
+ * @return int|false
+ */
+function wp_event_calendar_parse_date( $date = '', $iso_date = '' ) {
+	$date_time = wp_event_calendar_parse_numeric_date( $date, wp_event_calendar_get_date_format() );
+
+	if ( false !== $date_time ) {
+		return $date_time;
+	}
+
+	if ( preg_match( '/^(\\d{4})-(\\d{2})-(\\d{2})$/', $iso_date, $matches ) && checkdate( (int) $matches[2], (int) $matches[3], (int) $matches[1] ) ) {
+		return mktime( 0, 0, 0, (int) $matches[2], (int) $matches[3], (int) $matches[1] );
+	}
+
+	return strtotime( $date );
 }
 
 /**
