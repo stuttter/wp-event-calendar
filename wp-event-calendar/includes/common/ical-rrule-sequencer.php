@@ -2,10 +2,6 @@
 /**
  * Recurrence RRULE utility.
  *
- * Forked from the Sugar Calendar iCalendar RRULE sequencer originally written
- * by John James Jacoby and distributed under the GPL-2.0-or-later license.
- *
- * @link https://plugins.svn.wordpress.org/sugar-calendar-lite/tags/3.16.0/includes/classes/utilities/ical-rrule-sequencer.php
  * @package WP_Event_Calendar/iCalendar/RRULE
  */
 namespace WP_Event_Calendar\Utilities\iCalendar\Recur;
