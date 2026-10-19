@@ -673,38 +673,50 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 		// Rearrange posts into an array keyed by day of the month
 		foreach ( $this->query->posts as $post ) {
 
-			// Get start & end
-			$this->item_all_day = (bool) get_post_meta( $post->ID, 'wp_event_calendar_all_day',       true );
-			$this->item_start   =        get_post_meta( $post->ID, 'wp_event_calendar_date_time',     true );
-			$this->item_end     =        get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
+			$occurrences = wp_event_calendar_get_recurrence_occurrences( array(
+				'id'     => $post->ID,
+				'start'  => get_post_meta( $post->ID, 'wp_event_calendar_date_time', true ),
+				'end'    => get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true ),
+				'repeat' => get_post_meta( $post->ID, 'wp_event_calendar_repeat', true ),
+				'expire' => get_post_meta( $post->ID, 'wp_event_calendar_expire', true ),
+				'after'  => $this->view_start,
+				'before' => $this->view_end
+			) );
 
-			// Format start
-			if ( ! empty( $this->item_start ) ) {
-				$this->item_start = strtotime( $this->item_start );
+			foreach ( $occurrences as $occurrence ) {
+				$this->prepare_occurrence( $post, $occurrence, $max_per );
 			}
-
-			// Format end
-			if ( ! empty( $this->item_end ) ) {
-				$this->item_end = strtotime( $this->item_end );
-			}
-
-			if ( empty( $this->item_start ) ) {
-				continue;
-			}
-
-			// Convert dates to timestamps that exclude the timestamp
-			$start_date_timestamp = strtotime( date( 'F j, Y', $this->item_start ) );
-			$end_date_timestamp   = strtotime( date( 'F j, Y', $this->item_end   ) );
-
-			// Get the number of seconds between each timestamp's date
-			$diff = abs( $end_date_timestamp - $start_date_timestamp );
-
-			// Calculate full days spanned
-			$this->item_days = ceil( $diff / DAY_IN_SECONDS ) + 1;
-
-			// Prepare pointer & item
-			$this->setup_item( $post, $max_per );
 		}
+	}
+
+	/**
+	 * Prepare one event occurrence for list-table display.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param WP_Post $post       Event post.
+	 * @param array   $occurrence Occurrence start and end.
+	 * @param int     $max        Maximum events per cell.
+	 */
+	protected function prepare_occurrence( $post, $occurrence, $max = 10 ) {
+		$this->item_all_day = (bool) get_post_meta( $post->ID, 'wp_event_calendar_all_day', true );
+		$this->item_start   = strtotime( $occurrence['dtstart'] );
+		$this->item_end     = strtotime( $occurrence['dtend'] );
+
+		if ( empty( $this->item_start ) ) {
+			return;
+		}
+
+		if ( empty( $this->item_end ) ) {
+			$this->item_end = $this->item_start;
+		}
+
+		$start_date_timestamp = strtotime( date( 'F j, Y', $this->item_start ) );
+		$end_date_timestamp   = strtotime( date( 'F j, Y', $this->item_end ) );
+		$diff                 = abs( $end_date_timestamp - $start_date_timestamp );
+
+		$this->item_days = ceil( $diff / DAY_IN_SECONDS ) + 1;
+		$this->setup_item( $post, $max );
 	}
 
 	/**

@@ -44,6 +44,16 @@ class WP_Event_Calendar_Event {
 	protected $end_date;
 
 	/**
+	 * @var DateTime|null Last date on which the event may recur.
+	 */
+	protected $recurrence_end;
+
+	/**
+	 * @var int Recurrence interval identifier.
+	 */
+	protected $repeat = 0;
+
+	/**
 	 * @var bool all day flag used to determine business logic
 	 */
 	private $all_day = false;
@@ -88,8 +98,9 @@ class WP_Event_Calendar_Event {
 	 * @param string   $location      Simple string of text describing the event location
 	 * @param int      $repeat        Repetition of the event
 	 * @param string   $event_status  Defaults to EventScheduled
+	 * @param mixed    $recurrence_end Last date on which the event may recur
 	 */
-	public function __construct( $start_date = null, $end_date = null, $name = '', $description = '', $location = '', $repeat = 0, $event_status = 'EventScheduled' ) {
+	public function __construct( $start_date = null, $end_date = null, $name = '', $description = '', $location = '', $repeat = 0, $event_status = 'EventScheduled', $recurrence_end = null ) {
 
 		// Check if start_date is instance of DateTime object
 		if ( $start_date instanceof DateTime ) {
@@ -130,6 +141,14 @@ class WP_Event_Calendar_Event {
 		$this->event_status = $event_status;
 		$this->location     = $location;
 		$this->repeat       = $repeat;
+
+		if ( $recurrence_end instanceof DateTime ) {
+			$this->recurrence_end = $recurrence_end;
+		} elseif ( is_numeric( $recurrence_end ) && ! empty( $recurrence_end ) ) {
+			$this->recurrence_end = new DateTime( date( 'Y-m-d 23:59:59', (int) $recurrence_end ) );
+		} elseif ( ! empty( $recurrence_end ) ) {
+			$this->recurrence_end = new DateTime( $recurrence_end );
+		}
 	}
 
 	/**
@@ -143,12 +162,12 @@ class WP_Event_Calendar_Event {
 	protected function event_status_to_rfc() {
 
 		// Make sure the EventStatus is to spec
-		if ( ! empty( $this->event_status_mapping[ $this->event_status ] ) ) {
-			return $this->event_status_mapping[ $this->event_status ];
+		if ( ! empty( self::$event_status_mapping[ $this->event_status ] ) ) {
+			return self::$event_status_mapping[ $this->event_status ];
 		}
 
 		// Returning EventScheduled/CONFIRMED if spec does not match
-		return $this->event_status_mapping[ 'EventScheduled' ];
+		return self::$event_status_mapping[ 'EventScheduled' ];
 	}
 
 	/**
@@ -196,9 +215,9 @@ class WP_Event_Calendar_Event {
 				break;
 		}
 
-		// Get the UNTIL portion if the frequency and end_date are not empty
-		if ( ! empty( $frequency ) && ! empty( $this->end_date ) ) {
-			$frequency .= ';UNTIL=' . $this->event_date_to_rfc( $this->end_date );
+		// Get the UNTIL portion when recurrence has an explicit end.
+		if ( ! empty( $frequency ) && ! empty( $this->recurrence_end ) ) {
+			$frequency .= ';UNTIL=' . $this->event_date_to_rfc( $this->recurrence_end );
 		}
 
 		return $frequency;

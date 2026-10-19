@@ -236,6 +236,11 @@ function wp_event_calendar_duration_metabox( $post = null ) {
 		? $meta['wp_event_calendar_repeat'][0]
 		: '';
 
+	// Last recurrence date.
+	$expire = ! empty( $meta['wp_event_calendar_expire'][0] )
+		? date( 'm/d/Y', (int) $meta['wp_event_calendar_expire'][0] )
+		: '';
+
 	// Filter the intervals
 	$options = apply_filters( 'wp_event_calendar_intervals', array(
 		'0'      => __( 'Never',   'wp-event-calendar' ),
@@ -362,11 +367,11 @@ function wp_event_calendar_duration_metabox( $post = null ) {
 
 					</select>
 
-					<?php /*
-					<label for="wp_event_calendar_expire"><?php esc_html_e( 'until', 'wp-event-calendar' ); ?></label>
+					<span class="wp_event_calendar_expiration">
+						<label for="wp_event_calendar_expire"><?php esc_html_e( 'until', 'wp-event-calendar' ); ?></label>
 
-					<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_expire" id="wp_event_calendar_expire" value="<?php echo esc_attr( $expire ); ?>" placeholder="mm/dd/yyyy" />
-					*/ ?>
+						<input type="text" class="wp_event_calendar_datepicker" name="wp_event_calendar_expire" id="wp_event_calendar_expire" value="<?php echo esc_attr( $expire ); ?>" placeholder="mm/dd/yyyy" />
+					</span>
 				</td>
 			</tr>
 		</tbody>
@@ -584,7 +589,7 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		: delete_post_meta( $post_id, 'wp_event_calendar_repeat' );
 
 	// Save only if repeating
-	! empty( $expire ) && ( 'never' !== $repeat )
+	! empty( $expire ) && ! empty( $repeat )
 		? update_post_meta( $post_id, 'wp_event_calendar_expire', strtotime( $expire ) )
 		: delete_post_meta( $post_id, 'wp_event_calendar_expire' );
 }

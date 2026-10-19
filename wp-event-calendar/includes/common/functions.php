@@ -513,8 +513,9 @@ function wp_event_calendar_get_meta_query( $args = array() ) {
 		'end'   => ''
 	) );
 
-	// They're all the same now!
+	// Include both directly overlapping events and recurring event sources.
 	$retval = array(
+		'relation' => 'OR',
 		'wp_event_calendar_clause' => array(
 			'relation' => 'AND',
 			'within_range_clause' => array(
@@ -531,6 +532,21 @@ function wp_event_calendar_get_meta_query( $args = array() ) {
 					'type'    => 'DATETIME',
 					'compare' => '>'
 				)
+			)
+		),
+		'wp_event_calendar_recurring_clause' => array(
+			'relation' => 'AND',
+			'recurring_started_clause' => array(
+				'key'     => 'wp_event_calendar_date_time',
+				'value'   => $r['end'],
+				'type'    => 'DATETIME',
+				'compare' => '<'
+			),
+			'recurring_frequency_clause' => array(
+				'key'     => 'wp_event_calendar_repeat',
+				'value'   => array( 10, 100, 1000 ),
+				'type'    => 'NUMERIC',
+				'compare' => 'IN'
 			)
 		)
 	);
@@ -579,7 +595,8 @@ function wp_event_calendar_post_to_event( WP_Post $post ) {
 	$end      = get_post_meta( $post->ID, 'wp_event_calendar_end_date_time', true );
 	$location = get_post_meta( $post->ID, 'wp_event_calendar_location',      true );
 	$repeat   = get_post_meta( $post->ID, 'wp_event_calendar_repeat',        true );
+	$expire   = get_post_meta( $post->ID, 'wp_event_calendar_expire',        true );
 
 	// Return object
-	return new WP_Event_Calendar_Event( $start, $end, $title, $content, $location, $repeat );
+	return new WP_Event_Calendar_Event( $start, $end, $title, $content, $location, $repeat, 'EventScheduled', $expire );
 }

@@ -17,6 +17,10 @@ jQuery( document ).ready( function( $ ) {
 		}
 	} );
 
+	$( '#wp_event_calendar_repeat' ).on( 'change', function() {
+		$( '.wp_event_calendar_expiration' ).toggle( '0' !== $( this ).val() );
+	} ).trigger( 'change' );
+
 	if ( $( '.ct_rental_datepicker' ).length > 0 ) {
 		$( '.ct_rental_datepicker' ).datepicker( {
 			dateFormat: 'mm/dd/yy'
