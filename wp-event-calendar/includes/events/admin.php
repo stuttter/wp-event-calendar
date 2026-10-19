@@ -196,7 +196,7 @@ function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 		case 'repeat' :
 			$wp_query->set( 'order',                             $order );
 			$wp_query->set( 'orderby',                           'none' );
-			$wp_query->set( 'wp_event_calendar_orderby_repeat', true   );
+			$wp_query->set( 'wp_event_calendar_orderby_repeat',  true   );
 			break;
 
 		// End
