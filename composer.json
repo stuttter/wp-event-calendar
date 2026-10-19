@@ -13,6 +13,9 @@
       "name": "John James Jacoby",
       "email": "johnjamesjacoby@me.com"
     }
-  ]
+  ],
+  "scripts": {
+    "test": "php tests/admin-sorting.php"
+  }
 }
 
