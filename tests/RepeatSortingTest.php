@@ -22,7 +22,7 @@ class RepeatSortingTest extends TestCase {
 		$this->assertNotFalse( strpos( $clauses['join'], 'LEFT JOIN wp_postmeta' ) );
 		$this->assertNotFalse( strpos( $clauses['join'], "wp_event_calendar_repeat.meta_key = 'wp_event_calendar_repeat'" ) );
 		$this->assertFalse( strpos( $clauses['join'], 'WHERE' ) );
-		$this->assertSame( 'CAST( COALESCE( wp_event_calendar_repeat.meta_value, 0 ) AS SIGNED ) ASC', $clauses['orderby'] );
+		$this->assertSame( 'CAST( COALESCE( wp_event_calendar_repeat.meta_value, 0 ) AS SIGNED ) ASC, wp_posts.ID ASC', $clauses['orderby'] );
 	}
 
 	public function test_repeat_sorting_defaults_to_descending_order() {
@@ -38,7 +38,7 @@ class RepeatSortingTest extends TestCase {
 			'orderby' => '',
 		), $query );
 
-		$this->assertSame( 'CAST( COALESCE( wp_event_calendar_repeat.meta_value, 0 ) AS SIGNED ) DESC', $clauses['orderby'] );
+		$this->assertSame( 'CAST( COALESCE( wp_event_calendar_repeat.meta_value, 0 ) AS SIGNED ) DESC, wp_posts.ID DESC', $clauses['orderby'] );
 	}
 
 	public function test_unrelated_queries_are_unchanged() {

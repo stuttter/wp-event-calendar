@@ -246,7 +246,7 @@ function wp_event_calendar_sort_by_repeat_clauses( $clauses, WP_Query $wp_query 
 		" LEFT JOIN {$wpdb->postmeta} AS wp_event_calendar_repeat ON ( {$wpdb->posts}.ID = wp_event_calendar_repeat.post_id AND wp_event_calendar_repeat.meta_key = %s )",
 		'wp_event_calendar_repeat'
 	);
-	$clauses['orderby'] = "CAST( COALESCE( wp_event_calendar_repeat.meta_value, 0 ) AS SIGNED ) {$order}";
+	$clauses['orderby'] = "CAST( COALESCE( wp_event_calendar_repeat.meta_value, 0 ) AS SIGNED ) {$order}, {$wpdb->posts}.ID {$order}";
 
 	return $clauses;
 }
