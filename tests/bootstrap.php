@@ -12,6 +12,18 @@ class WP_List_Table {
 	}
 }
 
+class WP_Query {
+	public $query;
+
+	public function __construct( $query ) {
+		$this->query = $query;
+	}
+
+	public function set( $key, $value ) {
+		$this->query[ $key ] = $value;
+	}
+}
+
 function __( $text ) {
 	return $text;
 }
@@ -45,6 +57,10 @@ function sanitize_key( $key ) {
 	return strtolower( $key );
 }
 
+function post_type_supports( $post_type, $feature ) {
+	return ( 'event' === $post_type ) && ( 'events' === $feature );
+}
+
 class WP_Event_Calendar_Test_Locale {
 	public function get_weekday( $day ) {
 		return array(
@@ -63,3 +79,4 @@ $GLOBALS['wp_locale'] = new WP_Event_Calendar_Test_Locale();
 
 require_once dirname( __DIR__ ) . '/wp-event-calendar/includes/common/list-table-base.php';
 require_once dirname( __DIR__ ) . '/wp-event-calendar/includes/common/list-table-week.php';
+require_once dirname( __DIR__ ) . '/wp-event-calendar/includes/events/admin.php';
