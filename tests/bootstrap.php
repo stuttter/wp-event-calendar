@@ -13,10 +13,16 @@ class WP_List_Table {
 }
 
 class WP_Query {
-	public $query;
+	public $query = array();
 
-	public function __construct( $query ) {
+	public function __construct( $query = array() ) {
 		$this->query = $query;
+	}
+
+	public function get( $key ) {
+		return isset( $this->query[ $key ] )
+			? $this->query[ $key ]
+			: '';
 	}
 
 	public function set( $key, $value ) {
@@ -75,7 +81,17 @@ class WP_Event_Calendar_Test_Locale {
 	}
 }
 
+class WP_Event_Calendar_Test_WPDB {
+	public $posts    = 'wp_posts';
+	public $postmeta = 'wp_postmeta';
+
+	public function prepare( $query, $value ) {
+		return str_replace( '%s', "'" . addslashes( $value ) . "'", $query );
+	}
+}
+
 $GLOBALS['wp_locale'] = new WP_Event_Calendar_Test_Locale();
+$GLOBALS['wpdb']      = new WP_Event_Calendar_Test_WPDB();
 
 require_once dirname( __DIR__ ) . '/wp-event-calendar/includes/common/list-table-base.php';
 require_once dirname( __DIR__ ) . '/wp-event-calendar/includes/common/list-table-week.php';
