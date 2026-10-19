@@ -63,6 +63,15 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	protected $today = '';
 
 	/**
+	 * The day each week starts on
+	 *
+	 * @since 1.2.0
+	 *
+	 * @var int
+	 */
+	protected $start_of_week = 0;
+
+	/**
 	 * The posts query being run
 	 *
 	 * @since 0.1.0
@@ -179,9 +188,10 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 		add_action( 'admin_print_footer_scripts', array( $this, 'admin_pointers_footer' ) );
 
 		// Set year, month, & day
-		$this->year  = $this->get_year();
-		$this->month = $this->get_month();
-		$this->day   = $this->get_day();
+		$this->year          = $this->get_year();
+		$this->month         = $this->get_month();
+		$this->day           = $this->get_day();
+		$this->start_of_week = max( 0, min( 6, (int) get_option( 'start_of_week', 0 ) ) );
 
 		// Set "today" based on current request
 		$this->today = strtotime( "{$this->year}/{$this->month}/{$this->day}" );
@@ -277,15 +287,63 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 * @return array An associative array containing column information
 	 */
 	public function get_columns() {
-		return array(
-			'sunday'    => $GLOBALS['wp_locale']->get_weekday( 0 ),
-			'monday'    => $GLOBALS['wp_locale']->get_weekday( 1 ),
-			'tuesday'   => $GLOBALS['wp_locale']->get_weekday( 2 ),
-			'wednesday' => $GLOBALS['wp_locale']->get_weekday( 3 ),
-			'thursday'  => $GLOBALS['wp_locale']->get_weekday( 4 ),
-			'friday'    => $GLOBALS['wp_locale']->get_weekday( 5 ),
-			'saturday'  => $GLOBALS['wp_locale']->get_weekday( 6 )
+		$columns = array();
+
+		foreach ( $this->get_week_days() as $day => $day_key ) {
+			$columns[ $day_key ] = $GLOBALS['wp_locale']->get_weekday( $day );
+		}
+
+		return $columns;
+	}
+
+	/**
+	 * Return the days of the week in site order
+	 *
+	 * @since 1.2.0
+	 *
+	 * @return array
+	 */
+	protected function get_week_days() {
+		$days = array(
+			0 => 'sunday',
+			1 => 'monday',
+			2 => 'tuesday',
+			3 => 'wednesday',
+			4 => 'thursday',
+			5 => 'friday',
+			6 => 'saturday'
 		);
+
+		$start = array_slice( $days, $this->start_of_week, null, true );
+		$end   = array_slice( $days, 0, $this->start_of_week, true );
+
+		return $start + $end;
+	}
+
+	/**
+	 * Return a weekday's position relative to the site week start
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param int $weekday Sunday is 0 and Saturday is 6.
+	 * @return int
+	 */
+	protected function get_weekday_offset( $weekday = 0 ) {
+		return ( (int) $weekday - $this->start_of_week + 7 ) % 7;
+	}
+
+	/**
+	 * Return the start of the week containing a timestamp
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param int $timestamp Unix timestamp.
+	 * @return int
+	 */
+	protected function get_week_start( $timestamp = 0 ) {
+		$offset = $this->get_weekday_offset( date_i18n( 'w', $timestamp ) );
+
+		return strtotime( "-{$offset} days midnight", $timestamp );
 	}
 
 	/**
@@ -1173,7 +1231,9 @@ class WP_Event_Calendar_List_Table extends WP_List_Table {
 	 * @return  type
 	 */
 	protected function get_day_classes( $iterator = 1, $start_day = 1 ) {
-		$dow      = ( $iterator % 7 );
+		$dow      = ( 'day' === $this->mode )
+			? ( $iterator % 7 )
+			: ( ( $iterator + $this->start_of_week ) % 7 );
 		$day_key  = sanitize_key( $GLOBALS['wp_locale']->get_weekday( $dow ) );
 		$offset   = ( $iterator - $start_day ) + 1;
 

@@ -53,15 +53,7 @@ class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 	 * @return array An associative array containing column information
 	 */
 	public function get_columns() {
-		return array(
-			'sunday'    => $GLOBALS['wp_locale']->get_weekday( 0 ),
-			'monday'    => $GLOBALS['wp_locale']->get_weekday( 1 ),
-			'tuesday'   => $GLOBALS['wp_locale']->get_weekday( 2 ),
-			'wednesday' => $GLOBALS['wp_locale']->get_weekday( 3 ),
-			'thursday'  => $GLOBALS['wp_locale']->get_weekday( 4 ),
-			'friday'    => $GLOBALS['wp_locale']->get_weekday( 5 ),
-			'saturday'  => $GLOBALS['wp_locale']->get_weekday( 6 )
-		);
+		return parent::get_columns();
 	}
 
 	/**
@@ -217,7 +209,7 @@ class WP_Event_Calendar_Month_Table extends WP_Event_Calendar_List_Table {
 		$timestamp  = mktime( 0, 0, 0, $this->month, 1, $this->year );
 		$max_day    = date_i18n( 't', $timestamp );
 		$this_month = getdate( $timestamp );
-		$start_day  = $this_month['wday'];
+		$start_day  = $this->get_weekday_offset( $this_month['wday'] );
 
 		// Loop through days of the month
 		for ( $i = 0; $i < ( $max_day + $start_day ); $i++ ) {

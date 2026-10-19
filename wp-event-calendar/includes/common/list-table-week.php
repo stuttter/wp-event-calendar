@@ -56,18 +56,13 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	public function __construct( $args = array() ) {
 		parent::__construct( $args );
 
-		// Reset the week
-		$where_is_thumbkin = ( 0 === date( 'w' ) )
-			? 'this Sunday midnight'
-			: 'last Sunday midnight';
-
 		// Setup the week ranges
-		$this->week_start = strtotime( $where_is_thumbkin,       $this->today );
-		$this->week_end   = strtotime( 'this Saturday midnight', $this->today );
+		$this->week_start = $this->get_week_start( $this->today );
+		$this->week_end   = strtotime( '+6 days', $this->week_start );
 
 		// Setup the week ranges
 		$this->view_start = date_i18n( 'Y-m-d H:i:s', $this->week_start );
-		$this->view_end   = date_i18n( 'Y-m-d H:i:s', $this->week_end   );
+		$this->view_end   = date_i18n( 'Y-m-d H:i:s', strtotime( '+1 day', $this->week_end ) );
 	}
 
 	/**
@@ -78,16 +73,17 @@ class WP_Event_Calendar_Week_Table extends WP_Event_Calendar_List_Table {
 	 * @return array An associative array containing column information
 	 */
 	public function get_columns() {
-		return array(
-			'hour'      => sprintf( esc_html__( 'Wk. %s', 'wp-event-calendar' ), date_i18n( 'W', $this->today ) ),
-			'sunday'    => date_i18n( 'D, M. j', $this->week_start ),
-			'monday'    => date_i18n( 'D, M. j', $this->week_start + ( DAY_IN_SECONDS * 1 ) ),
-			'tuesday'   => date_i18n( 'D, M. j', $this->week_start + ( DAY_IN_SECONDS * 2 ) ),
-			'wednesday' => date_i18n( 'D, M. j', $this->week_start + ( DAY_IN_SECONDS * 3 ) ),
-			'thursday'  => date_i18n( 'D, M. j', $this->week_start + ( DAY_IN_SECONDS * 4 ) ),
-			'friday'    => date_i18n( 'D, M. j', $this->week_start + ( DAY_IN_SECONDS * 5 ) ),
-			'saturday'  => date_i18n( 'D, M. j', $this->week_end )
+		$columns = array(
+			'hour' => sprintf( esc_html__( 'Wk. %s', 'wp-event-calendar' ), date_i18n( 'W', $this->today ) )
 		);
+		$time    = $this->week_start;
+
+		foreach ( $this->get_week_days() as $day_key ) {
+			$columns[ $day_key ] = date_i18n( 'D, M. j', $time );
+			$time = strtotime( '+1 day', $time );
+		}
+
+		return $columns;
 	}
 
 	/**
