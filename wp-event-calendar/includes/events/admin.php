@@ -192,12 +192,11 @@ function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 		case 'title' :
 			break;
 
-		// End
+		// Repeat
 		case 'repeat' :
-			$wp_query->set( 'order',     $order );
-			$wp_query->set( 'orderby',   'meta_value' );
-			$wp_query->set( 'meta_key',  'wp_event_calendar_repeat' );
-			$wp_query->set( 'meta_type', 'NUMERIC' );
+			$wp_query->set( 'order',                             $order );
+			$wp_query->set( 'orderby',                           'none' );
+			$wp_query->set( 'wp_event_calendar_orderby_repeat', true   );
 			break;
 
 		// End
@@ -218,6 +217,38 @@ function wp_event_calendar_maybe_sort_by_fields( WP_Query $wp_query ) {
 			//$wp_query->set( 'meta_type', 'DATETIME' );
 			break;
 	}
+}
+
+/**
+ * Include events without repeat metadata when sorting by repetition.
+ *
+ * @since 1.1.1
+ *
+ * @param array    $clauses  The query clauses.
+ * @param WP_Query $wp_query The current WP_Query object.
+ *
+ * @return array The updated query clauses.
+ */
+function wp_event_calendar_sort_by_repeat_clauses( $clauses, WP_Query $wp_query ) {
+
+	// Bail if this is not a repeat sorting query
+	if ( ! $wp_query->get( 'wp_event_calendar_orderby_repeat' ) ) {
+		return $clauses;
+	}
+
+	global $wpdb;
+
+	$order = ( 'ASC' === strtoupper( $wp_query->get( 'order' ) ) )
+		? 'ASC'
+		: 'DESC';
+
+	$clauses['join']   .= $wpdb->prepare(
+		" LEFT JOIN {$wpdb->postmeta} AS wp_event_calendar_repeat ON ( {$wpdb->posts}.ID = wp_event_calendar_repeat.post_id AND wp_event_calendar_repeat.meta_key = %s )",
+		'wp_event_calendar_repeat'
+	);
+	$clauses['orderby'] = "CAST( COALESCE( wp_event_calendar_repeat.meta_value, 0 ) AS SIGNED ) {$order}";
+
+	return $clauses;
 }
 
 /**
