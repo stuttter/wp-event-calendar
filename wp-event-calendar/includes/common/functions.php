@@ -374,7 +374,49 @@ function wp_event_calendar_get_hours() {
  * @return string
  */
 function wp_event_calendar_get_date_format() {
-	return apply_filters( 'wp_event_calendar_date_format', get_option( 'date_format' ) );
+	$format      = apply_filters( 'wp_event_calendar_date_format', get_option( 'date_format' ) );
+	$tokens      = array( 'd', 'j', 'D', 'l', 'm', 'n', 'M', 'F', 'y', 'Y' );
+	$components  = array( 'day' => 0, 'month' => 0, 'year' => 0 );
+	$safe_format = '';
+	$escaped     = false;
+
+	if ( ! is_string( $format ) ) {
+		return 'Y-m-d';
+	}
+
+	foreach ( str_split( $format ) as $character ) {
+		if ( $escaped ) {
+			$safe_format .= $character;
+			$escaped = false;
+			continue;
+		}
+
+		if ( '\\' === $character ) {
+			$safe_format .= $character;
+			$escaped = true;
+			continue;
+		}
+
+		if ( ( preg_match( '/[A-Za-z]/', $character ) && ! in_array( $character, $tokens, true ) ) || in_array( $character, array( "'", '@', '!' ), true ) ) {
+			return 'Y-m-d';
+		}
+
+		if ( in_array( $character, array( 'd', 'j' ), true ) ) {
+			++$components['day'];
+		} elseif ( in_array( $character, array( 'm', 'n', 'M', 'F' ), true ) ) {
+			++$components['month'];
+		} elseif ( in_array( $character, array( 'y', 'Y' ), true ) ) {
+			++$components['year'];
+		}
+
+		$safe_format .= $character;
+	}
+
+	if ( $escaped || array( 1, 1, 1 ) !== array_values( $components ) ) {
+		return 'Y-m-d';
+	}
+
+	return $safe_format;
 }
 
 /**
@@ -397,7 +439,6 @@ function wp_event_calendar_get_datepicker_format() {
 		'F' => 'MM',
 		'y' => 'y',
 		'Y' => 'yy',
-		'o' => 'yy',
 	);
 	$format     = '';
 	$escaped    = false;
@@ -462,16 +503,46 @@ function wp_event_calendar_uses_24_hour_time() {
  * @return int|false
  */
 function wp_event_calendar_parse_numeric_date( $date = '', $format = '' ) {
-	preg_match_all( '/(?<!\\\\)[djmnYy]/', $format, $format_matches );
-	preg_match_all( '/\\d+/', $date, $date_matches );
+	$patterns = array(
+		'd' => '\\d{2}',
+		'j' => '\\d{1,2}',
+		'm' => '\\d{2}',
+		'n' => '\\d{1,2}',
+		'Y' => '\\d{4}',
+		'y' => '\\d{2}',
+	);
+	$pattern  = '';
+	$parts    = array();
+	$tokens   = array();
+	$escaped  = false;
 
-	if ( 3 !== count( $format_matches[0] ) || 3 !== count( $date_matches[0] ) ) {
+	foreach ( str_split( $format ) as $character ) {
+		if ( $escaped ) {
+			$pattern .= preg_quote( $character, '/' );
+			$escaped = false;
+			continue;
+		}
+
+		if ( '\\' === $character ) {
+			$escaped = true;
+			continue;
+		}
+
+		if ( isset( $patterns[ $character ] ) ) {
+			$pattern .= '(' . $patterns[ $character ] . ')';
+			$tokens[] = $character;
+		} elseif ( preg_match( '/[A-Za-z]/', $character ) ) {
+			return false;
+		} else {
+			$pattern .= preg_quote( $character, '/' );
+		}
+	}
+
+	if ( 3 !== count( $tokens ) || ! preg_match( '/^' . $pattern . '$/', $date, $matches ) ) {
 		return false;
 	}
 
-	$parts = array();
-
-	foreach ( $format_matches[0] as $key => $token ) {
+	foreach ( $tokens as $key => $token ) {
 		switch ( $token ) {
 			case 'd':
 			case 'j':
@@ -485,7 +556,7 @@ function wp_event_calendar_parse_numeric_date( $date = '', $format = '' ) {
 
 			case 'y':
 				$part = 'year';
-				$year = (int) $date_matches[0][ $key ];
+				$year = (int) $matches[ $key + 1 ];
 				$parts[ $part ] = ( $year < 70 ) ? $year + 2000 : $year + 1900;
 				continue 2;
 
@@ -499,14 +570,14 @@ function wp_event_calendar_parse_numeric_date( $date = '', $format = '' ) {
 			return false;
 		}
 
-		$parts[ $part ] = (int) $date_matches[0][ $key ];
+		$parts[ $part ] = (int) $matches[ $key + 1 ];
 	}
 
 	if ( 3 !== count( $parts ) || ! checkdate( $parts['month'], $parts['day'], $parts['year'] ) ) {
 		return false;
 	}
 
-	return mktime( 0, 0, 0, $parts['month'], $parts['day'], $parts['year'] );
+	return gmmktime( 0, 0, 0, $parts['month'], $parts['day'], $parts['year'] );
 }
 
 /**
@@ -519,17 +590,28 @@ function wp_event_calendar_parse_numeric_date( $date = '', $format = '' ) {
  * @return int|false
  */
 function wp_event_calendar_parse_date( $date = '', $iso_date = '' ) {
-	$date_time = wp_event_calendar_parse_numeric_date( $date, wp_event_calendar_get_date_format() );
+	$format    = wp_event_calendar_get_date_format();
+	$date_time = wp_event_calendar_parse_numeric_date( $date, $format );
 
 	if ( false !== $date_time ) {
 		return $date_time;
 	}
 
 	if ( preg_match( '/^(\\d{4})-(\\d{2})-(\\d{2})$/', $iso_date, $matches ) && checkdate( (int) $matches[2], (int) $matches[3], (int) $matches[1] ) ) {
-		return mktime( 0, 0, 0, (int) $matches[2], (int) $matches[3], (int) $matches[1] );
+		$date_time = gmmktime( 0, 0, 0, (int) $matches[2], (int) $matches[3], (int) $matches[1] );
+
+		if ( date_i18n( $format, $date_time, true ) === $date ) {
+			return $date_time;
+		}
+
+		return false;
 	}
 
-	return strtotime( $date );
+	$date_time = strtotime( $date . ' UTC' );
+
+	return ( false !== $date_time && date_i18n( $format, $date_time, true ) === $date )
+		? $date_time
+		: false;
 }
 
 /**

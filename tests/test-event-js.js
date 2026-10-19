@@ -17,6 +17,10 @@ var picker = {
 		return 'alt-field' === key ? '#event-date-iso' : 'dd.mm.yy';
 	},
 	datepicker: function( options ) {
+		if ( 'getDate' === options ) {
+			return new Date( 2026, 3, 3 );
+		}
+
 		datepickerOptions = options;
 	},
 	on: function( event, callback ) {
@@ -65,8 +69,8 @@ jQuery.datepicker = {
 	formatDate: function() {
 		return '2026-04-03';
 	},
-	parseDate: function( format, value ) {
-		if ( 'dd.mm.yy' !== format || '03.04.2026' !== value ) {
+	parseDate: function( format, value, settings ) {
+		if ( 'dd.mm.yy' !== format || '03.04.2026' !== value || 69 !== settings.shortYearCutoff ) {
 			throw new Error( 'Invalid date' );
 		}
 
@@ -79,10 +83,21 @@ global.jQuery = jQuery;
 
 require( '../wp-event-calendar/assets/js/event.js' );
 
-if ( 'yy-mm-dd' !== datepickerOptions.altFormat || '#event-date-iso' !== datepickerOptions.altField || 'dd.mm.yy' !== datepickerOptions.dateFormat ) {
+if ( 'dd.mm.yy' !== datepickerOptions.dateFormat || 69 !== datepickerOptions.shortYearCutoff || 'function' !== typeof datepickerOptions.onSelect ) {
 	throw new Error( 'Datepicker options were not localized.' );
 }
 
+if ( null !== alternateValue ) {
+	throw new Error( 'Datepicker initialization changed the machine-readable date.' );
+}
+
+datepickerOptions.onSelect();
+
+if ( '2026-04-03' !== alternateValue ) {
+	throw new Error( 'Datepicker selection did not synchronize the machine-readable date.' );
+}
+
+alternateValue = null;
 changeHandler();
 
 if ( '2026-04-03' !== alternateValue ) {

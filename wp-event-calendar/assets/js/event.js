@@ -4,23 +4,30 @@ jQuery( document ).ready( function( $ ) {
 	if ( $( '.wp_event_calendar_datepicker' ).length > 0 ) {
 		$( '.wp_event_calendar_datepicker' ).each( function() {
 			var picker = $( this );
+			var alternate = $( picker.data( 'alt-field' ) );
 
 			picker.datepicker( {
-				altField: picker.data( 'alt-field' ),
-				altFormat: 'yy-mm-dd',
-				dateFormat: picker.data( 'date-format' )
+				dateFormat: picker.data( 'date-format' ),
+				onSelect: function() {
+					var date = picker.datepicker( 'getDate' );
+
+					alternate.val( date ? $.datepicker.formatDate( 'yy-mm-dd', date ) : '' );
+				},
+				shortYearCutoff: 69
 			} );
 
 			picker.on( 'change', function() {
 				var date = null;
 
 				try {
-					date = $.datepicker.parseDate( picker.data( 'date-format' ), picker.val() );
+					date = $.datepicker.parseDate( picker.data( 'date-format' ), picker.val(), {
+						shortYearCutoff: 69
+					} );
 				} catch ( error ) {
 					// Let the server validate manually entered dates.
 				}
 
-				$( picker.data( 'alt-field' ) ).val( date ? $.datepicker.formatDate( 'yy-mm-dd', date ) : '' );
+				alternate.val( date ? $.datepicker.formatDate( 'yy-mm-dd', date ) : '' );
 			} );
 		} );
 	}

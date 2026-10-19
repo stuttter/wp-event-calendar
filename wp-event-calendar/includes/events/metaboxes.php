@@ -149,7 +149,7 @@ function wp_event_calendar_duration_metabox( $post = null ) {
 	$date_format       = wp_event_calendar_get_date_format();
 	$datepicker_format = wp_event_calendar_get_datepicker_format();
 	$uses_24_hour_time = wp_event_calendar_uses_24_hour_time();
-	$date_placeholder  = date_i18n( $date_format, mktime( 0, 0, 0, 12, 31, 2000 ), true );
+	$date_placeholder  = date_i18n( $date_format, gmmktime( 0, 0, 0, 12, 31, 2000 ), true );
 
 	/** All Day ***************************************************************/
 
@@ -170,7 +170,7 @@ function wp_event_calendar_duration_metabox( $post = null ) {
 
 	// Get date_time
 	$end_date_time = ! empty( $meta['wp_event_calendar_end_date_time'][0] )
-		? strtotime( $meta['wp_event_calendar_end_date_time'][0] )
+		? strtotime( $meta['wp_event_calendar_end_date_time'][0] . ' UTC' )
 		: null;
 
 	// Only if end isn't empty
@@ -178,25 +178,25 @@ function wp_event_calendar_duration_metabox( $post = null ) {
 
 		// Date
 		$end_date     = date_i18n( $date_format, $end_date_time, true );
-		$end_date_iso = date( 'Y-m-d', $end_date_time );
+		$end_date_iso = gmdate( 'Y-m-d', $end_date_time );
 
 		// Only if not all-day
 		if ( empty( $all_day ) ) {
 
 			// Hour
-			$end_hour = date( $uses_24_hour_time ? 'H' : 'h', $end_date_time );
+			$end_hour = gmdate( $uses_24_hour_time ? 'H' : 'h', $end_date_time );
 			if ( '' === $end_hour ) {
 				$end_hour = '';
 			}
 
 			// Minute
-			$end_minute = date( 'i', $end_date_time );
+			$end_minute = gmdate( 'i', $end_date_time );
 			if ( '' === $end_hour ) {
 				$end_minute = '';
 			}
 
 			// Day/night
-			$end_am_pm = date( 'a', $end_date_time );
+			$end_am_pm = gmdate( 'a', $end_date_time );
 		}
 	}
 
@@ -207,32 +207,32 @@ function wp_event_calendar_duration_metabox( $post = null ) {
 		$date_time = (int) $_GET['start_day'];
 	} else {
 		$date_time = ! empty( $meta['wp_event_calendar_date_time'][0] )
-			? strtotime( $meta['wp_event_calendar_date_time'][0] )
+			? strtotime( $meta['wp_event_calendar_date_time'][0] . ' UTC' )
 			: null;
 	}
 
 	// Date
 	if ( ! empty( $date_time ) ) {
 		$date     = date_i18n( $date_format, $date_time, true );
-		$date_iso = date( 'Y-m-d', $date_time );
+		$date_iso = gmdate( 'Y-m-d', $date_time );
 
 		// Only if not all-day
 		if ( empty( $all_day ) ) {
 
 			// Hour
-			$hour = date( $uses_24_hour_time ? 'H' : 'h', $date_time );
+			$hour = gmdate( $uses_24_hour_time ? 'H' : 'h', $date_time );
 			if ( '' === $end_hour || '' === $hour ) {
 				$hour = '';
 			}
 
 			// Minute
-			$minute = date( 'i', $date_time );
+			$minute = gmdate( 'i', $date_time );
 			if ( '' === $hour && '' === $end_minute ) {
 				$minute = '';
 			}
 
 			// Day/night
-			$am_pm = date( 'a', $date_time );
+			$am_pm = gmdate( 'a', $date_time );
 		}
 	}
 
@@ -514,6 +514,11 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 		)
 		: null;
 
+	// Bail without changing event metadata when either submitted date is invalid.
+	if ( false === $date || ( ! empty( $_POST['wp_event_calendar_end_date'] ) && false === $end_date ) ) {
+		return $post_id;
+	}
+
 	// Hour
 	$end_hour = ! empty( $_POST['wp_event_calendar_end_time_hour'] )
 		? sanitize_text_field( $_POST['wp_event_calendar_end_time_hour'] )
@@ -573,8 +578,8 @@ function wp_event_calendar_metabox_save( $post_id = 0 ) {
 	}
 
 	// Make timestamps from pieces
-	$date     = mktime( intval( $hour     ), intval( $minutes     ), 0, date( 'm', $date     ), date( 'd', $date     ), date( 'Y', $date     ) );
-	$end_date = mktime( intval( $end_hour ), intval( $end_minutes ), 0, date( 'm', $end_date ), date( 'd', $end_date ), date( 'Y', $end_date ) );
+	$date     = gmmktime( intval( $hour     ), intval( $minutes     ), 0, gmdate( 'm', $date     ), gmdate( 'd', $date     ), gmdate( 'Y', $date     ) );
+	$end_date = gmmktime( intval( $end_hour ), intval( $end_minutes ), 0, gmdate( 'm', $end_date ), gmdate( 'd', $end_date ), gmdate( 'Y', $end_date ) );
 
 	// End dates can't be before start dates
 	if ( $end_date <= $date ) {
