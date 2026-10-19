@@ -93,6 +93,10 @@ class WP_Event_Calendar_Test_WPDB {
 $GLOBALS['wp_locale'] = new WP_Event_Calendar_Test_Locale();
 $GLOBALS['wpdb']      = new WP_Event_Calendar_Test_WPDB();
 
+require_once dirname( __DIR__ ) . '/wp-event-calendar/includes/common/ical-rrule-sequencer.php';
+require_once dirname( __DIR__ ) . '/wp-event-calendar/includes/common/recurrence.php';
+require_once dirname( __DIR__ ) . '/wp-event-calendar/includes/common/event.php';
+require_once dirname( __DIR__ ) . '/wp-event-calendar/includes/common/functions.php';
 require_once dirname( __DIR__ ) . '/wp-event-calendar/includes/common/list-table-base.php';
 require_once dirname( __DIR__ ) . '/wp-event-calendar/includes/common/list-table-week.php';
 require_once dirname( __DIR__ ) . '/wp-event-calendar/includes/events/admin.php';

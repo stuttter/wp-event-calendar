@@ -28,6 +28,8 @@ function _wp_event_calendar() {
 
 	// Common files
 	require_once $plugin_path . 'includes/common/event.php';
+	require_once $plugin_path . 'includes/common/ical-rrule-sequencer.php';
+	require_once $plugin_path . 'includes/common/recurrence.php';
 	require_once $plugin_path . 'includes/common/functions.php';
 
 	// Admin-only common files
